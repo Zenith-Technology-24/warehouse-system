@@ -1,0 +1,104 @@
+import React, { Suspense, useEffect } from 'react'
+import './App.css'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
+import Loading from './components/Loading'
+
+const Dashboard = React.lazy(() => import('./pages/Dashboard'))
+const Login = React.lazy(() => import('./pages/Login'))
+const Inventory = React.lazy(() => import('./pages/Inventory'))
+const InventoryLayout = React.lazy(() => import('./pages/Inventory/layout'))
+const Pagelayout = React.lazy(() => import('./components/Pagelayout'))
+const RequireAuth = React.lazy(() => import('./helper/RequireAuth'))
+const NotAuth = React.lazy(() => import('./helper/NotAuth'))
+const CreateProduct = React.lazy(() => import('./pages/Inventory/CreateProduct'))
+const UpdateProduct = React.lazy(() => import('./pages/Inventory/UpdateProduct'))
+const Sales = React.lazy(() => import('./pages/Sales'))
+const CreateSales = React.lazy(() => import('./pages/Sales/Create'))
+const UpdateSales = React.lazy(() => import('./pages/Sales/Update'))
+const ViewSales = React.lazy(() => import('./pages/Sales/View'))
+const Expenses = React.lazy(() => import('./pages/Expenses'))
+const CreateExpense = React.lazy(() => import('./pages/Expenses/Create'))
+const UpdateExpense = React.lazy(() => import('./pages/Expenses/Update'))
+const Settings = React.lazy(() => import('./pages/Settings'))
+
+function App() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/serviceWorker.js")
+          .then(registration => {
+            // console.log("ServiceWorker registered: ", registration);
+          })
+          .catch(registrationError => {
+            console.log("ServiceWorker registration failed: ", registrationError);
+          });
+      });
+    }
+
+  }, [])
+
+  return (
+    <div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          className: '',
+          duration: 5000,
+          success: {
+            duration: 3000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+          style: {
+            minWidth: '250px',
+          },
+        }}
+      />
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+          <Route element={<NotAuth />}>
+            <Route path="/login" element={<Login />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<Pagelayout />} >
+              <Route index={true} element={<Dashboard />} />
+              <Route path="inventory" element={<InventoryLayout />} >
+                <Route index={true} element={<Inventory />} />
+                <Route path="create" element={<CreateProduct />} />
+                <Route path="update" element={<UpdateProduct />} />
+              </Route>
+              <Route path="sales">
+                <Route index={true} element={<Sales />} />
+                <Route path="create" element={<CreateSales />} />
+                <Route path="update" element={<UpdateSales />} />
+                <Route path="view/:id" element={<ViewSales />} />
+              </Route>
+              <Route path="expenses">
+                <Route index={true} element={<Expenses />} />
+                <Route path="create" element={<CreateExpense />} />
+                <Route path="update" element={<UpdateExpense />} />
+              </Route>
+              <Route path="settings">
+                <Route index={true} element={<Settings />} />
+              </Route>
+            </Route>
+          </Route>
+        </Routes>
+      </Suspense>
+    </div>
+  )
+}
+
+export default App
