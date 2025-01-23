@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
     container_name: mysql_db
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: aaa
+      MYSQL_DATABASE: warehousedb
       MYSQL_USER: user
       MYSQL_PASSWORD: myuserpassword
     ports:

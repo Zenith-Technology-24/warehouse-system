@@ -1,13 +1,12 @@
 export const siteConfig = {
-    name: "AAA Inventory",
-    description: "A Inventory system created by Zenith.",
+    name: "WAREHOUSE SYSTEM",
+    description: "A Warehouse system created by Zenith.",
     logo: '/vite.svg',
     url: "/localhost",
     team: "ZENITH",
     links: {
         twitter: "https://www.facebook.com/profile.php?id=100006381841053",
-        github: "https://github.com/Phnumbahwan",
-        // project: "https://github.com/EugerBonete/animinji",
+        github: "https://github.com/Phnumbahwan"
     },
     navItems: [
         {
