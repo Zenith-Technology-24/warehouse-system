@@ -11,7 +11,9 @@ export default {
       },
       colors: {
         aaa: {
-          DEFAULT: '#29A8E2',
+          DEFAULT: '#4B5320',
+          login: '#9FA486',
+          text: '#2B2B2B'
         },
       },
     },

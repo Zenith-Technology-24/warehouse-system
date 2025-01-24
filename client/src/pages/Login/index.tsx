@@ -53,20 +53,20 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="flex w-full h-screen bg-white justify-center items-center">
+        <div className="flex w-full h-screen bg-aaa-login justify-center items-center">
             <div className="flex flex-col bg-white border border-green-50 shadow-2xl shadow-[#4CAF5026] w-[50vh] min-w-[50vh] py-4 px-6 rounded-2xl">
                 <div className="flex w-full px-2">
                     <img src={siteConfig.logo} />
                 </div>
-                {/* <div className="w-full p-2">
-                    <span className="text-[#48494A] font-lato text-2xl font-[550]">Hi, Welcome back!</span>
-                </div> */}
                 <div className="w-full p-2">
-                    <span className="text-[#48494A] font-lato text-sm font-normal">Sign in to your AAA account.</span>
+                    <span className="text-aaa-text font-lato text-2xl font-[550]">Hi, Welcome back!</span>
+                </div>
+                <div className="w-full p-2">
+                    <span className="text-aaa-text font-lato text-sm font-normal">Sign in to your Warehouse Inventory System account.</span>
                 </div>
                 <div>
                     <div className=" mb-5">
-                        <label htmlFor="email" className="block mb-2 text-[#48494A] font-lato text-sm font-normal">Email Address</label>
+                        <label htmlFor="email" className="block mb-2 text-aaa-text font-lato text-sm font-normal">Email Address</label>
                         <input
                             name="email"
                             value={schema.values.email}
@@ -75,12 +75,12 @@ const Login: React.FC = () => {
                             type="email"
                             id="email"
                             className="!bg-zinc-50 border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:!ring-aaa focus:outline-none active:!border-aaa active:!ring-aaa focus:!border-aaa block w-full p-2.5"
-                            placeholder="Enter Email Address"
+                            placeholder="Email Address"
                             required
                         />
                     </div>
                     <div className="mb-5">
-                        <label htmlFor="password" className="block mb-2 text-[#48494A] font-lato text-sm font-normal">Password</label>
+                        <label htmlFor="password" className="block mb-2 text-aaa-text font-lato text-sm font-normal">Password</label>
                         <div className="relative">
                             <input
                                 type={passwordType}
