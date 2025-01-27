@@ -404,7 +404,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
                 message={'Are you sure you want to restore this sales?'}
             />
             <div className="flex flex-row justify-between">
-                <Header title={'Sales'} description={'Showing all sales'} />
+                <Header title={'Inventory Summary'} description={'Showing inventory summary'} />
                 {
                     dashboardView ? (
                         <button onClick={() => navigate('/sales')} className="rounded-lg font-lato border bg-aaa text-white p-3">
