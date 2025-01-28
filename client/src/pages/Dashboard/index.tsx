@@ -3,6 +3,7 @@ import DashboardCard from "../../components/DashboardCard"
 import Header from "../../components/Header"
 import Sales from "../Sales"
 import { fetchDashboardData } from "../../api/dashboard/dashboardApi";
+import InventoryStatus from "../../components/InventoryStatus";
 
 const Dashboard: React.FC = () => {
     const { data } = useQuery({
@@ -87,6 +88,7 @@ const Dashboard: React.FC = () => {
                     type={'total amount'}
                 />
             </div>
+            <InventoryStatus />
             <Sales dashboardView={true} />
         </>
     )
