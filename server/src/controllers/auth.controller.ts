@@ -25,5 +25,8 @@ export const login = async (req: Request, res: Response) => {
 
 export const session = async (req: any, res: Response) => {
     const user = await authService.getUser(Number(req.user.id))
-    res.status(200).json(user);
+    res.status(200).json({
+        ...user,
+        data: req.user
+    });
 };

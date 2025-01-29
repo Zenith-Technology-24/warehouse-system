@@ -7,6 +7,7 @@ import { createExpense, getAllExpense, getExportExpense, updateExpense, updateSt
 import { session } from '../controllers/auth.controller';
 import { dashboardData } from '../controllers/dashboard.controller';
 import { getAllCustomer } from '../controllers/customer.controller';
+import { hasRole } from '../middleware/role.middleware';
 const protectedRouter = Router();
 
 // Apply the authentication middleware
@@ -17,7 +18,8 @@ protectedRouter.get('/session', session);
 protectedRouter.get('/dashboard', dashboardData);
 
 // Prefix: /api/protected
-protectedRouter.get('/users', getAllUsers);
+// @ts-expect-error stupid
+protectedRouter.get('/users', hasRole(['superadmin']), getAllUsers);
 protectedRouter.post('/user/update', updateUser);
 protectedRouter.post('/users', createUser);
 

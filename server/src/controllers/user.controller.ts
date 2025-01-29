@@ -21,12 +21,12 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 };
 
 
-export const getAllUsers = async (res: Response) => {
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
         const users = await userService.getAllUsers();
         res.status(200).json(users);
     } catch (error: any) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: "Something went wrong" });
     }
 };
 

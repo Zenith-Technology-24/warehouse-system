@@ -6,6 +6,7 @@ import { Sales } from '../models/sales.entity';
 import { Customer } from '../models/customer.entity';
 import { SalesInventory } from '../models/sales_inventories.entity';
 import { Expense } from '../models/expense.entity';
+import { Role } from '../models/role.entity';
 
 export const AppDataSource = new DataSource({
     type: 'mysql',
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [User, Inventory, Sales, Customer, SalesInventory, Expense],
+    entities: [User, Inventory, Sales, Customer, SalesInventory, Expense, Role],
     synchronize: true,
     logging: true,
 });
