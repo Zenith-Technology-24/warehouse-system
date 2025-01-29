@@ -9,11 +9,11 @@ import { Expense } from '../models/expense.entity';
 
 export const AppDataSource = new DataSource({
     type: 'mysql',
-    host: process.env.DATABASE_HOST,
-    port: Number(process.env.DATABASE_PORT),
-    username: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     entities: [User, Inventory, Sales, Customer, SalesInventory, Expense],
     synchronize: true,
     logging: true,

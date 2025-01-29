@@ -7,7 +7,6 @@ import { createExpense, getAllExpense, getExportExpense, updateExpense, updateSt
 import { session } from '../controllers/auth.controller';
 import { dashboardData } from '../controllers/dashboard.controller';
 import { getAllCustomer } from '../controllers/customer.controller';
-
 const protectedRouter = Router();
 
 // Apply the authentication middleware

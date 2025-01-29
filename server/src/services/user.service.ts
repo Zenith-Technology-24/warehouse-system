@@ -9,6 +9,28 @@ export class UserService {
         return await this.userRepository.find();
     }
 
+    async createUser(userData: Partial<User>): Promise<User> {
+        
+        if (!userData.email || !userData.password) {
+            throw new Error('Email and password are required');
+        }
+
+        const existingUser = await this.userRepository.findOne({ 
+            where: { email: userData.email } 
+        });
+
+        if (existingUser) {
+            throw new Error('User with this email already exists');
+        }
+
+        const user = this.userRepository.create({
+            ...userData,
+        });
+
+        return await this.userRepository.save(user);
+    }
+
+
     async updateUser(id: number, user: any): Promise<User | null> {
         const existingUser = await this.userRepository.findOne({ where: { id } }) as any;
         if (!existingUser) {

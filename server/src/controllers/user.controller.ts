@@ -1,7 +1,25 @@
 import { Request, Response } from 'express';
+import { User } from '../models/user.entity';
 import { UserService } from '../services/user.service';
 
 const userService = new UserService();
+
+export const createUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userData = req.body;
+        const newUser = await userService.createUser(userData);
+        
+        res.status(201).json({
+            message: "User created successfully",
+            user: newUser
+        });
+    } catch (error: any) {
+        res.status(500).json({ 
+            message: error.message || "Failed to create user"
+        });
+    }
+};
+
 
 export const getAllUsers = async (res: Response) => {
     try {
