@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { getAllUsers, updateUser } from '../controllers/user.controller';
+import { createUser, getAllUsers, updateUser } from '../controllers/user.controller';
 import { createInventory, deleteInventory, getAllInventory, getAllProductNames, getExportInventory, updateInventory, updateStatusInventory } from '../controllers/inventory.controller';
 import { createSales, deleteSalesProduct, getAllSales, getExportSales, getSales, updateSales, updateStatusSales } from '../controllers/sales.controller';
 import { createExpense, getAllExpense, getExportExpense, updateExpense, updateStatusExpense } from '../controllers/expense.controller';
@@ -19,6 +19,7 @@ protectedRouter.get('/dashboard', dashboardData);
 // Prefix: /api/protected
 protectedRouter.get('/users', getAllUsers);
 protectedRouter.post('/user/update', updateUser);
+protectedRouter.post('/users', createUser);
 
 protectedRouter.post('/inventory', getAllInventory);
 protectedRouter.get('/inventory/names', getAllProductNames);
