@@ -1,50 +1,57 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { createUser, getAllUsers, updateUser } from '../controllers/user.controller';
-import { createInventory, deleteInventory, getAllInventory, getAllProductNames, getExportInventory, updateInventory, updateStatusInventory } from '../controllers/inventory.controller';
-import { createSales, deleteSalesProduct, getAllSales, getExportSales, getSales, updateSales, updateStatusSales } from '../controllers/sales.controller';
-import { createExpense, getAllExpense, getExportExpense, updateExpense, updateStatusExpense } from '../controllers/expense.controller';
-import { session } from '../controllers/auth.controller';
-import { dashboardData } from '../controllers/dashboard.controller';
-import { getAllCustomer } from '../controllers/customer.controller';
-import { hasRole } from '../middleware/role.middleware';
+import salesRoutes from './sales.routes';
+import inventoryRoutes from './inventory.routes';
+import sessionRoutes from './session.routes';
+import userRoutes from './user.routes';
+import expenseRoutes from './expense.routes';
+import dashboardRoutes from './dashboard.routes';
+import customerRoutes from './customer.routes';
+
 const protectedRouter = Router();
 
 // Apply the authentication middleware
 protectedRouter.use(authMiddleware);
+protectedRouter.use(salesRoutes);
+protectedRouter.use(inventoryRoutes);
+protectedRouter.use(sessionRoutes);
+protectedRouter.use(userRoutes);
+protectedRouter.use(expenseRoutes);
+protectedRouter.use(dashboardRoutes);
+protectedRouter.use(customerRoutes);
 
-protectedRouter.get('/session', session);
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The user ID
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The user's email address
+ *         name:
+ *           type: string
+ *           description: The user's full name
+ *         role:
+ *           type: string
+ *           description: The user's role
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
-protectedRouter.get('/dashboard', dashboardData);
-
-// Prefix: /api/protected
-// @ts-expect-error stupid
-protectedRouter.get('/users', hasRole(['superadmin']), getAllUsers);
-protectedRouter.post('/user/update', updateUser);
-protectedRouter.post('/users', createUser);
-
-protectedRouter.post('/inventory', getAllInventory);
-protectedRouter.get('/inventory/names', getAllProductNames);
-protectedRouter.post('/inventory/create', createInventory);
-protectedRouter.post('/inventory/:id/update', updateInventory);
-protectedRouter.get('/inventory/:id/delete', deleteInventory);
-protectedRouter.get('/inventory/:id/:status', updateStatusInventory);
-protectedRouter.post('/inventory/export', getExportInventory);
-
-protectedRouter.post('/sales', getAllSales);
-protectedRouter.post('/sales/create', createSales);
-protectedRouter.get('/sales/:id', getSales);
-protectedRouter.post('/sales/:id/update', updateSales);
-protectedRouter.get('/sales/:id/:status', updateStatusSales);
-protectedRouter.get('/sales/product/:id/delete', deleteSalesProduct);
-protectedRouter.post('/sales/export', getExportSales);
-
-protectedRouter.post('/expenses', getAllExpense);
-protectedRouter.post('/expenses/create', createExpense);
-protectedRouter.post('/expenses/:id/update', updateExpense);
-protectedRouter.get('/expenses/:id/:status', updateStatusExpense);
-protectedRouter.post('/expenses/export', getExportExpense);
-
-protectedRouter.get('/customers', getAllCustomer);
 
 export default protectedRouter;
