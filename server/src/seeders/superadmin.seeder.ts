@@ -1,4 +1,5 @@
 import { AppDataSource } from '../database/data-source';
+import { Role } from '../models/role.entity';
 import { User } from '../models/user.entity';
 
 const seedSuperAdmin = async () => {
@@ -10,11 +11,14 @@ const seedSuperAdmin = async () => {
     const superAdmin = await userRepository.findOneBy({ email: 'superadmin@aaa.com' });
 
     if (!superAdmin) {
+        const superAdminRole = await AppDataSource.getRepository(Role).findOneBy({ name: 'superadmin' });
+
         const newSuperAdmin = userRepository.create({
             firstname: 'Aldrin',
             lastname: 'Richard',
             email: 'superadmin@aaa.com',
             password: 'p4ssw0rd0123',
+            roles: superAdminRole ? [superAdminRole] : []
         });
 
         await userRepository.save(newSuperAdmin);
