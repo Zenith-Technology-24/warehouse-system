@@ -30,7 +30,7 @@ const userRoutes = Router();
  *         description: Server error
  */
 
-// @ts-expect-error stupid
+// @ts-expect-error malformed signatures
 userRoutes.get('/users', hasRole(['superadmin']), getAllUsers);
 
 /**
@@ -142,7 +142,8 @@ userRoutes.post('/user/update', updateUser);
  *                 message:
  *                   type: string
  */
-userRoutes.post('/users', createUser);
+// @ts-expect-error malformed signatures
+userRoutes.post('/users', hasRole(['superadmin']), createUser);
 
 /**
  * @swagger
