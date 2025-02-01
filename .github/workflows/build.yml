@@ -1,0 +1,51 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+        - 'electron'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build and Release Electron App
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            yarn build:win
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            yarn build:mac
+          else
+            yarn build:linux
+          fi
+        shell: bash
+
+      - name: Upload Artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
