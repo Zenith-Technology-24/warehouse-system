@@ -61,7 +61,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                 Issuance
                             </NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                             <NavLink
                                 to="/inventory"
                                 className={({ isActive }) =>
@@ -88,8 +88,8 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                 </svg>
                                 Return of Items
                             </NavLink>
-                        </li>
-                        {/* <li>
+                        </li> */}
+                        <li>
                             <NavLink
                                 to="/expenses"
                                 className={({ isActive }) =>
@@ -116,7 +116,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                 </svg>
                                 Sales
                             </NavLink>
-                        </li> */}
+                        </li>
                         <li>
                             <NavLink
                                 to="/settings"
