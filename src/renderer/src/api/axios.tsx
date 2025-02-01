@@ -6,7 +6,7 @@ const baseUrl = import.meta.env.VITE_APP_URL + "/api/";
 const apiService = Axios.create();
 
 const withToken = (config) => {
-    let user = JSON.parse(Cookies.get('user') || null);
+    const user = JSON.parse(Cookies.get('user') || null);
 
     return {
         ...config,

@@ -1,7 +1,7 @@
 {
   "name": "client",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.6",
   "type": "module",
   "main": "./out/main/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "yarn build && electron-builder --dir",
     "build:win": "yarn build && electron-builder --win --x64",
-    "build:mac": "yarn build && electron-builder --mac --universal",
+    "build:mac": "yarn build && electron-builder --mac --arm64",
     "build:linux": "yarn build && electron-builder --linux --x64"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@tanstack/react-query": "^5.51.23",
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.4",
+    "electron-store": "^10.0.1",
     "exceljs": "^4.4.0",
     "formik": "^2.4.6",
     "js-cookie": "^3.0.5",
@@ -42,8 +43,8 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
     "electron": "^34.0.2",
-    "electron-vite": "^2.3.0",
     "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
     "eslint": "^9.8.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",

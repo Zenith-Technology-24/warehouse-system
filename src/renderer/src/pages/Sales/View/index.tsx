@@ -153,7 +153,7 @@ const View: React.FC = () => {
                     <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
                         Cancel
                     </button>
-                    <button onClick={() => navigate('/sales/update', { state: data })} className="rounded-lg font-lato bg-aaa text-white p-3">
+                    <button onClick={() =>  navigate('/#/sales/update', { state: data })} className="rounded-lg font-lato bg-aaa text-white p-3">
                         Update
                     </button>
                 </TopButtons>

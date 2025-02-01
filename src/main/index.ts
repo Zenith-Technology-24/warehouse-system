@@ -1,17 +1,16 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, protocol, session, ipcMain } from "electron";
+import * as path from "path";
 
 let mainWindow: Electron.BrowserWindow | null;
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
     webPreferences: {
-      sandbox: false,
-      webSecurity: true,
-      nodeIntegration: true,
+      nodeIntegration: false, // Keep this off for security
       contextIsolation: true,
-      allowRunningInsecureContent: false, // Ensure HTTPS content is properly handled
     },
   });
 
@@ -30,14 +29,22 @@ function createWindow() {
   );
 
   // ...existing code...
-  mainWindow.loadURL("http://localhost:5173");
+  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'), {hash: ''});
   mainWindow.on("closed", () => (mainWindow = null));
+
 }
+
+ipcMain.handle("get-cookies", async () => {
+  return await session.defaultSession.cookies.get({});
+});
+
+ipcMain.handle("set-cookie", async (_, cookie) => {
+  await session.defaultSession.cookies.set(cookie);
+});
 
 app.whenReady().then(() => {
   createWindow();
 });
-
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

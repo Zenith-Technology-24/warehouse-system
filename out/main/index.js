@@ -1,16 +1,18 @@
-import { app, BrowserWindow } from "electron";
+import { ipcMain, session, app, BrowserWindow } from "electron";
+import * as path from "path";
+import __cjs_mod__ from "node:module";
+const __filename = import.meta.filename;
+const __dirname = import.meta.dirname;
+const require2 = __cjs_mod__.createRequire(import.meta.url);
 let mainWindow;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1e3,
     height: 800,
     webPreferences: {
-      sandbox: false,
-      webSecurity: true,
-      nodeIntegration: true,
-      contextIsolation: true,
-      allowRunningInsecureContent: false
-      // Ensure HTTPS content is properly handled
+      nodeIntegration: false,
+      // Keep this off for security
+      contextIsolation: true
     }
   });
   mainWindow.webContents.session.setPermissionRequestHandler(
@@ -23,9 +25,15 @@ function createWindow() {
       callback(0);
     }
   );
-  mainWindow.loadURL("http://localhost:5173");
+  mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"), { hash: "" });
   mainWindow.on("closed", () => mainWindow = null);
 }
+ipcMain.handle("get-cookies", async () => {
+  return await session.defaultSession.cookies.get({});
+});
+ipcMain.handle("set-cookie", async (_, cookie) => {
+  await session.defaultSession.cookies.set(cookie);
+});
 app.whenReady().then(() => {
   createWindow();
 });

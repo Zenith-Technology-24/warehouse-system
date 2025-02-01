@@ -1,9 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  BrowserRouter,
   Route,
   Routes,
+  HashRouter
 } from "react-router-dom";
 import './index.css'
 import App from './App';
@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/*" element={
           <ToastProvider>
@@ -31,6 +31,6 @@ createRoot(document.getElementById('root')!).render(
           </ToastProvider>
         } />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>,
 )
