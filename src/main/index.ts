@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol, session, ipcMain } from "electron";
+import { app, BrowserWindow } from "electron";
 import * as path from "path";
 
 let mainWindow: Electron.BrowserWindow | null;
