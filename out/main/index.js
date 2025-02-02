@@ -1,4 +1,4 @@
-import { ipcMain, session, app, BrowserWindow } from "electron";
+import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import __cjs_mod__ from "node:module";
 const __filename = import.meta.filename;
@@ -28,12 +28,6 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"), { hash: "" });
   mainWindow.on("closed", () => mainWindow = null);
 }
-ipcMain.handle("get-cookies", async () => {
-  return await session.defaultSession.cookies.get({});
-});
-ipcMain.handle("set-cookie", async (_, cookie) => {
-  await session.defaultSession.cookies.set(cookie);
-});
 app.whenReady().then(() => {
   createWindow();
 });

@@ -1,13 +1,11 @@
 import Axios from "axios";
-import Cookies from "js-cookie";
 
 const baseUrl = import.meta.env.VITE_APP_URL + "/api/";
 
 const apiService = Axios.create();
 
 const withToken = (config) => {
-    const user = JSON.parse(Cookies.get('user') || null);
-
+    const user = JSON.parse(localStorage.getItem('user') || "null");
     return {
         ...config,
         headers: {
@@ -22,7 +20,7 @@ apiService.interceptors.response.use(
     },
     function (error) {
         if (401 === error.response.status) {
-            Cookies.remove('user');
+            localStorage.removeItem('user');
             if (window.location.pathname !== "/") {
                 window.location.href = "/";
             }

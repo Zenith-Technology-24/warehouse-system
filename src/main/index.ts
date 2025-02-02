@@ -34,14 +34,6 @@ function createWindow() {
 
 }
 
-ipcMain.handle("get-cookies", async () => {
-  return await session.defaultSession.cookies.get({});
-});
-
-ipcMain.handle("set-cookie", async (_, cookie) => {
-  await session.defaultSession.cookies.set(cookie);
-});
-
 app.whenReady().then(() => {
   createWindow();
 });

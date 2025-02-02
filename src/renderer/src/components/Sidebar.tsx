@@ -19,7 +19,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
     })
 
     const handleLogout = () => {
-        Cookies.remove('user')
+        localStorage.removeItem('user');
         showToast(
             "Logged Out Successfully!",
             "",

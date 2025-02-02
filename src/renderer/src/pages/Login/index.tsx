@@ -3,7 +3,6 @@ import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/auth/authApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { siteConfig } from "../../constants/site";
@@ -25,10 +24,7 @@ const Login: React.FC = () => {
       alert("Account not found. Please try again.");
     },
     onSuccess: (data: any) => {
-      Cookies.set("user", JSON.stringify(data), {
-        domain: "localhost:5173",
-        path: "/",
-      });
+      localStorage.setItem("user", JSON.stringify(data));
       showToast("Logged In Successfully!", "", "success");
       navigate("/#/");
     },
