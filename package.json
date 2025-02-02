@@ -6,7 +6,7 @@
   "main": "./out/main/index.js",
   "scripts": {
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "electron-vite preview --outDir=dist",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
