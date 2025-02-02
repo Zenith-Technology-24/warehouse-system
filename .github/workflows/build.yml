@@ -1,6 +1,10 @@
 name: Build/release
 
-on: 'push'
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   release:
@@ -21,13 +25,10 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
+        env:
+          VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
           
 permissions:
