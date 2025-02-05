@@ -57,6 +57,20 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                     } ${isOpen ? 'block' : 'hidden'}`
                                 }
                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path fill="currentColor" d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.173T4 4.616v2.153q0 .27.173.442q.173.173.443.173m4.769 5.482h5.23V12h-5.23zM12 14.192" />
+                                </svg>
+                                Inventory
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/inventory"
+                                className={({ isActive }) =>
+                                    `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
+                                    } ${isOpen ? 'block' : 'hidden'}`
+                                }
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2m4 7h4m-4 5h4m-8-5h.01M8 16h.01" /></g></svg>
                                 Issuance
                             </NavLink>
@@ -89,7 +103,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                 Return of Items
                             </NavLink>
                         </li> */}
-                        <li>
+                        {/* <li>
                             <NavLink
                                 to="/expenses"
                                 className={({ isActive }) =>
@@ -102,8 +116,8 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                 </svg>
                                 Expenses
                             </NavLink>
-                        </li>
-                        <li>
+                        </li> */}
+                        {/* <li>
                             <NavLink
                                 to="/sales"
                                 className={({ isActive }) =>
@@ -115,6 +129,48 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
                                 </svg>
                                 Sales
+                            </NavLink>
+                        </li> */}
+                        <li>
+                            <NavLink
+                                to="/sales"
+                                className={({ isActive }) =>
+                                    `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
+                                    } ${isOpen ? 'block' : 'hidden'}`
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.198 3.002H3.802c-.75 0-1.126 0-1.386.177a1 1 0 0 0-.31.338c-.153.273-.116.64-.041 1.376c.125 1.228.187 1.842.513 2.28c.163.22.369.403.606.54c.476.277 1.102.277 2.355.277h12.922c1.253 0 1.879 0 2.355-.277c.237-.137.443-.32.606-.54c.326-.438.388-1.052.513-2.28c.075-.736.112-1.103-.04-1.376a1 1 0 0 0-.311-.338c-.26-.177-.636-.177-1.386-.177m-10.198 8h4m.539 4.976l2.727-.053c1.086-.02 3.237.247 3.237 2.503c0 2.34-2.249 2.57-3.262 2.57H8.05c-2.128 0-5.048-.472-5.048-4.488V7.997m11.536 7.981a.77.77 0 0 1 .232-.538l1.714-1.454m-1.946 1.992a.77.77 0 0 0 .234.579l1.712 1.414m4.495-9.974v5.028" color="currentColor" />
+                                </svg>
+                                Return of Items
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/manage-users"
+                                className={({ isActive }) =>
+                                    `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
+                                    } ${isOpen ? 'block' : 'hidden'}`
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.928 19.634h2.138a1.165 1.165 0 0 0 1.116-1.555a6.85 6.85 0 0 0-6.117-3.95m0-2.759a3.664 3.664 0 0 0 3.665-3.664a3.664 3.664 0 0 0-3.665-3.674m-1.04 16.795a1.908 1.908 0 0 0 1.537-3.035a8.03 8.03 0 0 0-6.222-3.196a8.03 8.03 0 0 0-6.222 3.197a1.909 1.909 0 0 0 1.536 3.034zM9.34 11.485a4.16 4.16 0 0 0 4.15-4.161a4.151 4.151 0 0 0-8.302 0a4.16 4.16 0 0 0 4.151 4.16" />
+                                </svg>
+                                Manage Users
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                to="/sales"
+                                className={({ isActive }) =>
+                                    `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
+                                    } ${isOpen ? 'block' : 'hidden'}`
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M3.5 12a8.5 8.5 0 1 1 17 0a8.5 8.5 0 0 1-17 0M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10S17.523 2 12 2m-.007 4.648a.75.75 0 0 0-1.493.102v6l.007.102a.75.75 0 0 0 .743.648h4l.102-.007A.75.75 0 0 0 15.25 12H12V6.75z" />
+                                </svg>
+                                Activity Logs
                             </NavLink>
                         </li>
                         <li>

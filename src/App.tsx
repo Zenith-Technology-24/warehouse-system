@@ -22,6 +22,9 @@ const CreateExpense = React.lazy(() => import('./pages/Expenses/Create'))
 const UpdateExpense = React.lazy(() => import('./pages/Expenses/Update'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 
+const ManageUsers = React.lazy(() => import('./pages/ManageUsers'))
+const CreateUser = React.lazy(() => import('./pages/ManageUsers/Create'))
+
 function App() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -89,6 +92,10 @@ function App() {
                 <Route index={true} element={<Expenses />} />
                 <Route path="create" element={<CreateExpense />} />
                 <Route path="update" element={<UpdateExpense />} />
+              </Route>
+              <Route path="manage-users">
+                <Route index={true} element={<ManageUsers />} />
+                <Route path="create" element={<CreateUser />} />
               </Route>
               <Route path="settings">
                 <Route index={true} element={<Settings />} />
