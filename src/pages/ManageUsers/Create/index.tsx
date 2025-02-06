@@ -71,7 +71,6 @@ const CreateUser: React.FC = () => {
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues, { }) => {
-                        console.log('dwad')
                         createUserMutation.mutate(values)
                     }
                     }

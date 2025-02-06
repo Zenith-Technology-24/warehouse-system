@@ -94,7 +94,6 @@ const ManageUsers: React.FC = () => {
                 label: 'ID',
                 name: 'id',
                 render(row: object, value: string) {
-                    console.log(value)
                     return (
                         <div>
                             {value}
