@@ -12,7 +12,7 @@ interface Props {
     footerTableJSX: any
 }
 
-const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, totalRows = 1, rowsPerPage = 10, totalPages, onPageChange, footerTableJSX}) => {
+const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, totalRows = 1, rowsPerPage = 10, totalPages, onPageChange, footerTableJSX }) => {
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -23,12 +23,12 @@ const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, to
         <div className="overflow-x-auto rounded-lg border border-gray-200">
             {columns?.length > 0 && (
                 <table className="min-w-full h-[500px] divide-y divide-gray-200 border border-gray-100">
-                    <thead className="bg-gray-100">
+                    <thead className="bg-[#EAECDF]">
                         <tr>
                             {columns.map((column: { name: string, label: string }, index: number) => (
                                 <th
                                     key={index}
-                                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                                    className="px-6 py-3 text-left text-xs font-medium tracking-wider"
                                 >
                                     {column.label}
                                 </th>
@@ -54,7 +54,7 @@ const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, to
                             ))
                         )}
                     </tbody>
-                   {footerTableJSX}
+                    {footerTableJSX}
                 </table>
             )}
 

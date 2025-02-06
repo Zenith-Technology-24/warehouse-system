@@ -1,4 +1,3 @@
-import logo from "../../assets/logo.svg"
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/auth/authApi";
 import { useFormik } from "formik";
@@ -22,16 +21,18 @@ const Login: React.FC = () => {
     const loginRequest = useMutation({
         mutationFn: login,
         onError: () => {
-            alert('Account not found. Please try again.')
+            alert('Account not found. Please try again.');
         },
         onSuccess: (data: any) => {
-            Cookies.set('user', JSON.stringify(data))
+            localStorage.setItem('user', JSON.stringify(data));
+
             showToast(
                 "Logged In Successfully!",
                 "",
                 'success'
-            )
-            navigate('/')
+            );
+
+            navigate('/');
         },
     });
 

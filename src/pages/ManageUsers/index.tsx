@@ -11,10 +11,11 @@ import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
 import SecondaryButton from "../../components/buttons/SecondaryButton"
 import CsvDownloader from 'react-csv-downloader'
-import { exportExpenses, fetchExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
+import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import ButtonWithIcon from "../../components/buttons/ButtonWithIcon"
+import { fetchUsers } from "../../api/users/usersApi"
 
 const ManageUsers: React.FC = () => {
     const { showToast } = useToast()
@@ -30,8 +31,8 @@ const ManageUsers: React.FC = () => {
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["expenses", search, page, limit, status],
-        queryFn: () => fetchExpenses({ search, page, limit, status }) as any,
+        queryKey: ["users", search, page, limit, status],
+        queryFn: () => fetchUsers({ search, page, limit, status }) as any,
     });
 
     const updateStatus = useMutation({
@@ -90,9 +91,10 @@ const ManageUsers: React.FC = () => {
     const columns = useMemo(() => {
         return [
             {
-                label: 'Expenses ID',
+                label: 'ID',
                 name: 'id',
                 render(row: object, value: string) {
+                    console.log(value)
                     return (
                         <div>
                             {value}
@@ -102,58 +104,37 @@ const ManageUsers: React.FC = () => {
             },
             {
                 label: 'Name',
-                name: 'first_name',
-                render(row: { last_name: string }, value: string) {
+                name: 'firstname',
+                render(row: { lastname: string }, value: string) {
                     return (
-                        <p>{value} {row.last_name}</p>
+                        <p>{value} {row.lastname}</p>
                     )
                 }
             },
             {
-                label: 'Expenses',
-                name: 'expense_type',
-                render(row: { amount: number }, value: string) {
+                label: 'Email',
+                name: 'email',
+                render(row: object, value: string) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Expenses Type</p>
-                                <p>{value}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Amount</p>
-                                <p>₱{row.amount}</p>
-                            </div>
-                        </div>
+                        <p>{value}</p>
                     );
                 },
             },
             {
-                label: 'Description',
-                name: 'description',
-                render(row: { status: string }, value: string) {
+                label: 'Role',
+                name: 'role',
+                render(row: object, value: string) {
                     return (
                         <p>{value}</p>
                     )
                 }
             },
             {
-                label: 'Date',
+                label: 'Created At',
                 name: 'created_at',
-                render(row: { status: string }, value: string) {
+                render(row: object, value: string) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Created At</p>
-                                <p>{moment(value).format('D MMM YYYY')}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Status</p>
-                                <div className={`${row.status === 'active' ? 'bg-green-50 text-green-500 w-14' : 'bg-gray-50 text-gray-500 w-20'} rounded-full flex flex-row items-center justify-center`}>
-                                    <div className={`w-2 h-2 rounded-full mr-1 ${row.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-                                    <p className="text-xs">{row.status.charAt(0).toUpperCase() + row.status.slice(1)}</p>
-                                </div>
-                            </div>
-                        </div>
+                        <p>{moment(value).format('D MMM YYYY')}</p>
                     )
                 }
             },
@@ -318,9 +299,9 @@ const ManageUsers: React.FC = () => {
             <Table
                 currentPage={page}
                 setCurrentPage={setPage}
-                totalRows={rows?.data?.length || 1}
+                totalRows={rows?.length || 1}
                 columns={columns}
-                rows={rows}
+                rows={{ data: rows }}
                 rowsPerPage={limit}
                 totalPages={rows?.totalPages}
                 onPageChange={handleChangePage}
