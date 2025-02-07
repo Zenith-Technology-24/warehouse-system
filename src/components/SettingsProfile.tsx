@@ -46,21 +46,21 @@ const SettingsProfile: React.FC<Props> = ({ schema }) => {
                 }
             </div>
             <div className="flex h-auto flex-col p-1">
-                <label className="pb-2 text-gray-500" htmlFor="email">Email</label>
+                <label className="pb-2 text-gray-500" htmlFor="username">Username</label>
                 <input
-                    name="email"
-                    value={schema.values.email}
+                    name="username"
+                    value={schema.values.username}
                     onChange={schema.handleChange}
-                    type="email"
-                    id="email"
+                    type="text"
+                    id="username"
                     className="h-12 border border-gray-300 p-4 mb-1 text-gray-500 bg-gray-100 rounded-md"
-                    placeholder="Enter Email"
+                    placeholder="Enter Username"
                     disabled
                 />
                 {
-                    schema.errors.email && (
+                    schema.errors.username && (
                         <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                            {schema.errors.email}
+                            {schema.errors.username}
                         </p>
                     )
                 }

@@ -24,6 +24,7 @@ const Settings = React.lazy(() => import('./pages/Settings'))
 
 const ManageUsers = React.lazy(() => import('./pages/ManageUsers'))
 const CreateUser = React.lazy(() => import('./pages/ManageUsers/Create'))
+const UpdateUser = React.lazy(() => import('./pages/ManageUsers/Update'))
 
 function App() {
   useEffect(() => {
@@ -96,6 +97,7 @@ function App() {
               <Route path="manage-users">
                 <Route index={true} element={<ManageUsers />} />
                 <Route path="create" element={<CreateUser />} />
+                <Route path="update" element={<UpdateUser />} />
               </Route>
               <Route path="settings">
                 <Route index={true} element={<Settings />} />

@@ -23,7 +23,7 @@ const Settings: React.FC = () => {
     const VALIDATION_SCHEMA = {
         first_name: status === 'profile' && Yup.string().required('First name is required') as any,
         last_name: status === 'profile' && Yup.string().required('Last name is required') as any,
-        email: status === 'profile' && Yup.string().required('Email is required') as any,
+        username: status === 'profile' && Yup.string().required('Username is required') as any,
         current_password: status === 'password' && Yup.string().required('Current password is required') as any,
         new_password: status === 'password' && Yup.string().required('New password is required') as any,
         confirm_password: status === 'password' && Yup.string().required('Confirm password is required') as any,
@@ -34,7 +34,7 @@ const Settings: React.FC = () => {
         initialValues: {
             first_name: data?.firstname,
             last_name: data?.lastname,
-            email: data?.email,
+            username: data?.username,
             current_password: '',
             new_password: '',
             confirm_password: ''
@@ -48,7 +48,7 @@ const Settings: React.FC = () => {
     useEffect(() => {
         schema.setFieldValue('first_name', data?.firstname)
         schema.setFieldValue('last_name', data?.lastname)
-        schema.setFieldValue('email', data?.email)
+        schema.setFieldValue('username', data?.username)
     }, [data])
 
     const updateProfileMutation = useMutation({

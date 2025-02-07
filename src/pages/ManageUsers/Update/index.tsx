@@ -2,30 +2,31 @@ import { useRef, useState } from "react"
 import Header from "../../../components/Header"
 import { useMutation } from "@tanstack/react-query"
 import TopButtons from "../../../components/TopButtons"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Formik, Form, Field, ErrorMessage, FormikValues } from 'formik';
 import * as Yup from 'yup';
 import { useToast } from "../../../providers/ToastContext"
 import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton"
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
-import { createUser } from "../../../api/users/usersApi"
+import { updateUser } from "../../../api/users/usersApi"
 
-const CreateUser: React.FC = () => {
-    const navigate = useNavigate();
+const UpdateUser: React.FC = () => {
+    const { state } = useLocation()
+    const navigate = useNavigate()
     const { showToast } = useToast()
-    const formRef = useRef<any>();
+    const formRef = useRef<any>()
     const [currentType, setCurrentType] = useState<string>('password')
     const [confirmType, setConfirmType] = useState<string>('password')
 
-    const createUserMutation = useMutation({
-        mutationFn: (values: any) => createUser(values),
+    const updateUserMutation = useMutation({
+        mutationFn: (values: any) => updateUser(values),
         onError: (error: any) => {
             console.log(error)
         },
         onSuccess: () => {
             showToast(
-                "User Created Successfully!",
-                "New user has been added to the system.",
+                "User Update Successfully!",
+                "",
                 'success'
             );
             navigate("/manage-users", { replace: true })
@@ -42,25 +43,26 @@ const CreateUser: React.FC = () => {
     const validationSchema = Yup.object().shape({
         firstname: Yup.string().required('First name is required'),
         lastname: Yup.string().required('Last name is required'),
-        password: Yup.string().required('Current password is required'),
-        confirm_password: Yup.string().required('Confirm password is required'),
         username: Yup.string().required('Username is required'),
+        password: Yup.string(),
+        confirm_password: Yup.string(),
         role: Yup.string().required('Role is required')
     });
 
     const initialValues = {
-        firstname: '',
-        lastname: '',
-        password: '',
-        confirm_password: '',
-        username: '',
-        role: 'admin'
+        id: state.id,
+        firstname: state.firstname,
+        lastname: state.lastname,
+        password: state.password,
+        confirm_password: state.confirm_password,
+        username: state.username,
+        role: state.role,
     };
 
     return (
         <>
             <div className="flex flex-row justify-between pb-4">
-                <Header title={'Create Users'} description={'Manage Users'} />
+                <Header title={'Update User'} description={'Updating user data'} />
                 <TopButtons>
                     <LinkSecondaryButton to=".." text="Cancel" />
                     <PrimaryButton text="Save" onClick={handleSave} />
@@ -73,12 +75,12 @@ const CreateUser: React.FC = () => {
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues, { }) => {
-                        createUserMutation.mutate(values)
+                        updateUserMutation.mutate(values)
                     }
                     }
                 >
                     {({ setFieldValue, values }) => (
-                        <Form className="w-full">
+                        <Form className=" w-full">
                             <div className="w-full rounded-lg border border-gray-200 p-4 grid grid-cols-2 gap-1"  >
                                 <div className="flex h-auto flex-col p-1">
                                     <label className="pb-2" htmlFor="firs_tname">First Name</label>
@@ -110,39 +112,6 @@ const CreateUser: React.FC = () => {
                                     />
                                     <div className="h-6">
                                         <ErrorMessage className="text-red-400" name="lastname" component="div" />
-                                    </div>
-                                </div>
-
-                                <div className="flex h-auto flex-col p-1">
-                                    <label className="pb-2" htmlFor="firs_tname">Role</label>
-                                    <Field
-                                        as="input"
-                                        name="role"
-                                        placeholder="Role"
-                                        disabled
-                                        className="bg-gray-100 h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                        fullWidth
-                                        variant="outlined"
-                                        size="small"
-                                    />
-                                    <div className="h-6">
-                                        <ErrorMessage className="text-red-400" name="role" component="div" />
-                                    </div>
-                                </div>
-
-                                <div className="flex h-auto flex-col p-1">
-                                    <label className="pb-2" htmlFor="firs_tname">Username</label>
-                                    <Field
-                                        as="input"
-                                        name="username"
-                                        placeholder="Username"
-                                        className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                        fullWidth
-                                        variant="outlined"
-                                        size="small"
-                                    />
-                                    <div className="h-6">
-                                        <ErrorMessage className="text-red-400" name="username" component="div" />
                                     </div>
                                 </div>
 
@@ -212,6 +181,23 @@ const CreateUser: React.FC = () => {
                                     </div>
                                 </div>
 
+                                <div className="flex h-auto flex-col p-1">
+                                    <label className="pb-2" htmlFor="firs_tname">Role</label>
+                                    <Field
+                                        as="input"
+                                        name="role"
+                                        placeholder="Role"
+                                        disabled
+                                        className="bg-gray-100 h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                        fullWidth
+                                        variant="outlined"
+                                        size="small"
+                                    />
+                                    <div className="h-6">
+                                        <ErrorMessage className="text-red-400" name="role" component="div" />
+                                    </div>
+                                </div>
+
                             </div>
 
                         </Form>
@@ -222,8 +208,7 @@ const CreateUser: React.FC = () => {
     )
 }
 
-export default CreateUser
-
+export default UpdateUser
 
 
 

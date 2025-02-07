@@ -13,6 +13,17 @@ interface createUserProps {
     lastname: string
     password: string
     confirm_password: string
+    username: string
+    role: Role.ADMIN
+}
+
+interface updateUserProps {
+    id: number
+    firstname: string
+    lastname: string
+    password: string
+    confirm_password: number
+    username: string
     role: Role.ADMIN
 }
 
@@ -23,5 +34,10 @@ export const fetchUsers = async ({ search, page, limit, status }: fetchUsersProp
 
 export const createUser = async (data: createUserProps) => {
     const res = await apiService.post("/users", data);
+    return res;
+};
+
+export const updateUser = async (data: updateUserProps) => {
+    const res = await apiService.post(`/user/update/${data.id}`, data);
     return res;
 };
