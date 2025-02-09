@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/auth/authApi";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { siteConfig } from "../../constants/site";
@@ -10,7 +9,7 @@ import { useToast } from "../../providers/ToastContext";
 import LoginWallpaper from "../../components/LoginWallpaper";
 
 const VALIDATION_SCHEMA = {
-    email: Yup.string().required(),
+    username: Yup.string().required(),
     password: Yup.string().required(),
 }
 
@@ -39,7 +38,7 @@ const Login: React.FC = () => {
     const schema = useFormik({
         validateOnMount: false,
         initialValues: {
-            email: '',
+            username: '',
             password: ''
         },
         validationSchema: Yup.object(VALIDATION_SCHEMA),
@@ -70,16 +69,16 @@ const Login: React.FC = () => {
                     </div>
                     <div>
                         <div className=" mb-5">
-                            <label htmlFor="email" className="block mb-2 text-aaa-text font-lato text-sm font-normal">Email Address</label>
+                            <label htmlFor="username" className="block mb-2 text-aaa-text font-lato text-sm font-normal">Username</label>
                             <input
-                                name="email"
-                                value={schema.values.email}
+                                name="username"
+                                value={schema.values.username}
                                 onChange={schema.handleChange}
                                 onKeyDown={handleKeyDown}
-                                type="email"
-                                id="email"
+                                type="username"
+                                id="username"
                                 className="!bg-zinc-50 border-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:!ring-aaa focus:outline-none active:!border-aaa active:!ring-aaa focus:!border-aaa block w-full p-2.5"
-                                placeholder="Email Address"
+                                placeholder="Username"
                                 required
                             />
                         </div>

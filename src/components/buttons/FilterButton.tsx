@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-type ButtonWithIconProps = {
+type FilterButtonProps = {
     icon: JSX.Element;
     children: React.ReactNode;
     options?: { label: string; value: string }[];
@@ -10,7 +10,7 @@ type ButtonWithIconProps = {
     size?: "sm" | "md" | "lg";
 };
 
-const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
+const FilterButton: React.FC<FilterButtonProps> = ({
     icon,
     children,
     options = [],
@@ -56,4 +56,4 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
     );
 };
 
-export default ButtonWithIcon;
+export default FilterButton;

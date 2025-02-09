@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, totalRows = 1, rowsPerPage = 10, totalPages, onPageChange, footerTableJSX }) => {
-
+    console.log(rows)
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         onPageChange && onPageChange(page);
@@ -36,18 +36,30 @@ const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, to
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {!rows?.data?.length ? (
+                        {!totalRows ? (
                             <tr>
                                 <td colSpan={columns.length} className="text-center py-6 text-gray-500">
                                     No data available
                                 </td>
                             </tr>
                         ) : (
-                            rows?.data?.map((row: any, rowIndex: number) => (
+                            [
+                                {
+                                    id: 1,
+                                    issuanceDate: "11 May 2023",
+                                    issuanceDirectiveNr: "TOS 2023-1105-17",
+                                    itemName: "Army Combat Boots, Suede, Field Use",
+                                    status: "Pending"
+                                }
+                            ].map((row: any, rowIndex: number) => (
                                 <tr key={rowIndex}>
                                     {columns.map((column: any, colIndex: number) => (
                                         <td key={colIndex} className="px-6 py-4 align-top whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {column.render ? column.render(row, row[column.name]) : row[column.name] || 'N/A'}
+                                            {column.render
+                                                ? column.render(row, row[column.name])
+                                                : typeof row[column.name] === "object"
+                                                    ? JSON.stringify(row[column.name])
+                                                    : row[column.name] || 'N/A'}
                                         </td>
                                     ))}
                                 </tr>

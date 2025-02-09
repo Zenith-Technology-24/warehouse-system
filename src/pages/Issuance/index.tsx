@@ -12,10 +12,10 @@ import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
 import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import { fetchUsers } from "../../api/users/usersApi"
 import FilterButton from "../../components/buttons/FilterButton"
+import { fetchIssuance } from "../../api/issuance/issuanceApi"
 
-const ManageUsers: React.FC = () => {
+const Issuance: React.FC = () => {
     const { showToast } = useToast()
     const navigate = useNavigate()
     const [search, setSearch] = useState<string>('')
@@ -29,8 +29,8 @@ const ManageUsers: React.FC = () => {
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["users", search, page, limit, status],
-        queryFn: () => fetchUsers({ search, page, limit, status }) as any,
+        queryKey: ["issuance", search, page, limit, status],
+        queryFn: () => fetchIssuance({ search, page, limit, status }) as any,
     });
 
     const updateStatus = useMutation({
@@ -43,8 +43,8 @@ const ManageUsers: React.FC = () => {
             setIsArchiveModalOpen(false)
             refetch()
             showToast(
-                `User Successfully ${data?.expense?.status === 'active' ? 'Restored' : 'Deactivated'}!`,
-                `User has been successfully ${data?.expense?.status === 'active' ? 'restored' : 'deactivated'}.`,
+                `Issuance Successfully ${data?.issuance?.status === 'active' ? 'Restored' : 'Archived'}!`,
+                `Issuance has been successfully ${data?.issuance?.status === 'active' ? 'restored' : 'archived'}.`,
                 'success'
             );
             setToArchive(null)
@@ -70,10 +70,10 @@ const ManageUsers: React.FC = () => {
         setToArchive(id)
     }
 
-    const handleDeactivate = () => {
+    const handleArchive = () => {
         updateStatus.mutate({
             id: toArchive,
-            status: 'deactivated'
+            status: 'archived'
         })
         setIsArchiveModalOpen(false)
     }
@@ -89,9 +89,9 @@ const ManageUsers: React.FC = () => {
     const columns = useMemo(() => {
         return [
             {
-                label: 'ID',
-                name: 'id',
-                render(row: object, value: string) {
+                label: 'Issuance Date',
+                name: 'issuanceDate',
+                render(value: string) {
                     return (
                         <div>
                             {value}
@@ -100,38 +100,29 @@ const ManageUsers: React.FC = () => {
                 }
             },
             {
-                label: 'Name',
-                name: 'firstname',
-                render(row: { lastname: string }, value: string) {
+                label: 'Issuance Directive Nr',
+                name: 'issuanceDirectiveNr',
+                render(value: string) {
                     return (
-                        <p>{value} {row.lastname}</p>
+                        <p>{value}</p>
                     )
                 }
             },
             {
-                label: 'Email',
-                name: 'email',
-                render(row: object, value: string) {
+                label: 'Item Name',
+                name: 'itemName',
+                render(value: string) {
                     return (
                         <p>{value}</p>
                     );
                 },
             },
             {
-                label: 'Role',
-                name: 'role',
-                render(row: object, value: string) {
+                label: 'Status',
+                name: 'status',
+                render(value: string) {
                     return (
                         <p>{value}</p>
-                    )
-                }
-            },
-            {
-                label: 'Created At',
-                name: 'created_at',
-                render(row: object, value: string) {
-                    return (
-                        <p>{moment(value).format('D MMM YYYY')}</p>
                     )
                 }
             },
@@ -141,15 +132,7 @@ const ManageUsers: React.FC = () => {
                 render(row: { id: number | null, status: string }, value: number) {
                     return (
                         <div className="flex flex-row gap-2">
-                            <div onClick={() => console.log('view')} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
-                                <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="none" stroke="currentColor" stroke-width="1.5">
-                                        <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821" />
-                                        <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z" />
-                                    </g>
-                                </svg>
-                            </div>
-                            <div onClick={() => navigate('/manage-users/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => navigate('/expenses/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -162,13 +145,25 @@ const ManageUsers: React.FC = () => {
                                 row.status === 'active' ? (
                                     <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                         <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m8.5 7l-5-5m0 5l5-5" />
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <path d="M20.5 7V13C20.5 16.7712 20.5 18.6569 19.3284 19.8284C18.1569 21 16.2712 21 12.5 21H11.5C7.72876 21 5.84315 21 4.67157 19.8284C3.5 18.6569 3.5 16.7712 3.5 13V7" stroke="#48494A" stroke-width="1.5" stroke-linecap="round"></path>
+                                                <path d="M2 5C2 4.05719 2 3.58579 2.29289 3.29289C2.58579 3 3.05719 3 4 3H20C20.9428 3 21.4142 3 21.7071 3.29289C22 3.58579 22 4.05719 22 5C22 5.94281 22 6.41421 21.7071 6.70711C21.4142 7 20.9428 7 20 7H4C3.05719 7 2.58579 7 2.29289 6.70711C2 6.41421 2 5.94281 2 5Z" stroke="#48494A" stroke-width="1.5"></path>
+                                                <path d="M12 7L12 16M12 16L15 12.6667M12 16L9 12.6667" stroke="#48494A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </g>
                                         </svg>
                                     </div>
                                 ) : (
                                     <div onClick={() => handleOpenActiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
-                                        <svg width="14px" height="14px" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill="currentColor" d="M678.3 642.4c24.2-13 51.9-20.4 81.4-20.4h.1c3 0 4.4-3.6 2.2-5.6a371.7 371.7 0 0 0-103.7-65.8c-.4-.2-.8-.3-1.2-.5C719.2 505 759.6 431.7 759.6 349c0-137-110.8-248-247.5-248S264.7 212 264.7 349c0 82.7 40.4 156 102.6 201.1c-.4.2-.8.3-1.2.5c-44.7 18.9-84.8 46-119.3 80.6a373.4 373.4 0 0 0-80.4 119.5A373.6 373.6 0 0 0 137 888.8a8 8 0 0 0 8 8.2h59.9c4.3 0 7.9-3.5 8-7.8c2-77.2 32.9-149.5 87.6-204.3C357 628.2 432.2 597 512.2 597c56.7 0 111.1 15.7 158 45.1a8.1 8.1 0 0 0 8.1.3M512.2 521c-45.8 0-88.9-17.9-121.4-50.4A171.2 171.2 0 0 1 340.5 349c0-45.9 17.9-89.1 50.3-121.6S466.3 177 512.2 177s88.9 17.9 121.4 50.4A171.2 171.2 0 0 1 683.9 349c0 45.9-17.9 89.1-50.3 121.6C601.1 503.1 558 521 512.2 521M880 759h-84v-84c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v84h-84c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h84v84c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-84h84c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8" />
+                                        <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <path d="M12 21L12 12M12 12L15 15.3333M12 12L9 15.3333" stroke="#48494A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M20.5 7V13C20.5 16.7712 20.5 18.6569 19.3284 19.8284C18.1569 21 16.2712 21 12.5 21H11.5C7.72876 21 5.84315 21 4.67157 19.8284C3.5 18.6569 3.5 16.7712 3.5 13V7" stroke="#48494A" stroke-width="1.5" stroke-linecap="round"></path>
+                                                <path d="M2 5C2 4.05719 2 3.58579 2.29289 3.29289C2.58579 3 3.05719 3 4 3H20C20.9428 3 21.4142 3 21.7071 3.29289C22 3.58579 22 4.05719 22 5C22 5.94281 22 6.41421 21.7071 6.70711C21.4142 7 20.9428 7 20 7H4C3.05719 7 2.58579 7 2.29289 6.70711C2 6.41421 2 5.94281 2 5Z" stroke="#48494A" stroke-width="1.5"></path>
+                                            </g>
                                         </svg>
                                     </div>
                                 )
@@ -246,20 +241,20 @@ const ManageUsers: React.FC = () => {
             />
             <Modal
                 isOpen={isArchiveModalOpen}
-                title={'Deactivate User'}
+                title={'Archive Expense'}
                 onClose={() => setIsArchiveModalOpen(false)}
-                handleFunction={() => handleDeactivate()}
-                message={'Are you sure you want to deactivate this user?'}
+                handleFunction={() => handleArchive()}
+                message={'Are you sure you want to archive this expenses?'}
             />
             <Modal
                 isOpen={isActiveModalOpen}
-                title={'Restore User'}
+                title={'Restore Expense'}
                 onClose={() => setIsActiveModalOpen(false)}
                 handleFunction={() => handleActive()}
-                message={'Are you sure you want to restore this user?'}
+                message={'Are you sure you want to restore this expenses?'}
             />
             <div className="flex flex-row justify-between">
-                <Header title={'Manage Users'} description={'Showing all users'} />
+                <Header title={'Issuance'} description={'Showing all issuance'} />
                 <TopButtons >
                     <button onClick={() => setIsExportModalOpen(true)} className="rounded-lg font-lato border-2 border-aaa text-aaa p-3">
                         Export
@@ -270,8 +265,9 @@ const ManageUsers: React.FC = () => {
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row gap-2 text-center text-lg text-gray-500">
                     <div onClick={() => setStatus('all')} className={`${checkIfActive('all')} w-24 py-2 cursor-pointer`}>All</div>
-                    <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
-                    <div onClick={() => setStatus('deactivated')} className={`${checkIfActive('deactivated')} w-24 py-2 cursor-pointer`}>Deactivated</div>
+                    <div onClick={() => setStatus('pending')} className={`${checkIfActive('pending')} w-24 py-2 cursor-pointer`}>Pending</div>
+                    <div onClick={() => setStatus('withdrawn')} className={`${checkIfActive('withdrawn')} w-24 py-2 cursor-pointer`}>Withdrawn</div>
+                    <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
                 <div className="flex gap-3">
                     <FilterButton
@@ -297,9 +293,9 @@ const ManageUsers: React.FC = () => {
             <Table
                 currentPage={page}
                 setCurrentPage={setPage}
-                totalRows={rows?.length || 1}
+                totalRows={rows?.data?.length || 1}
                 columns={columns}
-                rows={{ data: rows }}
+                rows={rows}
                 rowsPerPage={limit}
                 totalPages={rows?.totalPages}
                 onPageChange={handleChangePage}
@@ -308,4 +304,4 @@ const ManageUsers: React.FC = () => {
     )
 }
 
-export default ManageUsers
+export default Issuance

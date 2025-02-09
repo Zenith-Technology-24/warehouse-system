@@ -28,7 +28,7 @@ interface updateUserProps {
 }
 
 export const fetchUsers = async ({ search, page, limit, status }: fetchUsersProps) => {
-    const { data } = await apiService.get(`/users?page=${page}&limit=${limit}`, { search, status });
+    const { data } = await apiService.get(`user/users?page=${page}&limit=${limit}`, { search, status });
     return data;
 };
 
