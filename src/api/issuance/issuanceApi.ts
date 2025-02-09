@@ -9,6 +9,6 @@ interface fetchExpensesProps {
 }
 
 export const fetchIssuance = async ({ search, page, limit, status }: fetchExpensesProps) => {
-    const { data } = IssuanceData
+    const { data } = await apiService.get(`issuance/issuances?page=${page}&limit=${limit}`, { search, status });
     return data;
 };

@@ -27,6 +27,11 @@ interface updateUserProps {
     role: Role.ADMIN
 }
 
+interface updateUserStatusProps {
+    id: number | null;
+    status: string;
+}
+
 export const fetchUsers = async ({ search, page, limit, status }: fetchUsersProps) => {
     const { data } = await apiService.get(`user/users?page=${page}&limit=${limit}`, { search, status });
     return data;
@@ -40,4 +45,10 @@ export const createUser = async (data: createUserProps) => {
 export const updateUser = async (data: updateUserProps) => {
     const res = await apiService.post(`/user/update/${data.id}`, data);
     return res;
+};
+
+
+export const updateUserStatus = async ({ id, status }: updateUserStatusProps) => {
+    const { data } = await apiService.get(`/user/${id}/${status}`);
+    return data;
 };

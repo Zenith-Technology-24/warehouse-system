@@ -9,10 +9,10 @@ import { useToast } from "../../providers/ToastContext"
 import moment from "moment"
 import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
-import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
+import { exportExpenses } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import { fetchUsers } from "../../api/users/usersApi"
+import { fetchUsers, updateUserStatus } from "../../api/users/usersApi"
 import FilterButton from "../../components/buttons/FilterButton"
 
 const ManageUsers: React.FC = () => {
@@ -34,7 +34,7 @@ const ManageUsers: React.FC = () => {
     });
 
     const updateStatus = useMutation({
-        mutationFn: updateExpenseStatus,
+        mutationFn: updateUserStatus,
         onError: (error: any) => {
             console.log(error)
         },
@@ -141,7 +141,7 @@ const ManageUsers: React.FC = () => {
                 render(row: { id: number | null, status: string }, value: number) {
                     return (
                         <div className="flex flex-row gap-2">
-                            <div onClick={() => console.log('view')} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => navigate('/manage-users/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g fill="none" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821" />
@@ -297,9 +297,9 @@ const ManageUsers: React.FC = () => {
             <Table
                 currentPage={page}
                 setCurrentPage={setPage}
-                totalRows={rows?.length || 1}
+                totalRows={rows?.data?.length || 1}
                 columns={columns}
-                rows={{ data: rows }}
+                rows={rows}
                 rowsPerPage={limit}
                 totalPages={rows?.totalPages}
                 onPageChange={handleChangePage}

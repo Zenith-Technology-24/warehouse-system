@@ -53,8 +53,8 @@ const UpdateUser: React.FC = () => {
         id: state.id,
         firstname: state.firstname,
         lastname: state.lastname,
-        password: state.password,
-        confirm_password: state.confirm_password,
+        password: '',
+        confirm_password: '',
         username: state.username,
         role: state.role,
     };

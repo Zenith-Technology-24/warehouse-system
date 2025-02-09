@@ -25,6 +25,8 @@ const Settings = React.lazy(() => import('./pages/Settings'))
 const ManageUsers = React.lazy(() => import('./pages/ManageUsers'))
 const CreateUser = React.lazy(() => import('./pages/ManageUsers/Create'))
 const UpdateUser = React.lazy(() => import('./pages/ManageUsers/Update'))
+const ViewUser = React.lazy(() => import('./pages/ManageUsers/View'))
+
 const Issuance = React.lazy(() => import('./pages/Issuance'))
 
 function App() {
@@ -103,6 +105,7 @@ function App() {
                 <Route index={true} element={<ManageUsers />} />
                 <Route path="create" element={<CreateUser />} />
                 <Route path="update" element={<UpdateUser />} />
+                <Route path="view" element={<ViewUser />} />
               </Route>
               <Route path="settings">
                 <Route index={true} element={<Settings />} />
