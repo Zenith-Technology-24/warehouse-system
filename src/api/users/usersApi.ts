@@ -38,7 +38,7 @@ export const fetchUsers = async ({ search, page, limit, status }: fetchUsersProp
 };
 
 export const createUser = async (data: createUserProps) => {
-    const res = await apiService.post("/users", data);
+    const res = await apiService.post("user/users", data);
     return res;
 };
 
