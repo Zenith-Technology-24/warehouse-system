@@ -1,0 +1,25 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "itemName": "Army Athletic Rubber Shoes",
+            "size": "Small",
+            "totalQuantity": 100,
+            "unit": "ea",
+            "unitPrice": "₱2,800.00",
+            "grossAmount": "₱280,000.00"
+        },
+        {
+            "id": 2,
+            "itemName": "Backpack",
+            "size": null,
+            "totalQuantity": 150,
+            "unit": "prs",
+            "unitPrice": "₱2,000.00",
+            "grossAmount": "₱300,000.00"
+        }
+    ],
+    "total": 2,
+    "currentPage": 1,
+    "totalPages": 1
+}
