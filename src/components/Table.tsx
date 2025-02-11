@@ -4,10 +4,10 @@ interface Props {
     columns: any
     rows: any
     totalRows?: number
-    currentPage: number
-    setCurrentPage: any
+    currentPage?: number
+    setCurrentPage?: any
     rowsPerPage?: number
-    totalPages: number
+    totalPages?: number
     onPageChange?: (page: number) => void
     footerTableJSX: any
 }

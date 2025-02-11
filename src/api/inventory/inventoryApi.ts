@@ -66,6 +66,6 @@ export const updateProduct = async (props: updateProductProps) => {
 };
 
 export const updateInventoryStatus = async ({ id, status }: updateInventoryStatusProps) => {
-    const { data } = await apiService.get(`/inventory/${id}/${status}`);
+    const { data } = await apiService.put(`/inventory/inventories/${id}`, { status });
     return data;
 };

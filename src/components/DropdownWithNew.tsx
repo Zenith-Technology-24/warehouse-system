@@ -2,38 +2,36 @@ import React, { useEffect, useRef, useState } from "react";
 import { Field, ErrorMessage } from "formik";
 import { useQuery } from "@tanstack/react-query";
 
-interface DropdownWithSearchProps {
-    _index?: number
-    setFieldValue: any
-    label?: string
-    placeholder: string
-    name: string
-    fetchNames: any
-    forUpdate?: any
-    setSelectedValue?: any
-    values?: any
+interface DropdownWithNewProps {
+    _index?: number;
+    setFieldValue: any;
+    placeholder: string;
+    name: string;
+    fetchNames: any;
+    forUpdate?: any;
+    setSelectedValue?: any;
 }
 
-const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
+const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
     _index,
     setFieldValue,
-    label,
     placeholder,
     name,
     fetchNames,
     forUpdate,
     setSelectedValue
 }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [searchTerm, setSearchTerm] = useState<string>("")
-    const [selectedOption, setSelectedOption] = useState<any>(null)
-    const dropdownRef = useRef<HTMLUListElement>(null)
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [selectedOption, setSelectedOption] = useState<any>(null);
+    const dropdownRef = useRef<HTMLUListElement>(null);
 
     useEffect(() => {
         if (forUpdate) {
-            setSelectedOption({ id: forUpdate.id, name: forUpdate.product_name })
+            setSelectedOption({ id: forUpdate.id, name: forUpdate.product_name });
+            setSearchTerm(forUpdate.product_name);
         }
-    }, [name])
+    }, [forUpdate]);
 
     const { data: options } = useQuery({
         queryKey: [`${name}-list`],
@@ -45,27 +43,31 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     );
 
     const handleOptionClick = (option: any) => {
-        setSelectedOption(option)
-        setIsOpen(false)
-        setFieldValue(name, option?.id)
-        if (setSelectedValue) {
-            setSelectedValue(option)
-        }
+        setSelectedOption(option);
+        setSearchTerm(option.name);
+        setIsOpen(false);
+        setFieldValue(name, option?.id);
 
-        if (label === 'Product') {
-            setFieldValue(`inventories[${_index}].quantity`, '0')
-            setFieldValue(`inventories[${_index}].total_price`, '0')
-            setFieldValue(`inventories[${_index}].price`, Number(option?.price))
+        if (setSelectedValue) {
+            setSelectedValue(option);
+        }
+    };
+
+    const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            setIsOpen(false);
+            setSelectedOption({ id: null, name: searchTerm });
+            setFieldValue(name, searchTerm);
+
+            if (setSelectedValue) {
+                setSelectedValue({ id: null, name: searchTerm });
+            }
         }
     };
 
     return (
         <div className="flex flex-col w-full">
-            {
-                label && (
-                    <label className="pb-2 text-gray-500">{label}</label>
-                )
-            }
             <div className="relative w-full">
                 <Field name={name}>
                     {() => (
@@ -74,10 +76,11 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                                 className="bg-transparent h-12 border border-gray-300 rounded-lg p-2 flex justify-between items-center cursor-pointer"
                                 onClick={() => setIsOpen(!isOpen)}
                             >
-                                <span className={`ml-1 ${!selectedOption?.name ? 'text-gray-400' : 'text-black'}`}>{selectedOption?.name || placeholder}</span>
+                                <span className={`ml-1 ${!selectedOption?.name ? 'text-gray-400' : 'text-black'}`}>
+                                    {selectedOption?.name || placeholder}
+                                </span>
                                 <svg
-                                    className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? "transform rotate-180" : ""
-                                        }`}
+                                    className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? "transform rotate-180" : ""}`}
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20"
                                     fill="currentColor"
@@ -96,6 +99,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                                         type="text"
                                         value={searchTerm}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                                        onKeyDown={handleEnterPress}
                                         placeholder=" Search..."
                                         className="w-full p-2 border-b border-gray-300 outline-none"
                                     />
@@ -123,8 +127,8 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                     <ErrorMessage className="text-red-400" name={name} component="div" />
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
-export default DropdownWithSearch;
+export default DropdownWithNew;
