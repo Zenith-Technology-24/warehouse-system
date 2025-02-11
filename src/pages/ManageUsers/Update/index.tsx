@@ -56,7 +56,7 @@ const UpdateUser: React.FC = () => {
         password: '',
         confirm_password: '',
         username: state.username,
-        role: state.role,
+        role: state.roles[0].name,
     };
 
     return (
@@ -112,6 +112,39 @@ const UpdateUser: React.FC = () => {
                                     />
                                     <div className="h-6">
                                         <ErrorMessage className="text-red-400" name="lastname" component="div" />
+                                    </div>
+                                </div>
+
+                                <div className="flex h-auto flex-col p-1">
+                                    <label className="pb-2" htmlFor="firs_tname">Role</label>
+                                    <Field
+                                        as="input"
+                                        name="role"
+                                        placeholder="Role"
+                                        disabled
+                                        className="bg-gray-100 h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                        fullWidth
+                                        variant="outlined"
+                                        size="small"
+                                    />
+                                    <div className="h-6">
+                                        <ErrorMessage className="text-red-400" name="role" component="div" />
+                                    </div>
+                                </div>
+
+                                <div className="flex h-auto flex-col p-1">
+                                    <label className="pb-2" htmlFor="firs_tname">Username</label>
+                                    <Field
+                                        as="input"
+                                        name="username"
+                                        placeholder="Username"
+                                        className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                        fullWidth
+                                        variant="outlined"
+                                        size="small"
+                                    />
+                                    <div className="h-6">
+                                        <ErrorMessage className="text-red-400" name="username" component="div" />
                                     </div>
                                 </div>
 
@@ -178,23 +211,6 @@ const UpdateUser: React.FC = () => {
                                     </div>
                                     <div className="h-6">
                                         <ErrorMessage className="text-red-400" name="confirm_password" component="div" />
-                                    </div>
-                                </div>
-
-                                <div className="flex h-auto flex-col p-1">
-                                    <label className="pb-2" htmlFor="firs_tname">Role</label>
-                                    <Field
-                                        as="input"
-                                        name="role"
-                                        placeholder="Role"
-                                        disabled
-                                        className="bg-gray-100 h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                        fullWidth
-                                        variant="outlined"
-                                        size="small"
-                                    />
-                                    <div className="h-6">
-                                        <ErrorMessage className="text-red-400" name="role" component="div" />
                                     </div>
                                 </div>
 

@@ -21,10 +21,10 @@ const ManageUsers: React.FC = () => {
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(5)
-    const [status, setStatus] = useState<string>('all')
-    const [toArchive, setToArchive] = useState<number | null>(null)
+    const [status, setStatus] = useState<string>('active')
+    const [toDeactivate, setToDeactivate] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
-    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState<boolean>(false)
     const [isActiveModalOpen, setIsActiveModalOpen] = useState<boolean>(false)
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
@@ -40,14 +40,14 @@ const ManageUsers: React.FC = () => {
         },
         onSuccess: (data: any) => {
             setIsActiveModalOpen(false)
-            setIsArchiveModalOpen(false)
+            setIsDeactivateModalOpen(false)
             refetch()
             showToast(
                 `User Successfully ${data?.expense?.status === 'active' ? 'Restored' : 'Deactivated'}!`,
                 `User has been successfully ${data?.expense?.status === 'active' ? 'restored' : 'deactivated'}.`,
                 'success'
             );
-            setToArchive(null)
+            setToDeactivate(null)
             setToActive(null)
         },
     });
@@ -65,17 +65,17 @@ const ManageUsers: React.FC = () => {
         setToActive(id)
     }
 
-    const handleOpenArchiveModal = (id: number | null) => {
-        setIsArchiveModalOpen(true)
-        setToArchive(id)
+    const handleOpenDeactivateModal = (id: number | null) => {
+        setIsDeactivateModalOpen(true)
+        setToDeactivate(id)
     }
 
     const handleDeactivate = () => {
         updateStatus.mutate({
-            id: toArchive,
-            status: 'deactivated'
+            id: toDeactivate,
+            status: 'inactive'
         })
-        setIsArchiveModalOpen(false)
+        setIsDeactivateModalOpen(false)
     }
 
     const handleActive = () => {
@@ -83,7 +83,7 @@ const ManageUsers: React.FC = () => {
             id: toActive,
             status: 'active'
         })
-        setIsArchiveModalOpen(false)
+        setIsDeactivateModalOpen(false)
     }
 
     const columns = useMemo(() => {
@@ -109,8 +109,8 @@ const ManageUsers: React.FC = () => {
                 }
             },
             {
-                label: 'Email',
-                name: 'email',
+                label: 'Username',
+                name: 'username',
                 render(row: object, value: string) {
                     return (
                         <p>{value}</p>
@@ -122,7 +122,7 @@ const ManageUsers: React.FC = () => {
                 name: 'role',
                 render(row: object, value: string) {
                     return (
-                        <p>{value}</p>
+                        <p>{row.roles?.[0]?.name ? row.roles[0].name.charAt(0).toUpperCase() + row.roles[0].name.slice(1) : 'N/A'}</p>
                     )
                 }
             },
@@ -131,7 +131,7 @@ const ManageUsers: React.FC = () => {
                 name: 'created_at',
                 render(row: object, value: string) {
                     return (
-                        <p>{moment(value).format('D MMM YYYY')}</p>
+                        <p>{moment(value).format('DD MMM YYYY h:mm A')}</p>
                     )
                 }
             },
@@ -160,7 +160,7 @@ const ManageUsers: React.FC = () => {
                             </div>
                             {
                                 row.status === 'active' ? (
-                                    <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                    <div onClick={() => handleOpenDeactivateModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                         <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m8.5 7l-5-5m0 5l5-5" />
                                         </svg>
@@ -245,9 +245,9 @@ const ManageUsers: React.FC = () => {
                 exportFunction={exportExpenses}
             />
             <Modal
-                isOpen={isArchiveModalOpen}
+                isOpen={isDeactivateModalOpen}
                 title={'Deactivate User'}
-                onClose={() => setIsArchiveModalOpen(false)}
+                onClose={() => setIsDeactivateModalOpen(false)}
                 handleFunction={() => handleDeactivate()}
                 message={'Are you sure you want to deactivate this user?'}
             />
@@ -269,26 +269,10 @@ const ManageUsers: React.FC = () => {
             </div>
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row gap-2 text-center text-lg text-gray-500">
-                    <div onClick={() => setStatus('all')} className={`${checkIfActive('all')} w-24 py-2 cursor-pointer`}>All</div>
                     <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
                     <div onClick={() => setStatus('deactivated')} className={`${checkIfActive('deactivated')} w-24 py-2 cursor-pointer`}>Deactivated</div>
                 </div>
                 <div className="flex gap-3">
-                    <FilterButton
-                        icon={
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M3.75 7a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15A.75.75 0 0 1 3.75 7m2.5 5a.75.75 0 0 1 .75-.75h10a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1-.75-.75m3 5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75" />
-                            </svg>
-                        }
-                        options={[
-                            { label: "Name", value: "name" },
-                            { label: "Email", value: "email" },
-                            { label: "Date", value: "date" },
-                        ]}
-                        onSelect={() => alert("Button clicked!")}
-                    >
-                        Filter
-                    </FilterButton>
                     <Search
                         handleFetchData={handleSearch}
                     />

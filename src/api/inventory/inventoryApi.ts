@@ -1,4 +1,5 @@
 import apiService from "../axios";
+import InventoryData from "../../dummy/InventoryData.json";
 
 interface fetchInventoryProps {
     search: string
@@ -38,7 +39,7 @@ interface updateInventoryStatusProps {
 }
 
 export const fetchInventory = async ({ search, page, limit, status }: fetchInventoryProps) => {
-    const { data } = await apiService.post(`/inventory?page=${page}&limit=${limit}`, { search, status });
+    const { data } = await apiService.get(`/inventory/inventories?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
 };
 
@@ -65,6 +66,6 @@ export const updateProduct = async (props: updateProductProps) => {
 };
 
 export const updateInventoryStatus = async ({ id, status }: updateInventoryStatusProps) => {
-    const { data } = await apiService.get(`/inventory/${id}/${status}`);
+    const { data } = await apiService.put(`/inventory/inventories/${id}`, { status });
     return data;
 };
