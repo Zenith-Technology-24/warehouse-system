@@ -108,7 +108,7 @@ const Inventory: React.FC = () => {
             },
             {
                 label: 'T/Qty',
-                name: 'totalQuantity',
+                name: 'quantity',
                 render(row: { size: string, in_stock: number }, value: string) {
                     return (
                         <div>
@@ -130,7 +130,7 @@ const Inventory: React.FC = () => {
             },
             {
                 label: 'U/Price',
-                name: 'unitPrice',
+                name: 'price',
                 render(row: { status: string }, value: string) {
                     return (
                         <div>
@@ -141,7 +141,7 @@ const Inventory: React.FC = () => {
             },
             {
                 label: 'GT/Amount',
-                name: 'grossAmount',
+                name: 'amount',
                 render(row: { status: string }, value: string) {
                     return (
                         <div>

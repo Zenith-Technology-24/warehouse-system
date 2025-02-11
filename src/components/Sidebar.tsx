@@ -1,6 +1,5 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import Cookies from "js-cookie"
 import { useQuery } from '@tanstack/react-query'
 import { session } from '../api/auth/authApi'
 import { siteConfig } from '../constants/site'
@@ -19,13 +18,13 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
     })
 
     const handleLogout = () => {
-        Cookies.remove('user')
+        localStorage.removeItem('user');
         showToast(
             "Logged Out Successfully!",
             "",
             'success'
-        )
-    }
+        );
+    };
 
     return (
         <div className={`h-screen sticky top-0 overflow-hidden transition-all shadow-lg duration-300 !z-10 ${isOpen ? 'w-64 flex-none' : 'w-0'}`}>

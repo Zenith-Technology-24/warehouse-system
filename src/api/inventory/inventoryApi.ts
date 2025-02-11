@@ -39,8 +39,7 @@ interface updateInventoryStatusProps {
 }
 
 export const fetchInventory = async ({ search, page, limit, status }: fetchInventoryProps) => {
-    // const { data } = await apiService.post(`/inventory?page=${page}&limit=${limit}`, { search, status });
-    const data = InventoryData
+    const { data } = await apiService.get(`/inventory/inventories?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
 };
 

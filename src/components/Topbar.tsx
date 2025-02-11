@@ -29,7 +29,7 @@ const Topbar: React.FC<Props> = ({ toggleSidebar }) => {
                         <img src="/user.png" alt="Your Image" className="object-cover scale-100" />
                     </div>
                     <div>
-                        <p className='text-aaa font-semibold'>{data?.firstname} {data?.lastname}</p>
+                        <p className='text-aaa font-semibold'>{data?.user?.firstname} {data?.user?.lastname}</p>
                         <p className='text-gray-400 text-sm text-right'>Admin</p>
                     </div>
                 </div>

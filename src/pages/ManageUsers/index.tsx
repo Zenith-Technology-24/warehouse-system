@@ -22,9 +22,9 @@ const ManageUsers: React.FC = () => {
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(5)
     const [status, setStatus] = useState<string>('active')
-    const [toArchive, setToArchive] = useState<number | null>(null)
+    const [toDeactivate, setToDeactivate] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
-    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState<boolean>(false)
     const [isActiveModalOpen, setIsActiveModalOpen] = useState<boolean>(false)
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
@@ -40,14 +40,14 @@ const ManageUsers: React.FC = () => {
         },
         onSuccess: (data: any) => {
             setIsActiveModalOpen(false)
-            setIsArchiveModalOpen(false)
+            setIsDeactivateModalOpen(false)
             refetch()
             showToast(
                 `User Successfully ${data?.expense?.status === 'active' ? 'Restored' : 'Deactivated'}!`,
                 `User has been successfully ${data?.expense?.status === 'active' ? 'restored' : 'deactivated'}.`,
                 'success'
             );
-            setToArchive(null)
+            setToDeactivate(null)
             setToActive(null)
         },
     });
@@ -65,17 +65,17 @@ const ManageUsers: React.FC = () => {
         setToActive(id)
     }
 
-    const handleOpenArchiveModal = (id: number | null) => {
-        setIsArchiveModalOpen(true)
-        setToArchive(id)
+    const handleOpenDeactivateModal = (id: number | null) => {
+        setIsDeactivateModalOpen(true)
+        setToDeactivate(id)
     }
 
     const handleDeactivate = () => {
         updateStatus.mutate({
-            id: toArchive,
-            status: 'deactivated'
+            id: toDeactivate,
+            status: 'inactive'
         })
-        setIsArchiveModalOpen(false)
+        setIsDeactivateModalOpen(false)
     }
 
     const handleActive = () => {
@@ -83,7 +83,7 @@ const ManageUsers: React.FC = () => {
             id: toActive,
             status: 'active'
         })
-        setIsArchiveModalOpen(false)
+        setIsDeactivateModalOpen(false)
     }
 
     const columns = useMemo(() => {
@@ -160,7 +160,7 @@ const ManageUsers: React.FC = () => {
                             </div>
                             {
                                 row.status === 'active' ? (
-                                    <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                    <div onClick={() => handleOpenDeactivateModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                         <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h3.5m8.5 7l-5-5m0 5l5-5" />
                                         </svg>
@@ -245,9 +245,9 @@ const ManageUsers: React.FC = () => {
                 exportFunction={exportExpenses}
             />
             <Modal
-                isOpen={isArchiveModalOpen}
+                isOpen={isDeactivateModalOpen}
                 title={'Deactivate User'}
-                onClose={() => setIsArchiveModalOpen(false)}
+                onClose={() => setIsDeactivateModalOpen(false)}
                 handleFunction={() => handleDeactivate()}
                 message={'Are you sure you want to deactivate this user?'}
             />

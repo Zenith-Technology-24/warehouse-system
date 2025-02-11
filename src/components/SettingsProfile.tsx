@@ -53,7 +53,7 @@ const SettingsProfile: React.FC<Props> = ({ schema }) => {
                     onChange={schema.handleChange}
                     type="text"
                     id="username"
-                    className="h-12 border border-gray-300 p-4 mb-1 text-gray-500 bg-transparent rounded-md"
+                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                     placeholder="Enter Username"
                 />
                 {

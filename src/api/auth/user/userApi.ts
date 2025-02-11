@@ -1,21 +1,22 @@
 import apiService from "../../axios"
 
 interface userProps {
+    id: string
     first_name: string
     last_name: number
-    email: string
+    username: string
     current_password?: string
     new_password?: string
     confirm_password?: string
 }
 
 export const updateUser = async (props: userProps) => {
-    const res = await apiService.post('/user/update', {
+    const res = await apiService.put(`/user/users/${props?.id}`, {
         firstname: props?.first_name,
         lastname: props?.last_name,
-        email: props?.email,
+        username: props?.username,
         current_password: props?.current_password,
-        new_password: props?.new_password,
+        password: props?.new_password,
         confirm_password: props?.confirm_password
     });
     return res;

@@ -32,23 +32,23 @@ const Settings: React.FC = () => {
     const schema = useFormik({
         validateOnMount: false,
         initialValues: {
-            first_name: data?.firstname,
-            last_name: data?.lastname,
-            username: data?.username,
+            first_name: data?.user?.firstname,
+            last_name: data?.user?.lastname,
+            username: data?.user?.username,
             current_password: '',
             new_password: '',
             confirm_password: ''
         },
         validationSchema: Yup.object(VALIDATION_SCHEMA),
         onSubmit(values) {
-            updateProfileMutation.mutate(values)
+            updateProfileMutation.mutate({ ...values, id: data?.user?.id })
         }
     })
 
     useEffect(() => {
-        schema.setFieldValue('first_name', data?.firstname)
-        schema.setFieldValue('last_name', data?.lastname)
-        schema.setFieldValue('username', data?.username)
+        schema.setFieldValue('first_name', data?.user?.firstname)
+        schema.setFieldValue('last_name', data?.user?.lastname)
+        schema.setFieldValue('username', data?.user?.username)
     }, [data])
 
     const updateProfileMutation = useMutation({
