@@ -91,7 +91,7 @@ const Issuance: React.FC = () => {
             {
                 label: 'Issuance Date',
                 name: 'issuanceDate',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -102,7 +102,7 @@ const Issuance: React.FC = () => {
             {
                 label: 'Issuance Directive Nr',
                 name: 'directiveNo',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
                     )
@@ -111,17 +111,17 @@ const Issuance: React.FC = () => {
             {
                 label: 'Item Name',
                 name: 'itemName',
-                render(row: { inventoryItems: any }, value: string) {
+                render(row: { inventoryItems: any }, value: string, rowIndex: number) {
                     console.log(row)
                     return (
-                        <p>{row.inventoryItems.map((item: { itemName: string }) => item.itemName).join(", ")}</p>
+                        <p>{row?.inventoryItems?.map((item: { itemName: string }) => item.itemName).join(", ")}</p>
                     );
                 },
             },
             {
                 label: 'Status',
                 name: 'status',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
                     )
@@ -130,7 +130,7 @@ const Issuance: React.FC = () => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: { id: number | null, status: string }, value: number) {
+                render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
                             <div onClick={() => navigate('/issuance/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">

@@ -100,7 +100,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
             {
                 label: 'Sales ID',
                 name: 'id',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -111,7 +111,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
             {
                 label: 'Customer',
                 name: 'customer',
-                render(row: object, value: { first_name: string, last_name: string, contact_number: string, address: string }) {
+                render(row: object, value: { first_name: string, last_name: string, contact_number: string, address: string }, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
@@ -133,7 +133,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
             {
                 label: 'Product',
                 name: 'salesInventory',
-                render(row: { id: number }, value: any) {
+                render(row: { id: number }, value: any, rowIndex: number) {
                     const seeMore = isSeeMore[row.id];
                     return (
                         <div className="!col-span-2">
@@ -215,7 +215,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
             {
                 label: 'Date',
                 name: 'created_at',
-                render(row: { status: string }, value: string) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
@@ -236,7 +236,7 @@ const Sales: React.FC<Props> = ({ dashboardView }) => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: { id: number | null, status: string }, value: number) {
+                render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
                             {
