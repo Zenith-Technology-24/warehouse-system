@@ -13,7 +13,7 @@ import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expenses
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import FilterButton from "../../components/buttons/FilterButton"
-import { fetchIssuance } from "../../api/issuance/issuanceApi"
+import { fetchIssuance, updateIssuanceStatus } from "../../api/issuance/issuanceApi"
 
 const Issuance: React.FC = () => {
     const { showToast } = useToast()
@@ -23,8 +23,10 @@ const Issuance: React.FC = () => {
     const [limit, setLimit] = useState<number>(5)
     const [status, setStatus] = useState<string>('all')
     const [toArchive, setToArchive] = useState<number | null>(null)
+    const [toWithdrawn, setToWithdrawn] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
+    const [isWithdrawnModalOpen, setIsWithdrawnModalOpen] = useState<boolean>(false)
     const [isActiveModalOpen, setIsActiveModalOpen] = useState<boolean>(false)
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
@@ -34,7 +36,7 @@ const Issuance: React.FC = () => {
     });
 
     const updateStatus = useMutation({
-        mutationFn: updateExpenseStatus,
+        mutationFn: updateIssuanceStatus,
         onError: (error: any) => {
             console.log(error)
         },
@@ -43,12 +45,13 @@ const Issuance: React.FC = () => {
             setIsArchiveModalOpen(false)
             refetch()
             showToast(
-                `Issuance Successfully ${data?.issuance?.status === 'active' ? 'Restored' : 'Archived'}!`,
-                `Issuance has been successfully ${data?.issuance?.status === 'active' ? 'restored' : 'archived'}.`,
+                `Issuance Successfully ${data?.status}!`,
+                `Issuance has been successfully ${data?.status}.`,
                 'success'
             );
             setToArchive(null)
             setToActive(null)
+            setToWithdrawn(null)
         },
     });
 
@@ -70,6 +73,11 @@ const Issuance: React.FC = () => {
         setToArchive(id)
     }
 
+    const handleOpenWithdrawnModal = (id: number | null) => {
+        setIsWithdrawnModalOpen(true)
+        setToWithdrawn(id)
+    }
+
     const handleArchive = () => {
         updateStatus.mutate({
             id: toArchive,
@@ -81,9 +89,17 @@ const Issuance: React.FC = () => {
     const handleActive = () => {
         updateStatus.mutate({
             id: toActive,
-            status: 'active'
+            status: 'pending'
         })
         setIsArchiveModalOpen(false)
+    }
+
+    const handleWithdrawn = () => {
+        updateStatus.mutate({
+            id: toWithdrawn,
+            status: 'withdrawn'
+        })
+        setIsWithdrawnModalOpen(false)
     }
 
     const columns = useMemo(() => {
@@ -165,7 +181,7 @@ const Issuance: React.FC = () => {
                                     </g>
                                 </svg>
                             </div>
-                            <div onClick={() => navigate('/issuance/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => handleOpenWithdrawnModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
                                         <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
@@ -174,7 +190,7 @@ const Issuance: React.FC = () => {
                                 </svg>
                             </div>
                             {
-                                row.status === 'active' ? (
+                                row.status !== 'archived' ? (
                                     <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                         <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -273,17 +289,24 @@ const Issuance: React.FC = () => {
             />
             <Modal
                 isOpen={isArchiveModalOpen}
-                title={'Archive Expense'}
+                title={'Archive Issuance'}
                 onClose={() => setIsArchiveModalOpen(false)}
                 handleFunction={() => handleArchive()}
-                message={'Are you sure you want to archive this expenses?'}
+                message={'Are you sure you want to archive this issuance?'}
             />
             <Modal
                 isOpen={isActiveModalOpen}
-                title={'Restore Expense'}
+                title={'Restore Issuance'}
                 onClose={() => setIsActiveModalOpen(false)}
                 handleFunction={() => handleActive()}
-                message={'Are you sure you want to restore this expenses?'}
+                message={'Are you sure you want to restore this issuance?'}
+            />
+            <Modal
+                isOpen={isWithdrawnModalOpen}
+                title={'Withdraw Issuance'}
+                onClose={() => setIsWithdrawnModalOpen(false)}
+                handleFunction={() => handleWithdrawn()}
+                message={'Are you sure you want to withdraw this issuance?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Issuance'} description={'Showing all issuance'} />

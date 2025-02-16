@@ -12,7 +12,7 @@ interface ItemTableProps {
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) => {
-    const inventoryItems = values.endUsers[index].items || []
+    const inventoryItems = values?.endUsers?.[index]?.items || []
     const addItem = () => {
         const newItem = {
             inventoryId: '',

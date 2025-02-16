@@ -132,7 +132,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                         </li> */}
                         <li>
                             <NavLink
-                                to="/sales"
+                                to="/return-if-items"
                                 className={({ isActive }) =>
                                     `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
                                     } ${isOpen ? 'block' : 'hidden'}`
@@ -160,7 +160,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
                         </li>
                         <li>
                             <NavLink
-                                to="/sales"
+                                to="/activity-logs"
                                 className={({ isActive }) =>
                                     `flex flex-row gap-2 items-center px-4 py-3 rounded-lg text-left transition ${isActive ? 'bg-aaa text-white hover:text-white' : 'hover:bg-aaa hover:text-white'
                                     } ${isOpen ? 'block' : 'hidden'}`

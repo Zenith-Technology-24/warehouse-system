@@ -16,7 +16,7 @@ import moment from "moment"
 const View: React.FC = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
-    console.log(state)
+
     return (
         <>
             <div className="flex flex-row justify-between">

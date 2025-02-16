@@ -10,7 +10,8 @@ import { useToast } from "../../../providers/ToastContext"
 import { useMutation } from "@tanstack/react-query"
 import ItemTable from "../../../components/Issuance/ItemTable"
 import DropdownWithNew from "../../../components/DropdownWithNew"
-import { createIssuance } from "../../../api/issuance/issuanceApi"
+import { createIssuance, updateIssuance } from "../../../api/issuance/issuanceApi"
+import moment from "moment"
 
 const UpdateIssuance: React.FC = () => {
     const { state } = useLocation()
@@ -21,28 +22,23 @@ const UpdateIssuance: React.FC = () => {
     const navigate = useNavigate()
     const { showToast } = useToast()
     const formRef = useRef<any>()
-    console.log(state)
-    const createIssuanceMutation = useMutation({
-        mutationFn: (values: any) => createIssuance(values),
+
+    const updateIssuanceMutation = useMutation({
+        mutationFn: (values: any) => updateIssuance({ ...values, id: state.id }),
         onError: (error: any) => {
-            showToast(
-                error?.response?.data?.message,
-                "",
-                "error"
-            );
+            console.log(error)
         },
         onSuccess: () => {
             showToast(
-                "Expenses Successfully Created!",
+                "Expenses Successfully Updated!",
                 "",
                 "success"
             );
-            navigate("/sales", { replace: true })
+            navigate("/issuance", { replace: true })
         },
     });
 
     const handleSave = () => {
-        console.log(formRef)
         if (formRef?.current) {
             formRef.current?.submitForm()
         }
@@ -53,14 +49,14 @@ const UpdateIssuance: React.FC = () => {
         directive_no: Yup.string().required('Issuance Directive Nr. is required') as any,
         issuance_date: Yup.string().required('Issuance Date is required') as any,
         expiry_date: Yup.string().required('Expiry Date is required') as any,
-        endUser: Yup.array().of(
+        endUsers: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
                 name: Yup.string().required('End User is required'),
-                inventoryItems: Yup.array().of(
+                items: Yup.array().of(
                     Yup.object().shape({
-                        id: Yup.string().nullable(),
-                        item_name: Yup.string().required('Inventory Item Name is required'),
+                        inventoryId: Yup.string().nullable(),
+                        itemName: Yup.string().required('Inventory Item Name is required'),
                         location: Yup.string().required('Inventory Location is required'),
                         supplier: Yup.string().required('Inventory Supplier is required'),
                         quantity: Yup.number().required('Inventory Quantity is required'),
@@ -77,14 +73,14 @@ const UpdateIssuance: React.FC = () => {
     const initialValues = {
         document_no: state?.documentNum || '',
         directive_no: state?.directiveNo || '',
-        issuance_date: state?.issuanceDate || '',
-        expiry_date: state?.expiryDate || '',
-        endUser: state?.endUsers?.map((end: any) => ({
+        issuance_date: state?.issuanceDate ? moment(state?.issuanceDate).format('YYYY-MM-DD') : '',
+        expiry_date: state?.expiryDate ? moment(state?.expiryDate).format('YYYY-MM-DD') : '',
+        endUsers: state?.endUsers?.map((end: any) => ({
             id: end?.id,
             name: end?.endUser?.name || '',
-            inventoryItems: end?.items?.map((item: any) => ({
-                id: item?.id,
-                item_name: item?.inventory?.itemName || '',
+            items: end?.items?.map((item: any) => ({
+                inventoryId: item?.id,
+                itemName: item?.inventory?.itemName || '',
                 location: item?.inventory?.location || '',
                 supplier: item?.inventory?.supplier || '',
                 quantity: item?.inventory?.quantity || 0,
@@ -95,7 +91,7 @@ const UpdateIssuance: React.FC = () => {
             }))
         })) || []
     };
-    console.log(initialValues)
+    
     useEffect(() => {
         setSelectedCustomer(null)
     }, [isCustomerNew])
@@ -120,7 +116,12 @@ const UpdateIssuance: React.FC = () => {
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
                         console.log(values)
-                        createIssuanceMutation.mutate(values)
+                        const formattedValues = {
+                            ...values,
+                            issuance_date: values.issuance_date ? `${values.issuance_date}T00:00:00.000Z` : null,
+                            expiry_date: values.issuance_date ? `${values.expiry_date}T00:00:00.000Z` : null,
+                        };
+                        updateIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
@@ -133,7 +134,6 @@ const UpdateIssuance: React.FC = () => {
                                             <label className="pb-2" htmlFor="document_no">Document No.</label>
                                             <Field
                                                 as="input"
-                                                type='number'
                                                 name="document_no"
                                                 placeholder="Document No."
                                                 className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
@@ -186,7 +186,7 @@ const UpdateIssuance: React.FC = () => {
                                     </div>
 
                                     <h1 className="text-lg">End User & Item Details</h1>
-                                    {values.endUser.map((user: any, index: number) => {
+                                    {values.endUsers.map((user: any, index: number) => {
                                         return (
                                             <div key={index} className="w-full grid grid-cols-2 gap-1 border-b mb-5">
                                                 <div className="flex h-auto flex-col py-3">
