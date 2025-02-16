@@ -89,7 +89,7 @@ const UpdateExpense: React.FC = () => {
                     }
                 >
                     {({ setFieldValue, values }) => (
-                        <Form className=" w-full">
+                        <Form className="w-full">
                             <div className="w-full rounded-lg border border-gray-200 p-4 grid grid-cols-2 gap-1"  >
                                 <div className="flex h-auto flex-col p-1">
                                     <label className="pb-2" htmlFor="expense_type">Expense Type</label>

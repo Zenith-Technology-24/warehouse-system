@@ -29,6 +29,8 @@ const ViewUser = React.lazy(() => import('./pages/ManageUsers/View'))
 
 const Issuance = React.lazy(() => import('./pages/Issuance'))
 const CreateIssuance = React.lazy(() => import('./pages/Issuance/Create'))
+const ViewIssuance = React.lazy(() => import('./pages/Issuance/View'))
+const UpdateIssuance = React.lazy(() => import('./pages/Issuance/Update'))
 
 function App() {
   useEffect(() => {
@@ -102,6 +104,8 @@ function App() {
               <Route path="issuance">
                 <Route index={true} element={<Issuance />} />
                 <Route path="create" element={<CreateIssuance />} />
+                <Route path="view" element={<ViewIssuance />} />
+                <Route path="update" element={<UpdateIssuance />} />
               </Route>
               <Route path="manage-users">
                 <Route index={true} element={<ManageUsers />} />

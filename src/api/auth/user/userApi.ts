@@ -11,7 +11,7 @@ interface userProps {
 }
 
 export const updateUser = async (props: userProps) => {
-    const res = await apiService.put(`/user/users/${props?.id}`, {
+    const res = await apiService.put(`/auth/user/update`, {
         firstname: props?.first_name,
         lastname: props?.last_name,
         username: props?.username,

@@ -3,6 +3,7 @@ import Table from "../Table"
 import { Field } from "formik"
 import DropdownWithNew from "../DropdownWithNew"
 import DropdownWithSearch from "../DropdownWithSearch"
+import { fetchIssuanceInventory } from "../../api/inventory/inventoryApi"
 
 interface ItemTableProps {
     index: number
@@ -11,30 +12,25 @@ interface ItemTableProps {
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) => {
-    // Fetch the inventoryItems array from Formik values
-    const inventoryItems = values.endUser[index].inventoryItems || []
-
-    // Function to add a new item
+    const inventoryItems = values.endUsers[index].items || []
     const addItem = () => {
         const newItem = {
-            item_name: "",
-            location: "",
-            supplier: "",
-            size: "",
+            inventoryId: '',
+            itemName: '',
+            location: '',
+            supplier: '',
+            size: '',
             quantity: 1,
-            unit: "",
-            price: "",
-            amount: "",
+            unit: '',
+            price: 0,
+            amount: 0
         }
-        console.log(newItem)
-        setFieldValue(`endUser[${index}].inventoryItems`, [...inventoryItems, newItem])
+        setFieldValue(`endUsers[${index}].items`, [...inventoryItems, newItem])
     }
 
-    // Function to remove an item
     const removeItem = (itemIndex: number) => {
-        console.log(itemIndex)
         const updatedItems = inventoryItems.filter((_, i) => i !== itemIndex)
-        setFieldValue(`endUser[${index}].inventoryItems`, updatedItems)
+        setFieldValue(`endUsers[${index}].items`, updatedItems)
     }
 
     const columns = useMemo(() => {
@@ -46,10 +42,22 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                     return (
                         <DropdownWithNew
                             placeholder="Item Name"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].item_name`}
-                            fetchNames={null}
+                            id={`endUsers[${index}].items[${rowIndex}].inventoryId`}
+                            name={`endUsers[${index}].items[${rowIndex}].itemName`}
+                            fetchNames={fetchIssuanceInventory}
                             setFieldValue={setFieldValue}
-                            setSelectedValue={(value) => console.log("Selected:", value)}
+                            data={value}
+                            setSelectedValue={(value: any) => {
+                                if (value.id) {
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].location`, value.location)
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].supplier`, value.supplier)
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].quantity`, parseInt(value.quantity))
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].size`, value.size)
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].price`, parseInt(value.price))
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].amount`, parseInt(value.amount))
+                                    setFieldValue(`endUsers[${index}].items[${rowIndex}].unit`, value.unit)
+                                }
+                            }}
                         />
                     )
                 }
@@ -59,11 +67,13 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                 name: 'location',
                 render(row: any, value: string, rowIndex: number) {
                     return (
-                        <DropdownWithSearch
-                            setFieldValue={setFieldValue}
+                        <DropdownWithNew
                             placeholder="Location"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].location`}
+                            name={`endUsers[${index}].items[${rowIndex}].location`}
                             fetchNames={() => [{ name: 'Storage A' }, { name: 'Storage B' }]}
+                            setFieldValue={setFieldValue}
+                            data={value}
+                            disabled={row.inventoryId.length > 0}
                         />
                     )
                 }
@@ -75,9 +85,10 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                     return (
                         <Field
                             as="input"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].supplier`}
+                            name={`endUsers[${index}].items[${rowIndex}].supplier`}
                             placeholder="Supplier"
                             className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                            disabled={row.inventoryId.length > 0}
                         />
                     )
                 }
@@ -88,8 +99,9 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                 render(row: any, value: string, rowIndex: number) {
                     return (
                         <Field as="select"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].size`}
+                            name={`endUsers[${index}].items[${rowIndex}].size`}
                             className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                            disabled={row.inventoryId.length > 0}
                         >
                             <option value="" disabled>Select Size</option>
                             <option value="small">Small</option>
@@ -107,9 +119,10 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                         <Field
                             as="input"
                             type="number"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].quantity`}
+                            name={`endUsers[${index}].items[${rowIndex}].quantity`}
                             placeholder="Quantity"
                             className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                            disabled={row.inventoryId.length > 0}
                         />
                     )
                 }
@@ -120,8 +133,9 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                 render(row: any, value: string, rowIndex: number) {
                     return (
                         <Field as="select"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].unit`}
+                            name={`endUsers[${index}].items[${rowIndex}].unit`}
                             className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                            disabled={row.inventoryId.length > 0}
                         >
                             <option value="" disabled>Select Unit</option>
                             <option value="ea">ea</option>
@@ -138,9 +152,11 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                     return (
                         <Field
                             as="input"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].price`}
+                            type="number"
+                            name={`endUsers[${index}].items[${rowIndex}].price`}
                             placeholder="U/Price"
                             className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                            disabled={row.inventoryId.length > 0}
                         />
                     )
                 }
@@ -152,9 +168,11 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
                     return (
                         <Field
                             as="input"
-                            name={`endUser[${index}].inventoryItems[${rowIndex}].amount`}
+                            type="number"
+                            name={`endUsers[${index}].items[${rowIndex}].amount`}
                             placeholder="T/Amount"
                             className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                            disabled={row.inventoryId.length > 0}
                         />
                     )
                 }
@@ -183,7 +201,7 @@ const ItemTable: React.FC<ItemTableProps> = ({ index, values, setFieldValue }) =
     return (
         <div className="col-span-2">
             <Table columns={columns} rows={{ data: inventoryItems }} classes="!h-0" />
-            <div onClick={addItem} className="flex flex-row gap-2 items-center text-sm text-gray-500 hover:text-gray-800 cursor-pointer">
+            <div onClick={addItem} className="flex flex-row gap-2 p-5 items-center text-sm text-gray-500 hover:text-gray-800 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>

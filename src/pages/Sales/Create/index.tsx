@@ -273,7 +273,7 @@ const CreateSales: React.FC = () => {
                                     </div>
 
                                     <h1 className="text-lg">Product Information</h1>
-                                    {values.inventories.map((inv: any, index: number) => (
+                                    {values.inventories.map((inv1: any, index: number) => (
                                         <div key={index} className="w-full grid grid-cols-2 gap-1 border-b mb-5">
                                             <div className="flex h-auto flex-col py-3">
                                                 <DropdownWithSearch
