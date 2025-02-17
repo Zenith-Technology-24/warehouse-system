@@ -5,31 +5,32 @@ import Header from "../../../components/Header"
 import TopButtons from "../../../components/TopButtons"
 import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton"
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
 import { useMutation } from "@tanstack/react-query"
 import ItemTable from "../../../components/Issuance/ItemTable"
 import DropdownWithNew from "../../../components/DropdownWithNew"
-import { createIssuance } from "../../../api/issuance/issuanceApi"
-import { fetchEndUsers } from "../../../api/users/usersApi"
+import { createIssuance, updateIssuance } from "../../../api/issuance/issuanceApi"
+import moment from "moment"
 
-const CreateIssuance: React.FC = () => {
+const UpdateIssuance: React.FC = () => {
+    const { state } = useLocation()
+    const [isCustomerNew, setIsCustomerNew] = useState<boolean>(false)
+    const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
+    const [total, setTotal] = useState(0);
+
     const navigate = useNavigate()
     const { showToast } = useToast()
     const formRef = useRef<any>()
 
-    const createIssuanceMutation = useMutation({
-        mutationFn: (values: any) => createIssuance(values),
+    const updateIssuanceMutation = useMutation({
+        mutationFn: (values: any) => updateIssuance({ ...values, id: state.id }),
         onError: (error: any) => {
-            showToast(
-                error?.response?.data?.message,
-                "",
-                "error"
-            );
+            console.log(error)
         },
         onSuccess: () => {
             showToast(
-                "Issuance Successfully Created!",
+                "Expenses Successfully Updated!",
                 "",
                 "success"
             );
@@ -70,37 +71,39 @@ const CreateIssuance: React.FC = () => {
     });
 
     const initialValues = {
-        document_no: '',
-        directive_no: '',
-        issuance_date: '',
-        expiry_date: '',
-        endUsers: [
-            {
-                id: '',
-                name: '',
-                items: [
-                    {
-                        inventoryId: '',
-                        itemName: '',
-                        location: '',
-                        supplier: '',
-                        quantity: 1,
-                        price: 0,
-                        amount: 0,
-                        unit: '',
-                        size: '',
-                    }
-                ]
-            }
-        ]
+        document_no: state?.documentNum || '',
+        directive_no: state?.directiveNo || '',
+        issuance_date: state?.issuanceDate ? moment(state?.issuanceDate).format('YYYY-MM-DD') : '',
+        expiry_date: state?.expiryDate ? moment(state?.expiryDate).format('YYYY-MM-DD') : '',
+        endUsers: state?.endUsers?.map((end: any) => ({
+            id: end?.id,
+            name: end?.endUser?.name || '',
+            items: end?.items?.map((item: any) => ({
+                inventoryId: item?.id,
+                itemName: item?.inventory?.itemName || '',
+                location: item?.inventory?.location || '',
+                supplier: item?.inventory?.supplier || '',
+                quantity: item?.inventory?.quantity || 0,
+                price: item?.inventory?.price || 0,
+                amount: item?.inventory?.amount || 0,
+                unit: item?.inventory?.unit || '',
+                size: item?.inventory?.size || '',
+            }))
+        })) || []
     };
+    
+    useEffect(() => {
+        setSelectedCustomer(null)
+    }, [isCustomerNew])
 
     return (
         <>
             <div className="flex flex-row justify-between pb-4">
-                <Header title={'Create Issuance'} description={'Issuance'} />
+                <Header title={'Update Issuance'} description={'Issuance'} />
                 <TopButtons>
-                    <LinkSecondaryButton to=".." text="Cancel" />
+                    <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
+                        Cancel
+                    </button>
                     <PrimaryButton text="Save" onClick={handleSave} />
                 </TopButtons>
             </div>
@@ -108,15 +111,17 @@ const CreateIssuance: React.FC = () => {
                 <Formik
                     innerRef={formRef}
                     initialValues={initialValues}
+                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
+                        console.log(values)
                         const formattedValues = {
                             ...values,
                             issuance_date: values.issuance_date ? `${values.issuance_date}T00:00:00.000Z` : null,
                             expiry_date: values.issuance_date ? `${values.expiry_date}T00:00:00.000Z` : null,
                         };
-                        createIssuanceMutation.mutate(formattedValues)
+                        updateIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
@@ -135,6 +140,7 @@ const CreateIssuance: React.FC = () => {
                                                 fullWidth
                                                 variant="outlined"
                                                 size="small"
+                                                value={values.document_no}
                                             />
                                             <div className="h-6">
                                                 <ErrorMessage className="text-red-400" name="document_no" component="div" />
@@ -186,25 +192,24 @@ const CreateIssuance: React.FC = () => {
                                                 <div className="flex h-auto flex-col py-3">
                                                     <DropdownWithNew
                                                         placeholder="End User"
-                                                        id={`endUsers[${index}].id`}
-                                                        name={`endUsers[${index}].name`}
-                                                        fetchNames={fetchEndUsers}
+                                                        name={`endUser[${index}].name`}
+                                                        fetchNames={null}
                                                         setFieldValue={setFieldValue}
                                                         data={user.name}
                                                         setSelectedValue={(value) => console.log("Selected:", value)}
                                                     />
                                                     <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`endUsers[${index}].name`} component="div" />
+                                                        <ErrorMessage className="text-red-400" name={`endUser[${index}].name`} component="div" />
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row gap-5 mx-5">
                                                     <div className="py-6">
                                                         <div
                                                             onClick={() => {
-                                                                if (values.endUsers.length > 1) {
-                                                                    const updatedEndUsers = [...values.endUsers];
+                                                                if (values.endUser.length > 1) {
+                                                                    const updatedEndUsers = [...values.endUser];
                                                                     updatedEndUsers.splice(index, 1);
-                                                                    setFieldValue('endUsers', updatedEndUsers);
+                                                                    setFieldValue('endUser', updatedEndUsers);
                                                                 }
                                                             }}
                                                             className={`flex flex-row gap-2 items-center text-sm text-red-300 ${values.inventories?.length > 1 && 'hover:text-red-400'} cursor-pointer`}>
@@ -215,13 +220,13 @@ const CreateIssuance: React.FC = () => {
                                                         </div>
                                                     </div>
                                                     <div className="py-6">
-                                                        <div onClick={() => setFieldValue('endUsers', [...values.endUsers, {
-                                                            id: '',
+                                                        <div onClick={() => setFieldValue('endUser', [...values.endUser, {
+                                                            id: null,
                                                             name: '',
-                                                            items: [
+                                                            inventoryItems: [
                                                                 {
-                                                                    inventoryId: '',
-                                                                    itemName: '',
+                                                                    id: null,
+                                                                    item_name: '',
                                                                     location: '',
                                                                     supplier: '',
                                                                     quantity: 1,
@@ -254,4 +259,4 @@ const CreateIssuance: React.FC = () => {
     )
 }
 
-export default CreateIssuance
+export default UpdateIssuance

@@ -79,7 +79,7 @@ const View: React.FC = () => {
             {
                 label: 'Product',
                 name: 'inventory',
-                render(row: object, value: any) {
+                render(row: object, value: any, rowIndex: number) {
                     return (
                         <div>
                             {value.product_name}
@@ -90,7 +90,7 @@ const View: React.FC = () => {
             {
                 label: 'Quantity',
                 name: 'quantity',
-                render(row: object, value: any) {
+                render(row: object, value: any, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -101,7 +101,7 @@ const View: React.FC = () => {
             {
                 label: 'Amount',
                 name: 'total_price',
-                render(row: object, value: any) {
+                render(row: object, value: any, rowIndex: number) {
                     return (
                         <div>
                             ₱{value}
@@ -112,7 +112,7 @@ const View: React.FC = () => {
             {
                 label: 'Terms',
                 name: 'terms',
-                render(row: object, value: any) {
+                render(row: object, value: any, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -123,7 +123,7 @@ const View: React.FC = () => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: object, value: any) {
+                render(row: object, value: any, rowIndex: number) {
                     return (
                         <div className="flex flex-row">
                             <div onClick={() => handleOpenDeleteProduct(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition">
@@ -190,19 +190,19 @@ const View: React.FC = () => {
                                 totalPages={totalPages}
                                 onPageChange={handleChangePage}
                                 footerTableJSX={
-                                
-                                        <tfoot className="sticky bottom-0">
+
+                                    <tfoot className="sticky bottom-0">
                                         <tr>
-                                          <th colSpan={columns?.length ?? 1} className="p-4">
-                                            <div className="flex justify-start gap-2 ">
-                                            <span>Total Sales: </span>
-                                             <span className="font-normal">{`₱${data?.total ?? 0}`}</span>
-                                            </div>
-                                        
-                                         </th>
-                                     </tr>
-                                     </tfoot>
-                                    }
+                                            <th colSpan={columns?.length ?? 1} className="p-4">
+                                                <div className="flex justify-start gap-2 ">
+                                                    <span>Total Sales: </span>
+                                                    <span className="font-normal">{`₱${data?.total ?? 0}`}</span>
+                                                </div>
+
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                }
                             />
                         )
                     }

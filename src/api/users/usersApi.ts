@@ -52,3 +52,8 @@ export const updateUserStatus = async ({ id, status }: updateUserStatusProps) =>
     const { data } = await apiService.put(`/user/users/${id}`, { status });
     return data;
 };
+
+export const fetchEndUsers = async () => {
+    const { data } = await apiService.get('end-user/end-users');
+    return data;
+};

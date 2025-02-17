@@ -57,9 +57,9 @@ const Login: React.FC = () => {
         <div className="grid grid-cols-2 h-screen">
             <LoginWallpaper />
             <div className="m-auto">
-                <div className="flex flex-col bg-white border border-green-50 shadow-2xl w-[500px] shadow-[#4CAF5026] py-4 px-6 rounded-2xl">
-                    <div className="flex w-full px-2">
-                        <img src={siteConfig.logo} />
+                <div className="flex flex-col bg-white border border-green-50 w-[500px] py-4 px-6 rounded-2xl">
+                    <div className="flex w-full py-6 justify-center">
+                        <img className="w-36" src={siteConfig.logo} />
                     </div>
                     <div className="w-full p-2">
                         <span className="text-aaa-text font-lato text-2xl font-[550]">Hi, Welcome back!</span>

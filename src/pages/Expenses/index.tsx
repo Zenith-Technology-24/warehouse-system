@@ -91,7 +91,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Expenses ID',
                 name: 'id',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -102,7 +102,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Name',
                 name: 'first_name',
-                render(row: { last_name: string }, value: string) {
+                render(row: { last_name: string }, value: string, rowIndex: number) {
                     return (
                         <p>{value} {row.last_name}</p>
                     )
@@ -111,7 +111,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Expenses',
                 name: 'expense_type',
-                render(row: { amount: number }, value: string) {
+                render(row: { amount: number }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
@@ -129,7 +129,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Description',
                 name: 'description',
-                render(row: { status: string }, value: string) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
                     )
@@ -138,7 +138,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Date',
                 name: 'created_at',
-                render(row: { status: string }, value: string) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
@@ -159,7 +159,7 @@ const Expenses: React.FC = () => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: { id: number | null, status: string }, value: number) {
+                render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
                             <div onClick={() => navigate('/expenses/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">

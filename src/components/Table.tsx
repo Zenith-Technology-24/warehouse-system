@@ -9,10 +9,22 @@ interface Props {
     rowsPerPage?: number
     totalPages?: number
     onPageChange?: (page: number) => void
-    footerTableJSX: any
+    footerTableJSX?: any
+    classes?: string
 }
 
-const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, totalRows = 1, rowsPerPage = 10, totalPages, onPageChange, footerTableJSX }) => {
+const Table: React.FC<Props> = ({
+    currentPage,
+    setCurrentPage,
+    columns,
+    rows,
+    totalRows = 1,
+    rowsPerPage = 10,
+    totalPages,
+    onPageChange,
+    footerTableJSX,
+    classes
+}) => {
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         onPageChange && onPageChange(page);
@@ -21,7 +33,7 @@ const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, to
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
             {columns?.length > 0 && (
-                <table className="min-w-full h-[500px] divide-y divide-gray-200 border border-gray-100">
+                <table className={`${classes} min-w-full h-[500px] divide-y divide-gray-200 border border-gray-100`}>
                     <thead className="bg-[#EAECDF]">
                         <tr>
                             {columns.map((column: { name: string, label: string }, index: number) => (
@@ -46,7 +58,7 @@ const Table: React.FC<Props> = ({ currentPage, setCurrentPage, columns, rows, to
                                 <tr key={rowIndex}>
                                     {columns.map((column: any, colIndex: number) => (
                                         <td key={colIndex} className="px-6 py-4 align-top whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {column.render ? column.render(row, row[column.name]) : row[column.name] || 'N/A'}
+                                            {column.render ? column.render(row, row[column.name], rowIndex) : row[column.name] || 'N/A'}
                                         </td>
                                     ))}
                                 </tr>

@@ -4,27 +4,41 @@ import { useQuery } from "@tanstack/react-query";
 
 interface DropdownWithNewProps {
     _index?: number;
+    id?: string;
     setFieldValue: any;
     placeholder: string;
     name: string;
     fetchNames: any;
     forUpdate?: any;
     setSelectedValue?: any;
+    data?: string | undefined;
+    disabled?: boolean;
 }
 
 const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
     _index,
+    id,
     setFieldValue,
     placeholder,
     name,
     fetchNames,
     forUpdate,
-    setSelectedValue
+    setSelectedValue,
+    data,
+    disabled = false
 }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useState<string>(data);
     const [selectedOption, setSelectedOption] = useState<any>(null);
     const dropdownRef = useRef<HTMLUListElement>(null);
+
+    useEffect(() => {
+        if (data) {
+            setSelectedOption({ id: null, name: data });
+            setSearchTerm(data);
+        }
+    }, [data]);
+
 
     useEffect(() => {
         if (forUpdate) {
@@ -39,17 +53,21 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
     });
 
     const filteredOptions = options?.filter((option: any) =>
-        option.name.toLowerCase().includes(searchTerm.toLowerCase())
+        option?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleOptionClick = (option: any) => {
         setSelectedOption(option);
         setSearchTerm(option.name);
         setIsOpen(false);
-        setFieldValue(name, option?.id);
+        setFieldValue(name, option?.name);
 
         if (setSelectedValue) {
             setSelectedValue(option);
+        }
+
+        if (id) {
+            setFieldValue(id, option?.id)
         }
     };
 
@@ -62,6 +80,10 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
 
             if (setSelectedValue) {
                 setSelectedValue({ id: null, name: searchTerm });
+            }
+
+            if (id) {
+                setFieldValue(id, '')
             }
         }
     };
@@ -80,7 +102,7 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
                                     {selectedOption?.name || placeholder}
                                 </span>
                                 <svg
-                                    className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? "transform rotate-180" : ""}`}
+                                    className={`w-5 h-5 transition-transform text-gray-400 ${isOpen && disabled === false ? "transform rotate-180" : ""}`}
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20"
                                     fill="currentColor"
@@ -93,7 +115,7 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
                                 </svg>
                             </div>
 
-                            {isOpen && (
+                            {isOpen && disabled === false && (
                                 <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                                     <input
                                         type="text"

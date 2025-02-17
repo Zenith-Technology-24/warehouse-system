@@ -91,7 +91,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'ID',
                 name: 'id',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -102,7 +102,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'Name',
                 name: 'firstname',
-                render(row: { lastname: string }, value: string) {
+                render(row: { lastname: string }, value: string, rowIndex: number) {
                     return (
                         <p>{value} {row.lastname}</p>
                     )
@@ -111,7 +111,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'Username',
                 name: 'username',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
                     );
@@ -120,7 +120,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'Role',
                 name: 'role',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{row.roles?.[0]?.name ? row.roles[0].name.charAt(0).toUpperCase() + row.roles[0].name.slice(1) : 'N/A'}</p>
                     )
@@ -129,7 +129,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'Created At',
                 name: 'created_at',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{moment(value).format('DD MMM YYYY h:mm A')}</p>
                     )
@@ -138,7 +138,7 @@ const ManageUsers: React.FC = () => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: { id: number | null, status: string }, value: number) {
+                render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
                             <div onClick={() => navigate('/manage-users/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">

@@ -31,7 +31,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
 
     useEffect(() => {
         if (forUpdate) {
-            setSelectedOption({ id: forUpdate.id, name: forUpdate.product_name })
+            setSelectedOption({ name: forUpdate })
         }
     }, [name])
 
@@ -47,7 +47,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     const handleOptionClick = (option: any) => {
         setSelectedOption(option)
         setIsOpen(false)
-        setFieldValue(name, option?.id)
+        setFieldValue(name, option?.name)
         if (setSelectedValue) {
             setSelectedValue(option)
         }

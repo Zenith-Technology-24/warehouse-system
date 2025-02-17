@@ -69,3 +69,11 @@ export const updateInventoryStatus = async ({ id, status }: updateInventoryStatu
     const { data } = await apiService.put(`/inventory/inventories/${id}`, { status });
     return data;
 };
+
+export const fetchIssuanceInventory = async () => {
+    const { data } = await apiService.get('/issuance/inventory');
+    return data.map(({ itemName, ...rest }) => ({
+        name: itemName,
+        ...rest,
+    }));
+};

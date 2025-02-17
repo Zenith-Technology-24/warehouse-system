@@ -87,7 +87,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'Item Name',
                 name: 'itemName',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -98,7 +98,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'Size',
                 name: 'size',
-                render(row: object, value: string) {
+                render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -109,7 +109,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'T/Qty',
                 name: 'quantity',
-                render(row: { size: string, in_stock: number }, value: string) {
+                render(row: { size: string, in_stock: number }, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -120,7 +120,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'U/I',
                 name: 'unit',
-                render(row: { price: number }, value: string) {
+                render(row: { price: number }, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -131,7 +131,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'U/Price',
                 name: 'price',
-                render(row: { status: string }, value: string) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -142,7 +142,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'GT/Amount',
                 name: 'amount',
-                render(row: { status: string }, value: string) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div>
                             {value}
@@ -153,7 +153,7 @@ const Inventory: React.FC = () => {
             {
                 label: 'Action',
                 name: 'id',
-                render(row: { id: number | null, status: string }, value: number) {
+                render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
                             <div onClick={() => navigate('/manage-users/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
