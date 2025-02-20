@@ -32,6 +32,14 @@ const CreateIssuance = React.lazy(() => import('./pages/Issuance/Create'))
 const ViewIssuance = React.lazy(() => import('./pages/Issuance/View'))
 const UpdateIssuance = React.lazy(() => import('./pages/Issuance/Update'))
 
+const ReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems'))
+const CreateReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/Create'))
+// const ViewReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/View'))
+const UpdateReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/Update'))
+
+const Receipt = React.lazy(() => import('./pages/Receipt'))
+const CreateReceipt = React.lazy(() => import('./pages/Receipt/Create'))
+
 function App() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -107,6 +115,20 @@ function App() {
                 <Route path="view" element={<ViewIssuance />} />
                 <Route path="update" element={<UpdateIssuance />} />
               </Route>
+
+              <Route path="return-of-items">
+                <Route index={true} element={<ReturnOfItems />} />
+                <Route path="create" element={<CreateReturnOfItems />} />
+                <Route path="update" element={<UpdateReturnOfItems />} />
+              </Route>
+
+              <Route path="receipt">
+                <Route index={true} element={<Receipt />} />
+                <Route path="create" element={<CreateReceipt />} />
+                <Route path="view" element={<ViewIssuance />} />
+                <Route path="update" element={<UpdateIssuance />} />
+              </Route>
+
               <Route path="manage-users">
                 <Route index={true} element={<ManageUsers />} />
                 <Route path="create" element={<CreateUser />} />
