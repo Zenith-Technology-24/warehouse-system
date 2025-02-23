@@ -112,7 +112,7 @@ const Receipt: React.FC = () => {
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
-                            <p>{moment(value).format('DD MMM YYYY')}</p>
+                            <p className="font-normal">{moment(value).format('DD MMM YYYY')}</p>
                         </div>
                     )
                 }
@@ -122,7 +122,16 @@ const Receipt: React.FC = () => {
                 name: 'directiveNo',
                 render(row: object, value: string, rowIndex: number) {
                     return (
-                        <p>{value}</p>
+                        <p className="font-normal">{value}</p>
+                    )
+                }
+            },
+            {
+                label: 'T/Qty',
+                name: 'quantity',
+                render(row: object, value: string, rowIndex: number) {
+                    return (
+                        <p className="font-normal">{value}</p>
                     )
                 }
             },
@@ -137,7 +146,7 @@ const Receipt: React.FC = () => {
                         ? `${itemNames.slice(0, 2).join(', ')}..`
                         : itemNames.join(', ');
 
-                    return <p>{displayText}</p>;
+                    return <p className="font-normal">{displayText}</p>;
                 }
             },
             {
@@ -146,7 +155,7 @@ const Receipt: React.FC = () => {
                 render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
-                            <div onClick={() => navigate('/issuance/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => navigate('/receipt/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g fill="none" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821" />
@@ -154,20 +163,12 @@ const Receipt: React.FC = () => {
                                     </g>
                                 </svg>
                             </div>
-                            <div onClick={() => navigate('/issuance/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => navigate('/receipt/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                                     <g id="SVGRepo_iconCarrier">
                                         <path fill-rule="evenodd" clip-rule="evenodd" d="M20.8477 1.87868C19.6761 0.707109 17.7766 0.707105 16.605 1.87868L2.44744 16.0363C2.02864 16.4551 1.74317 16.9885 1.62702 17.5692L1.03995 20.5046C0.760062 21.904 1.9939 23.1379 3.39334 22.858L6.32868 22.2709C6.90945 22.1548 7.44285 21.8693 7.86165 21.4505L22.0192 7.29289C23.1908 6.12132 23.1908 4.22183 22.0192 3.05025L20.8477 1.87868ZM18.0192 3.29289C18.4098 2.90237 19.0429 2.90237 19.4335 3.29289L20.605 4.46447C20.9956 4.85499 20.9956 5.48815 20.605 5.87868L17.9334 8.55027L15.3477 5.96448L18.0192 3.29289ZM13.9334 7.3787L3.86165 17.4505C3.72205 17.5901 3.6269 17.7679 3.58818 17.9615L3.00111 20.8968L5.93645 20.3097C6.13004 20.271 6.30784 20.1759 6.44744 20.0363L16.5192 9.96448L13.9334 7.3787Z" fill="#48494A"></path>
-                                    </g>
-                                </svg>
-                            </div>
-                            <div onClick={() => handleOpenWithdrawnModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
-                                <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
-                                        <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
-                                        <path d="M12 10.5V17m-2.5-2l2.5 2.5l2.5-2.5m6.5-4a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305" />
                                     </g>
                                 </svg>
                             </div>
