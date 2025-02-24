@@ -12,6 +12,7 @@ interface DropdownWithSearchProps {
     forUpdate?: any
     setSelectedValue?: any
     values?: any
+    refetchData?: any;
 }
 
 const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
@@ -22,20 +23,25 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     name,
     fetchNames,
     forUpdate,
-    setSelectedValue
+    setSelectedValue,
+    values,
+    refetchData
 }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [selectedOption, setSelectedOption] = useState<any>(null)
     const dropdownRef = useRef<HTMLUListElement>(null)
+    const formikSelectedValue = values?.inventory?.[_index as any]?.name || ""
 
     useEffect(() => {
         if (forUpdate) {
             setSelectedOption({ name: forUpdate })
+        } else {
+            setSelectedOption(null);
         }
     }, [name])
 
-    const { data: options } = useQuery({
+    const { data: options, refetch } = useQuery({
         queryKey: [`${name}-list`],
         queryFn: () => fetchNames() as any,
     });
@@ -59,8 +65,14 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
         }
     };
 
+    useEffect(() => {
+        if (refetchData) {
+            refetchData(refetch);
+        }
+    }, [refetchData, refetch])
+
     return (
-        <div className="flex flex-col w-full">
+        <div key={_index} className="flex flex-col w-full">
             {
                 label && (
                     <label className="pb-2 text-gray-500">{label}</label>
@@ -74,7 +86,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                                 className="bg-transparent h-12 border border-gray-300 rounded-lg p-2 flex justify-between items-center cursor-pointer"
                                 onClick={() => setIsOpen(!isOpen)}
                             >
-                                <span className={`ml-1 ${!selectedOption?.name ? 'text-gray-400' : 'text-black'}`}>{selectedOption?.name || placeholder}</span>
+                                <span className={`ml-1 ${!selectedOption?.name ? 'text-gray-400' : 'text-black'}`}>{formikSelectedValue || placeholder}</span>
                                 <svg
                                     className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? "transform rotate-180" : ""
                                         }`}
@@ -110,6 +122,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                                                     {option.name}
                                                 </li>
                                             ))
+
                                         ) : (
                                             <li className="p-2 text-gray-400">No options found</li>
                                         )}
