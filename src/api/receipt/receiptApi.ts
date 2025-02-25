@@ -70,11 +70,11 @@ export const createReceipt = async (data: createReceiptProps) => {
 };
 
 export const updateReceipt = async (data: updateReceiptProps) => {
-    const res = await apiService.put(`/issuance/issuances/${data.id}`, data);
+    const res = await apiService.put(`/receipt/${data.id}`, data);
     return res;
 };
 
 export const updateReceiptStatus = async ({ id, status }: updateReceiptStatusProps) => {
-    const { data } = await apiService.put(`/issuance/issuances/${id}`, { status });
+    const { data } = await apiService.put(`/receipt/${status}/${id}`);
     return data;
 };

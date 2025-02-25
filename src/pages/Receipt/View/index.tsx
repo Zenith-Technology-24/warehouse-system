@@ -58,7 +58,7 @@ const View: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-gray-500">U/I</p>
-                                <p>{row?.unit || 'N/A'}</p>
+                                <p>{row?.item?.unit || 'N/A'}</p>
                             </div>
                         </div>
                     )

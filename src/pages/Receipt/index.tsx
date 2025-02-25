@@ -83,7 +83,7 @@ const Receipt: React.FC = () => {
     const handleArchive = () => {
         updateStatus.mutate({
             id: toArchive,
-            status: 'archived'
+            status: 'archive'
         })
         setIsArchiveModalOpen(false)
     }
@@ -91,7 +91,7 @@ const Receipt: React.FC = () => {
     const handleActive = () => {
         updateStatus.mutate({
             id: toActive,
-            status: 'pending'
+            status: 'unarchive'
         })
         setIsArchiveModalOpen(false)
     }
@@ -267,24 +267,24 @@ const Receipt: React.FC = () => {
             />
             <Modal
                 isOpen={isArchiveModalOpen}
-                title={'Archive Issuance'}
+                title={'Archive Receipt'}
                 onClose={() => setIsArchiveModalOpen(false)}
                 handleFunction={() => handleArchive()}
-                message={'Are you sure you want to archive this issuance?'}
+                message={'Are you sure you want to archive this receipt?'}
             />
             <Modal
                 isOpen={isActiveModalOpen}
-                title={'Restore Issuance'}
+                title={'Restore Receipt'}
                 onClose={() => setIsActiveModalOpen(false)}
                 handleFunction={() => handleActive()}
-                message={'Are you sure you want to restore this issuance?'}
+                message={'Are you sure you want to restore this receipt?'}
             />
             <Modal
                 isOpen={isWithdrawnModalOpen}
-                title={'Withdraw Issuance'}
+                title={'Withdraw Receipt'}
                 onClose={() => setIsWithdrawnModalOpen(false)}
                 handleFunction={() => handleWithdrawn()}
-                message={'Are you sure you want to withdraw this issuance?'}
+                message={'Are you sure you want to withdraw this receipt?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Receipt'} description={'Showing all receipts'} />
