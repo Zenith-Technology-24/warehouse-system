@@ -39,6 +39,8 @@ const UpdateReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/Updat
 
 const Receipt = React.lazy(() => import('./pages/Receipt'))
 const CreateReceipt = React.lazy(() => import('./pages/Receipt/Create'))
+const ViewReceipt = React.lazy(() => import('./pages/Receipt/View'))
+const UpdateReceipt = React.lazy(() => import('./pages/Receipt/Update'))
 
 function App() {
   useEffect(() => {
@@ -125,8 +127,8 @@ function App() {
               <Route path="receipt">
                 <Route index={true} element={<Receipt />} />
                 <Route path="create" element={<CreateReceipt />} />
-                <Route path="view" element={<ViewIssuance />} />
-                <Route path="update" element={<UpdateIssuance />} />
+                <Route path="view" element={<ViewReceipt />} />
+                <Route path="update" element={<UpdateReceipt />} />
               </Route>
 
               <Route path="manage-users">

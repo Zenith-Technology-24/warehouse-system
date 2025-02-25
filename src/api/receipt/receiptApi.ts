@@ -60,12 +60,12 @@ interface updateReceiptStatusProps {
 }
 
 export const fetchReceipt = async ({ search, page, limit, status }: fetchExpensesProps) => {
-    const { data } = await apiService.get(`issuance/issuances?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+    const { data } = await apiService.get(`receipt?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
 };
 
 export const createReceipt = async (data: createReceiptProps) => {
-    const res = await apiService.post("/issuance/issuances", data);
+    const res = await apiService.post("/receipt", data);
     return res;
 };
 

@@ -22,7 +22,7 @@ const Receipt: React.FC = () => {
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(5)
-    const [status, setStatus] = useState<string>('all')
+    const [status, setStatus] = useState<string>('active')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toWithdrawn, setToWithdrawn] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
@@ -108,7 +108,7 @@ const Receipt: React.FC = () => {
         return [
             {
                 label: 'Date of Receipt',
-                name: 'issuanceDate',
+                name: 'receiptDate',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
@@ -119,34 +119,29 @@ const Receipt: React.FC = () => {
             },
             {
                 label: 'Issuance Directive Nr',
-                name: 'directiveNo',
+                name: 'issuanceDirective',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <p className="font-normal">{value}</p>
                     )
                 }
             },
-            {
-                label: 'T/Qty',
-                name: 'quantity',
-                render(row: object, value: string, rowIndex: number) {
-                    return (
-                        <p className="font-normal">{value}</p>
-                    )
-                }
-            },
+            // {
+            //     label: 'T/Qty',
+            //     name: 'quantity',
+            //     render(row: object, value: string, rowIndex: number) {
+            //         return (
+            //             <p className="font-normal">{value}</p>
+            //         )
+            //     }
+            // },
             {
                 label: 'Source',
-                name: 'itemName',
-                render(row: { endUsers: any[] }, value: string, rowIndex: number) {
-                    const itemNames = row?.endUsers
-                        ?.flatMap((endUser) => endUser.items.map((item: any) => item.inventory.itemName));
-
-                    const displayText = itemNames.length > 2
-                        ? `${itemNames.slice(0, 2).join(', ')}..`
-                        : itemNames.join(', ');
-
-                    return <p className="font-normal">{displayText}</p>;
+                name: 'issuanceDirective',
+                render(row: object, value: string, rowIndex: number) {
+                    return (
+                        <p className="font-normal">{value}</p>
+                    )
                 }
             },
             {
