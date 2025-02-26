@@ -22,10 +22,10 @@ apiService.interceptors.response.use(
     },
     function (error) {
         if (401 === error.response.status) {
-            localStorage.removeItem('user');
-            if (window.location.pathname !== "/") {
-                window.location.href = "/";
-            }
+            // localStorage.removeItem('user');
+            // if (window.location.pathname !== "/") {
+            //     window.location.href = "/";
+            // }
         } else {
             return Promise.reject(error);
         }

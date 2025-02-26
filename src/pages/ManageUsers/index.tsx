@@ -13,7 +13,6 @@ import { exportExpenses } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import { fetchUsers, updateUserStatus } from "../../api/users/usersApi"
-import FilterButton from "../../components/buttons/FilterButton"
 
 const ManageUsers: React.FC = () => {
     const { showToast } = useToast()
