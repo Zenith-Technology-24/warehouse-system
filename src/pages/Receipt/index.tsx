@@ -21,7 +21,7 @@ const Receipt: React.FC = () => {
     const navigate = useNavigate()
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
-    const [limit, setLimit] = useState<number>(5)
+    const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('active')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toWithdrawn, setToWithdrawn] = useState<number | null>(null)
@@ -137,7 +137,7 @@ const Receipt: React.FC = () => {
             // },
             {
                 label: 'Source',
-                name: 'issuanceDirective',
+                name: 'source',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <p className="font-normal">{value}</p>

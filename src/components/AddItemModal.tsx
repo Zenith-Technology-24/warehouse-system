@@ -11,10 +11,10 @@ interface AddItemModalProps {
 const VALIDATION_SCHEMA = Yup.object().shape({
     name: Yup.string()
         .required('Item name is required'),
-    size: Yup.string()
+    sizeType: Yup.string()
         .required('Size is required'),
-    uom: Yup.string()
-        .required('UoM is required'),
+    unit: Yup.string()
+        .required('Unit is required'),
 });
 
 
@@ -25,8 +25,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
         validateOnMount: false,
         initialValues: {
             name: '',
-            size: 'none',
-            uom: ''
+            sizeType: 'none',
+            unit: ''
         },
         validationSchema: VALIDATION_SCHEMA,
         onSubmit(values) {
@@ -59,26 +59,26 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
                     <div className='flex flex-col'>
                         <label className='label text-sm'>Size</label>
                         <select
-                            name="size"
-                            value={schema.values.size}
+                            name="sizeType"
+                            value={schema.values.sizeType}
                             onChange={schema.handleChange}
-                            id="size"
+                            id="sizeType"
                             className="bg-transparent text-gray-500 border border-gray-300 p-4 mb-1 rounded-md custom-select-icon"
                             required
                         >
                             <option value="none">No Size</option>
-                            <option value="apparel">Apparel (S, M, L, XL, 2XL)</option>
+                            <option value="apparrel">Apparrel (S, M, L, XL, 2XL)</option>
                             <option value="numerical">Numerical (6-12)</option>
                         </select>
-                        {schema.errors.size && (
-                            <p className='text-red-500 text-sm'>{schema.errors.size}</p>
+                        {schema.errors.sizeType && (
+                            <p className='text-red-500 text-sm'>{schema.errors.sizeType}</p>
                         )}
                     </div>
                     <div className='flex flex-col'>
                         <label className='label text-sm'>Default UoM</label>
                         <input
-                            name="uom"
-                            value={schema.values.uom}
+                            name="unit"
+                            value={schema.values.unit}
                             onChange={schema.handleChange}
                             id="uom"
                             className="bg-transparent text-gray-500 border border-gray-300 p-4 mb-1 rounded-md"
@@ -86,8 +86,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
                             required
                         />
                         {
-                            schema.errors.uom && (
-                                <p className='text-red-500 text-sm'>{schema.errors.uom}</p>
+                            schema.errors.unit && (
+                                <p className='text-red-500 text-sm'>{schema.errors.unit}</p>
                             )
                         }
                     </div>

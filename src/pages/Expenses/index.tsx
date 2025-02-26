@@ -20,7 +20,7 @@ const Expenses: React.FC = () => {
     const navigate = useNavigate()
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
-    const [limit, setLimit] = useState<number>(5)
+    const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('all')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)

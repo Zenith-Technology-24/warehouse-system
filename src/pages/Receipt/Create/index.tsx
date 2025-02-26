@@ -61,7 +61,7 @@ const CreateReceipt: React.FC = () => {
                     amount: Yup.number().required('Inventory Amount is required'),
                     unit: Yup.string().required('Inventory Unit is required'),
                     size: Yup.string().required('Inventory Size is required'),
-                    expiryDate: Yup.string().required('Inventory Expiry Date is required'),
+                    expiryDate: Yup.string(),
                 })
             })
         ),
