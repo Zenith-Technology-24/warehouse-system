@@ -7,6 +7,7 @@ import Loading from './components/Loading'
 const Dashboard = React.lazy(() => import('./pages/Dashboard'))
 const Login = React.lazy(() => import('./pages/Login'))
 const Inventory = React.lazy(() => import('./pages/Inventory'))
+const ViewInventory = React.lazy(() => import('./pages/Inventory/View'))
 const InventoryLayout = React.lazy(() => import('./pages/Inventory/layout'))
 const Pagelayout = React.lazy(() => import('./components/Pagelayout'))
 const RequireAuth = React.lazy(() => import('./helper/RequireAuth'))
@@ -99,6 +100,7 @@ function App() {
                 <Route index={true} element={<Inventory />} />
                 <Route path="create" element={<CreateProduct />} />
                 <Route path="update" element={<UpdateProduct />} />
+                <Route path="view" element={<ViewInventory />} />
               </Route>
               <Route path="sales">
                 <Route index={true} element={<Sales />} />
