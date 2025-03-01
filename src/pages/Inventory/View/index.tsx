@@ -3,10 +3,10 @@ import { usePendingIssuanceColumns } from "../../../columns/PendingIssuanceColum
 import { useReceiptColumns } from "../../../columns/ReceiptColumns"
 import DashboardCard from "../../../components/DashboardCard"
 import Header from "../../../components/Header"
-import OverallBox from "../../../components/OverallBox"
 import Table from "../../../components/Table"
 import TopButtons from "../../../components/TopButtons"
 import { useLocation, useNavigate } from "react-router-dom"
+import InventoryBreakdown from "../../../components/InventoryBreakdown"
 
 const View: React.FC = () => {
     const { state } = useLocation()
@@ -70,7 +70,7 @@ const View: React.FC = () => {
                             title={'Total Inventory'}
                             value={'100'}
                             type={'inventory'}
-                            handleClick={() => setExpand('inventory')}
+                            handleClick={() => expand === 'inventory' ? setExpand(null) : setExpand('inventory')}
                         />
                         <DashboardCard
                             active={expand === 'pending'}
@@ -86,7 +86,7 @@ const View: React.FC = () => {
                             title={'Total Pending'}
                             value={'100'}
                             type={'pending'}
-                            handleClick={() => setExpand('pending')}
+                            handleClick={() => expand === 'pending' ? setExpand(null) : setExpand('pending')}
                         />
                         <DashboardCard
                             active={expand === 'available'}
@@ -102,7 +102,7 @@ const View: React.FC = () => {
                             title={'Available Issuance'}
                             value={'100'}
                             type={'available'}
-                            handleClick={() => setExpand('available')}
+                            handleClick={() => expand === 'available' ? setExpand(null) : setExpand('available')}
                         />
                         <DashboardCard
                             active={expand === 'gross'}
@@ -118,10 +118,33 @@ const View: React.FC = () => {
                             title={'Gross Total Amount'}
                             value={'100'}
                             type={'gross'}
-                            handleClick={() => setExpand('gross')}
                         />
                     </div>
                 </div>
+                {
+                    expand === 'inventory' && (
+                        <InventoryBreakdown
+                            title={'Total Quantity Breakdown by Size'}
+                            color={'#575B42'}
+                        />
+                    )
+                }
+                {
+                    expand === 'pending' && (
+                        <InventoryBreakdown
+                            title={'Total Pending Breakdown by Size'}
+                            color={'#FFC107'}
+                        />
+                    )
+                }
+                {
+                    expand === 'available' && (
+                        <InventoryBreakdown
+                            title={'Total Available Issuance Breakdown by Size'}
+                            color={'#4CAF50'}
+                        />
+                    )
+                }
                 <div>
                     <h1 className="text-md font-semibold mb-2">Receipt Details</h1>
                     <Table

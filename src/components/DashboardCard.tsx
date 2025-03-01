@@ -44,12 +44,31 @@ const isActive = (active: boolean, type: string) => {
     }
 }
 
-const DashboardCard: React.FC<Props> = ({ active = false, icon, title, value, type, handleClick }) => {
+const DashboardCard: React.FC<Props> = ({ active = null, icon, title, value, type, handleClick }) => {
     return (
         <div onClick={handleClick} className={`shadow-md hover:shadow-lg flex flex-col justify-center gap-2 rounded-lg items-start p-4 ${getStyle(type)} ${isActive(active, type)}`}>
             {icon}
             <p className="text-gray-400 font-medium">{title}</p>
             <h1 className="font-medium text-gray-600 text-right text-3xl">{value}</h1>
+            {
+                active != null && (
+                    active ? (
+                        <div className="flex gap-3 items-center">
+                            <span className="text-gray-500 text-sm">View Less</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </div>
+                    ) : (
+                        <div className="flex gap-3 items-center">
+                            <span className="text-gray-500 text-sm">View More</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                            </svg>
+                        </div>
+                    )
+                )
+            }
         </div>
     )
 }
