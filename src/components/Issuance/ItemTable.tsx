@@ -2,7 +2,6 @@ import { useMemo } from "react"
 import Table from "../Table"
 import { Field } from "formik"
 import DropdownWithNew from "../DropdownWithNew"
-import DropdownWithSearch from "../DropdownWithSearch"
 import { fetchIssuanceInventory } from "../../api/inventory/inventoryApi"
 
 interface ItemTableProps {
