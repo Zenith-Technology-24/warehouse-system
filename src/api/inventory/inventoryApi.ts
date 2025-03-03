@@ -70,10 +70,15 @@ export const updateInventoryStatus = async ({ id, status }: updateInventoryStatu
     return data;
 };
 
-export const fetchIssuanceInventory = async () => {
-    const { data } = await apiService.get('/issuance/inventory');
-    return data.map(({ itemName, ...rest }) => ({
-        name: itemName,
-        ...rest,
-    }));
+export const fetchOneInventory = async (id: number) => {
+    const { data } = await apiService.get(`/inventory/${id}`);
+    return data;
 };
+
+// export const fetchIssuanceInventory = async () => {
+//     const { data } = await apiService.get('/issuance/inventory');
+//     return data.map(({ itemName, ...rest }) => ({
+//         name: itemName,
+//         ...rest,
+//     }));
+// };

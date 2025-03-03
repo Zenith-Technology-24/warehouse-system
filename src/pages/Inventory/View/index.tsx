@@ -7,14 +7,20 @@ import Table from "../../../components/Table"
 import TopButtons from "../../../components/TopButtons"
 import { useLocation, useNavigate } from "react-router-dom"
 import InventoryBreakdown from "../../../components/InventoryBreakdown"
+import { useQuery } from "@tanstack/react-query"
+import { fetchOneInventory } from "../../../api/inventory/inventoryApi"
 
 const View: React.FC = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
     const [expand, setExpand] = useState<string | null>(null)
-
-    const receiptColumns = useReceiptColumns(state?.endUsers)
-    const pendingIssuanceColumns = usePendingIssuanceColumns(state?.endUsers)
+    const { data } = useQuery({
+        queryKey: ["inventory_details", state.id],
+        queryFn: () => fetchOneInventory(state.id),
+    });
+    console.log(data)
+    const receiptColumns = useReceiptColumns(state)
+    const pendingIssuanceColumns = usePendingIssuanceColumns(state)
 
     return (
         <>
@@ -33,24 +39,24 @@ const View: React.FC = () => {
                 <div className="grid grid-columns-2">
                     <h1 className="text-md font-semibold mb-2 col-span-2">Inventory Details</h1>
                     <div className="text-gray-500 space-y-2">
-                        <p>Item Name: <span className="text-black ml-2">Army Rubber Shoes</span></p>
-                        <p>UoM: <span className="text-black ml-2">ea</span></p>
+                        <p>Item Name: <span className="text-black ml-2">{data?.name}</span></p>
+                        <p>UoM: <span className="text-black ml-2">{data?.unit}</span></p>
                         <div className="flex">
                             <p>Status:</p>
                             <div
                                 className={`
-                                    ${state?.status === 'active' && 'bg-green-50 text-green-500 w-20'}
-                                    ${state?.status === 'archived' && 'bg-gray-50 text-gray-500 w-20'} 
+                                    ${data?.status === 'active' && 'bg-green-50 text-green-500 w-20'}
+                                    ${data?.status === 'archived' && 'bg-gray-50 text-gray-500 w-20'} 
                                     rounded-full flex items-center justify-center mx-3`}
                             >
                                 <div
                                     className={`w-2 h-2 rounded-full mr-1 
-                                        ${state?.status === 'active' && 'bg-green-500'}
-                                        ${state?.status === 'archived' && 'bg-gray-500'}
+                                        ${data?.status === 'active' && 'bg-green-500'}
+                                        ${data?.status === 'archived' && 'bg-gray-500'}
                                     `}
                                 ></div>
                                 <p className="text-xs">
-                                    {state?.status.charAt(0).toUpperCase() + state?.status.slice(1)}
+                                    {data?.status.charAt(0).toUpperCase() + data?.status.slice(1)}
                                 </p>
                             </div>
                         </div>
@@ -147,19 +153,28 @@ const View: React.FC = () => {
                 }
                 <div>
                     <h1 className="text-md font-semibold mb-2">Receipt Details</h1>
-                    <Table
-                        columns={receiptColumns}
-                        rows={{ data: state?.inventory }}
-                        classes="!h-0"
-                    />
+                    {
+                        data?.receipts.length > 0 ? (
+                            <Table
+                                columns={receiptColumns}
+                                rows={{ data: data?.receipts }}
+                                classes="!h-0"
+                            />
+                        ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>
+                    }
+
                 </div>
                 <div>
                     <h1 className="text-md font-semibold mb-2">Pending Issuance Details</h1>
-                    <Table
-                        columns={pendingIssuanceColumns}
-                        rows={{ data: state?.inventory }}
-                        classes="!h-0"
-                    />
+                    {
+                        data?.issuance.length > 0 ? (
+                            <Table
+                                columns={pendingIssuanceColumns}
+                                rows={{ data: state?.issuance }}
+                                classes="!h-0"
+                            />
+                        ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>
+                    }
                 </div>
             </div>
         </>

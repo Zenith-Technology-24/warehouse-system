@@ -39,7 +39,7 @@ const Table: React.FC<Props> = ({
                             {columns.map((column: { name: string, label: string }, index: number) => (
                                 <th
                                     key={index}
-                                    className="px-6 py-3 text-left text-xs font-medium tracking-wider"
+                                    className={`px-6 py-3 text-left text-xs font-medium tracking-wider ${column?.label === 'Action' && 'text-center'}`}
                                 >
                                     {column.label}
                                 </th>

@@ -11,6 +11,7 @@ import moment from "moment"
 import Search from "../../components/Search"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
+import StockStatusComponent from "../../components/StockStatus"
 
 const Inventory: React.FC = () => {
     const { showToast } = useToast()
@@ -96,17 +97,6 @@ const Inventory: React.FC = () => {
                 }
             },
             {
-                label: 'Size',
-                name: 'size',
-                render(row: { item: { size: string } }, value: string, rowIndex: number) {
-                    return (
-                        <div>
-                            {row?.item?.size}
-                        </div>
-                    )
-                }
-            },
-            {
                 label: 'T/Qty',
                 name: 'quantity',
                 render(row: { item: { quantity: string } }, value: string, rowIndex: number) {
@@ -118,23 +108,12 @@ const Inventory: React.FC = () => {
                 }
             },
             {
-                label: 'U/I',
+                label: 'UoM',
                 name: 'unit',
-                render(row: { price: number }, value: string, rowIndex: number) {
+                render(row: { item: { unit: string } }, value: string, rowIndex: number) {
                     return (
                         <div>
-                            {value}
-                        </div>
-                    )
-                }
-            },
-            {
-                label: 'U/Price',
-                name: 'price',
-                render(row: { item: { price: string } }, value: string, rowIndex: number) {
-                    return (
-                        <div>
-                            {row?.item?.price && '₱' + row?.item?.price}
+                            {row?.item?.unit}
                         </div>
                     )
                 }
@@ -151,12 +130,21 @@ const Inventory: React.FC = () => {
                 }
             },
             {
+                label: 'Stock Level',
+                name: 'amount',
+                render(row: { item: { amount: string } }, value: string, rowIndex: number) {
+                    return (
+                        <StockStatusComponent status={'High Stock'} />
+                    )
+                }
+            },
+            {
                 label: 'Action',
                 name: 'id',
                 render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
-                        <div className="flex flex-row gap-2">
-                            <div onClick={() => navigate('/inventory/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                        <div className="flex flex-row justify-center gap-2">
+                            <div onClick={() => navigate('/inventory/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g fill="none" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821" />

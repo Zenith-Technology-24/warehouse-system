@@ -319,7 +319,7 @@ const CreateReceipt: React.FC = () => {
                                                     </div>
                                                 </div>
                                                 <div className="flex h-auto flex-col py-3 col-span-3">
-                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.expiryDate`}>Expiry Date</label>
+                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.expiryDate`}>Expiry Date <span className="text-gray-500">(Optional)</span></label>
                                                     <Field
                                                         type="date"
                                                         name={`inventory[${index}].item.expiryDate`}
