@@ -64,6 +64,11 @@ export const fetchReceipt = async ({ search, page, limit, status }: fetchExpense
     return data;
 };
 
+export const fetchOneReceipt = async (id: number) => {
+    const { data } = await apiService.get(`/receipt/${id}`);
+    return data;
+};
+
 export const createReceipt = async (data: createReceiptProps) => {
     const res = await apiService.post("/receipt", data);
     return res;

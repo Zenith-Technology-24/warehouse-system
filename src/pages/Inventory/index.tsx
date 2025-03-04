@@ -98,11 +98,11 @@ const Inventory: React.FC = () => {
             },
             {
                 label: 'T/Qty',
-                name: 'quantity',
-                render(row: { item: { quantity: string } }, value: string, rowIndex: number) {
+                name: 'totalQuantity',
+                render(row: object, value: number, rowIndex: number) {
                     return (
                         <div>
-                            {row?.item?.quantity}
+                            {value}
                         </div>
                     )
                 }
@@ -113,28 +113,28 @@ const Inventory: React.FC = () => {
                 render(row: { item: { unit: string } }, value: string, rowIndex: number) {
                     return (
                         <div>
-                            {row?.item?.unit}
+                            {row?.unit}
                         </div>
                     )
                 }
             },
             {
                 label: 'GT/Amount',
-                name: 'amount',
+                name: 'grandTotalAmount',
                 render(row: { item: { amount: string } }, value: string, rowIndex: number) {
                     return (
                         <div>
-                            {row?.item?.amount && '₱' + row?.item?.amount}
+                            {value && '₱' + value}
                         </div>
                     )
                 }
             },
             {
                 label: 'Stock Level',
-                name: 'amount',
-                render(row: { item: { amount: string } }, value: string, rowIndex: number) {
+                name: 'stockLevel',
+                render(row: object, value: string, rowIndex: number) {
                     return (
-                        <StockStatusComponent status={'High Stock'} />
+                        <StockStatusComponent status={value} />
                     )
                 }
             },

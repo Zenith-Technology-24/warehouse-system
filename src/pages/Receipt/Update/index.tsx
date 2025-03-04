@@ -7,11 +7,11 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import moment from "moment"
 import AddItemModal from "../../../components/AddItemModal"
 import { addItemType, fetchItemType } from "../../../api/item/itemApi"
-import { updateReceipt } from "../../../api/receipt/receiptApi"
+import { fetchOneReceipt, updateReceipt } from "../../../api/receipt/receiptApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 
 const UpdateReceipt: React.FC = () => {
@@ -21,6 +21,10 @@ const UpdateReceipt: React.FC = () => {
     const [sizeType, setSizeType] = useState<string>('none')
     const navigate = useNavigate()
     const { showToast } = useToast()
+    const { data } = useQuery({
+        queryKey: ["receipt_details", state.id],
+        queryFn: () => fetchOneReceipt(state.id),
+    });
     const updateReceiptMutation = useMutation({
         mutationFn: (values: any) => updateReceipt({ ...values, id: state.id }),
         onError: (error: any) => {
@@ -65,22 +69,22 @@ const UpdateReceipt: React.FC = () => {
     });
 
     const initialValues = {
-        source: state?.source,
-        issuanceDirective: state?.issuanceDirective,
-        receipt_date: state?.receiptDate ? moment(state?.receiptDate).format('YYYY-MM-DD') : '',
-        inventory: state?.inventory?.map((inv: any) => (
+        source: data?.source,
+        issuanceDirective: data?.issuanceDirective,
+        receipt_date: data?.receiptDate ? moment(data?.receiptDate).format('YYYY-MM-DD') : '',
+        inventory: data?.item?.map((inv: any) => (
             {
                 id: inv?.id,
-                name: inv?.name,
+                name: inv?.item_name,
                 sizeType: inv?.sizeType, // wala,
                 item: {
-                    location: inv?.item?.location,
-                    quantity: inv?.item?.quantity,
-                    price: inv?.item?.price,
-                    amount: inv?.item?.amount,
-                    unit: inv?.item?.unit,
-                    size: inv?.item?.size,
-                    expiryDate: inv?.item?.expiryDate ? moment(inv?.item?.expiryDate).format('YYYY-MM-DD') : '',
+                    location: inv?.location,
+                    quantity: inv?.quantity,
+                    price: inv?.price,
+                    amount: inv?.amount,
+                    unit: inv?.unit,
+                    size: inv?.size,
+                    expiryDate: inv?.expiryDate ? moment(inv?.expiryDate).format('YYYY-MM-DD') : '',
                 }
             }
         ))
@@ -142,7 +146,7 @@ const UpdateReceipt: React.FC = () => {
                     }}
                 >
                     {({ values, setFieldValue }) => {
-                        const totalAmount = values.inventory.reduce((sum: number, inv: { item: { price: number, quantity: number } }) => {
+                        const totalAmount = values?.inventory?.reduce((sum: number, inv: { item: { price: number, quantity: number } }) => {
                             return sum + (inv?.item?.price * inv?.item?.quantity || 0);
                         }, 0);
 
@@ -208,7 +212,7 @@ const UpdateReceipt: React.FC = () => {
                                             <p>Add Item Type</p>
                                         </div>
                                     </div>
-                                    {values.inventory.map((inventory: any, index: number) => {
+                                    {values?.inventory?.map((inventory: any, index: number) => {
                                         return (
                                             <div key={index} className="w-full grid grid-cols-12 gap-1 bg-gray-50 px-6 py-2 my-2 rounded-lg">
                                                 <div className="flex h-auto flex-col py-3 col-span-6">
@@ -402,7 +406,7 @@ const UpdateReceipt: React.FC = () => {
                                         )
                                     })}
                                     <div className="flex flex-row-reverse py-1">
-                                        GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        GT/Amount: ₱{totalAmount?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </div>
                                 </div>
                             </Form>

@@ -15,7 +15,7 @@ export const useReceiptColumns = (inventoryData: any) => {
                 label: 'Receipt Directive Nr',
                 name: 'issuanceDirective',
                 render(row: any, value: string) {
-                    return <p>{value.toUpperCase()}</p>
+                    return <p>{row?.receipt?.issuanceDirective?.toUpperCase()}</p>
                 }
             },
             {
@@ -26,17 +26,24 @@ export const useReceiptColumns = (inventoryData: any) => {
                 }
             },
             {
+                label: 'Size',
+                name: 'size',
+                render(row: object, value: string) {
+                    return <p>{value}</p>
+                }
+            },
+            {
                 label: 'UoM',
-                name: 'StockDetails',
+                name: 'unit',
                 render(row: { item: { quantity: string, unit: string } }, value: string) {
                     return <p>{value}</p>
                 }
             },
             {
                 label: 'T/Amount',
-                name: 'price',
-                render(row: { item: { price: string } }) {
-                    return <p></p>
+                name: 'amount',
+                render(row: object, value: string) {
+                    return <p>{value && '₱' + value}</p>
                 }
             },
             {
@@ -51,7 +58,7 @@ export const useReceiptColumns = (inventoryData: any) => {
                             </div>
                             <div>
                                 <p className="text-gray-500">Created By</p>
-                                <p>{row?.user?.firstname} {row?.user?.lastname}</p>
+                                <p>{row?.receipt?.user?.firstname} {row?.receipt?.user?.lastname} ({row?.receipt?.user?.roles[0]?.name})</p>
                             </div>
                         </div>
                     )

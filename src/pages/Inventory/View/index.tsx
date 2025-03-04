@@ -18,7 +18,6 @@ const View: React.FC = () => {
         queryKey: ["inventory_details", state.id],
         queryFn: () => fetchOneInventory(state.id),
     });
-    console.log(data)
     const receiptColumns = useReceiptColumns(state)
     const pendingIssuanceColumns = usePendingIssuanceColumns(state)
 
@@ -63,7 +62,7 @@ const View: React.FC = () => {
                     </div>
                     <div className="grid gap-2 grid-cols-4">
                         <DashboardCard
-                            active={expand === 'inventory'}
+                            active={data?.sizeType === 'none' ? null : expand === 'inventory'}
                             icon={
                                 <div>
                                     <div className="bg-aaa rounded-full p-2">
@@ -74,12 +73,16 @@ const View: React.FC = () => {
                                 </div>
                             }
                             title={'Total Inventory'}
-                            value={'100'}
+                            value={data?.quantitySummary?.totalQuantity}
                             type={'inventory'}
-                            handleClick={() => expand === 'inventory' ? setExpand(null) : setExpand('inventory')}
+                            handleClick={() => {
+                                if (data?.sizeType !== 'none') {
+                                    expand === 'inventory' ? setExpand(null) : setExpand('inventory')
+                                }
+                            }}
                         />
                         <DashboardCard
-                            active={expand === 'pending'}
+                            active={data?.sizeType === 'none' ? null : expand === 'pending'}
                             icon={
                                 <div>
                                     <div className="bg-[#FFC107] rounded-full p-2">
@@ -90,12 +93,16 @@ const View: React.FC = () => {
                                 </div>
                             }
                             title={'Total Pending'}
-                            value={'100'}
+                            value={data?.quantitySummary?.pendingQuantity}
                             type={'pending'}
-                            handleClick={() => expand === 'pending' ? setExpand(null) : setExpand('pending')}
+                            handleClick={() => {
+                                if (data?.sizeType !== 'none') {
+                                    expand === 'pending' ? setExpand(null) : setExpand('pending')
+                                }
+                            }}
                         />
                         <DashboardCard
-                            active={expand === 'available'}
+                            active={data?.sizeType === 'none' ? null : expand === 'available'}
                             icon={
                                 <div>
                                     <div className="bg-[#4CAF50] rounded-full p-2">
@@ -106,12 +113,15 @@ const View: React.FC = () => {
                                 </div>
                             }
                             title={'Available Issuance'}
-                            value={'100'}
+                            value={data?.quantitySummary?.availableQuantity}
                             type={'available'}
-                            handleClick={() => expand === 'available' ? setExpand(null) : setExpand('available')}
+                            handleClick={() => {
+                                if (data?.sizeType !== 'none') {
+                                    expand === 'available' ? setExpand(null) : setExpand('available')
+                                }
+                            }}
                         />
                         <DashboardCard
-                            active={expand === 'gross'}
                             icon={
                                 <div>
                                     <div className="bg-[#2196F3] rounded-full p-2">
@@ -122,7 +132,7 @@ const View: React.FC = () => {
                                 </div>
                             }
                             title={'Gross Total Amount'}
-                            value={'100'}
+                            value={data?.quantitySummary?.grandTotalAmount}
                             type={'gross'}
                         />
                     </div>
@@ -131,7 +141,8 @@ const View: React.FC = () => {
                     expand === 'inventory' && (
                         <InventoryBreakdown
                             title={'Total Quantity Breakdown by Size'}
-                            color={'#575B42'}
+                            classname={'bg-[#575B42]'}
+                            data={data?.sizeDetails?.total}
                         />
                     )
                 }
@@ -139,7 +150,8 @@ const View: React.FC = () => {
                     expand === 'pending' && (
                         <InventoryBreakdown
                             title={'Total Pending Breakdown by Size'}
-                            color={'#FFC107'}
+                            classname={'bg-[#FFC107]'}
+                            data={data?.sizeDetails?.pending}
                         />
                     )
                 }
@@ -147,7 +159,8 @@ const View: React.FC = () => {
                     expand === 'available' && (
                         <InventoryBreakdown
                             title={'Total Available Issuance Breakdown by Size'}
-                            color={'#4CAF50'}
+                            classname={'bg-[#4CAF50]'}
+                            data={data?.sizeDetails?.available}
                         />
                     )
                 }
@@ -157,7 +170,7 @@ const View: React.FC = () => {
                         data?.receipts.length > 0 ? (
                             <Table
                                 columns={receiptColumns}
-                                rows={{ data: data?.receipts }}
+                                rows={{ data: data?.items }}
                                 classes="!h-0"
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>

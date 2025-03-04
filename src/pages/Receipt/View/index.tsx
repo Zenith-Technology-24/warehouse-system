@@ -5,16 +5,22 @@ import TopButtons from "../../../components/TopButtons"
 import CsvDownloader from 'react-csv-downloader'
 import { useLocation, useNavigate } from "react-router-dom"
 import moment from "moment"
+import { useQuery } from "@tanstack/react-query"
+import { fetchOneReceipt } from "../../../api/receipt/receiptApi"
 
 const View: React.FC = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
-    console.log(state);
+    const { data } = useQuery({
+        queryKey: ["receipt_details", state.id],
+        queryFn: () => fetchOneReceipt(state.id),
+    });
+
     const columns = useMemo(() => {
         return [
             {
                 label: 'Item Name',
-                name: 'name',
+                name: 'item_name',
                 render(row: any, value: string, rowIndex: number) {
                     return (
                         <p className="font-normal">{value}</p>
@@ -26,7 +32,7 @@ const View: React.FC = () => {
                 name: 'location',
                 render(row: any, value: string, rowIndex: number) {
                     return (
-                        <p>{row?.item?.location}</p>
+                        <p>{value}</p>
                     )
                 }
             },
@@ -35,23 +41,23 @@ const View: React.FC = () => {
                 name: 'size',
                 render(row: { item: { size: string } }, value: string, rowIndex: number) {
                     return (
-                        <p>{row?.item?.size}</p>
+                        <p>{value}</p>
                     )
                 }
             },
             {
                 label: 'Stock Details',
                 name: 'StockDetails',
-                render(row: { item: { quantity: string, unit: string }, unit: string }, value: string, rowIndex: number) {
+                render(row: { quantity: string, unit: string }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
                                 <p className="text-gray-500">Qty</p>
-                                <p>{row?.item?.quantity}</p>
+                                <p>{row?.quantity}</p>
                             </div>
                             <div>
-                                <p className="text-gray-500">U/I</p>
-                                <p>{row?.item?.unit || 'N/A'}</p>
+                                <p className="text-gray-500">UoM</p>
+                                <p>{row?.unit || 'N/A'}</p>
                             </div>
                         </div>
                     )
@@ -62,7 +68,7 @@ const View: React.FC = () => {
                 name: 'price',
                 render(row: { item: { price: string } }, value: string, rowIndex: number) {
                     return (
-                        <p>₱{row?.item?.price}</p>
+                        <p>₱{value}</p>
                     )
                 }
             },
@@ -73,7 +79,7 @@ const View: React.FC = () => {
                     return (
                         <div>
                             <p className="text-gray-500">T/Amount</p>
-                            <p>₱{row?.item?.amount}</p>
+                            <p>₱{row?.amount}</p>
                         </div>
                     )
                 }
@@ -128,7 +134,7 @@ const View: React.FC = () => {
                     <h1 className="text-md font-semibold mb-2">Item Details</h1>
                     <Table
                         columns={columns}
-                        rows={{ data: state?.inventory }}
+                        rows={{ data: data?.item }}
                         classes="!h-0"
                     />
                 </div>

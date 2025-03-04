@@ -1,7 +1,7 @@
 import React from "react"
 
 interface Props {
-    active?: boolean
+    active?: boolean | null
     icon: any
     title: string
     value: string

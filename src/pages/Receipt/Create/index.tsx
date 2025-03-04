@@ -16,10 +16,9 @@ import { createReceipt } from "../../../api/receipt/receiptApi"
 const CreateReceipt: React.FC = () => {
     const navigate = useNavigate()
     const { showToast } = useToast()
-    const queryClient = useQueryClient()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
-    const [sizeType, setSizeType] = useState<string>('none');
+    // const [sizeType, setSizeType] = useState<string>('none');
     const createReceiptMutation = useMutation({
         mutationFn: (values: any) => createReceipt(values),
         onError: (error: any) => {
@@ -31,7 +30,7 @@ const CreateReceipt: React.FC = () => {
         },
         onSuccess: () => {
             showToast(
-                "Receeipt Successfully Created!",
+                "Receipt Successfully Created!",
                 "",
                 "success"
             );
@@ -224,9 +223,10 @@ const CreateReceipt: React.FC = () => {
                                                         fetchNames={fetchItemType}
                                                         setFieldValue={setFieldValue}
                                                         refetchData={handleRefetch}
-                                                        setSelectedValue={(value: { sizeType: string, unit: string, name: string }) => {
-                                                            setSizeType(value.sizeType)
+                                                        setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
+                                                            // setSizeType(value.sizeType)
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
+                                                            setFieldValue(`inventory[${index}].item.size`, value.sizeType === 'numerical' ? '6' : value.sizeType === 'apparrel' ? 'S' : 'none')
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                     />
@@ -238,19 +238,19 @@ const CreateReceipt: React.FC = () => {
                                                     <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
                                                     <Field as="select"
                                                         name={`inventory[${index}].item.size`}
-                                                        disabled={sizeType === 'none'}
+                                                        disabled={inventory?.sizeType === 'none'}
                                                         className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                                     >
                                                         {
-                                                            sizeType === 'none' && (
+                                                            inventory?.sizeType === 'none' && (
                                                                 <>
-                                                                    <option value="none">None</option>
+                                                                    <option selected value="none">None</option>
                                                                 </>
                                                             )
 
                                                         }
                                                         {
-                                                            sizeType === 'apparrel' && (
+                                                            inventory?.sizeType === 'apparrel' && (
                                                                 <>
                                                                     <option selected value="S">S</option>
                                                                     <option value="M">M</option>
@@ -262,7 +262,7 @@ const CreateReceipt: React.FC = () => {
 
                                                         }
                                                         {
-                                                            sizeType === 'numerical' && (
+                                                            inventory?.sizeType === 'numerical' && (
                                                                 <>
                                                                     <option selected value="6">6</option>
                                                                     <option value="7">7</option>
