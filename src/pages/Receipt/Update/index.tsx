@@ -38,7 +38,11 @@ const UpdateReceipt: React.FC = () => {
                     id: inv?.id,
                     name: inv?.item_name,
                     sizeType: inv?.sizeType,
+                    inventoryId: inv?.inventoryId || null,
+                    itemId: inv?.inventoryId || null,
                     item: {
+                        itemId: inv?.inventoryId || null,
+                        id: inv?.inventoryId || null,
                         location: inv?.location,
                         quantity: inv?.quantity,
                         price: inv?.price,
@@ -70,6 +74,7 @@ const UpdateReceipt: React.FC = () => {
     });
 
     const handleSave = () => {
+        console.log(formRef.current)
         if (formRef?.current) {
             formRef.current?.submitForm()
         }
@@ -84,7 +89,11 @@ const UpdateReceipt: React.FC = () => {
                 id: Yup.string().nullable(),
                 name: Yup.string().required('Name is required'),
                 sizeType: Yup.string(),
+                inventoryId: Yup.string().nullable(),
+                itemId: Yup.string().nullable(),
                 item: Yup.object().shape({
+                    id: Yup.string().nullable(),
+                    itemId: Yup.string().nullable(),
                     location: Yup.string().required('Inventory Location is required'),
                     quantity: Yup.number()
                         .required('Inventory Quantity is required')
@@ -404,7 +413,11 @@ const UpdateReceipt: React.FC = () => {
                                                             id: '',
                                                             name: '',
                                                             sizeType: '',
+                                                            inventoryId: null,
+                                                            itemId: null,
                                                             item: {
+                                                                itemId: null,
+                                                                id: null,
                                                                 location: '',
                                                                 quantity: 1,
                                                                 price: 0,
