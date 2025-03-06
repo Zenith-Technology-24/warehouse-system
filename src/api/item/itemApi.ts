@@ -7,7 +7,7 @@ interface addItemTypeProps {
 }
 
 export const addItemType = async (data: addItemTypeProps) => {
-    const res = await apiService.post("/inventory", data);
+    const res = await apiService.post("/inventory/type", data);
     return res;
 };
 
