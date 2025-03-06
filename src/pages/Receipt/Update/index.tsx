@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react"
 import * as Yup from 'yup'
 import Header from "../../../components/Header"
 import TopButtons from "../../../components/TopButtons"
-import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton"
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
@@ -19,12 +18,42 @@ const UpdateReceipt: React.FC = () => {
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
     const [sizeType, setSizeType] = useState<string>('none')
+    const [initialValues, setInitialValues] = useState<any>(null)
     const navigate = useNavigate()
     const { showToast } = useToast()
     const { data } = useQuery({
         queryKey: ["receipt_details", state.id],
         queryFn: () => fetchOneReceipt(state.id),
     });
+
+    useEffect(() => {
+        if (data) {
+            setInitialValues({
+                source: data?.source,
+                issuanceDirective: data?.issuanceDirective,
+                receipt_date: data?.receiptDate
+                    ? moment(data?.receiptDate).format("YYYY-MM-DD")
+                    : "",
+                inventory: data?.item?.map((inv: any) => ({
+                    id: inv?.id,
+                    name: inv?.item_name,
+                    sizeType: inv?.sizeType,
+                    item: {
+                        location: inv?.location,
+                        quantity: inv?.quantity,
+                        price: inv?.price,
+                        amount: inv?.amount,
+                        unit: inv?.unit,
+                        size: inv?.size,
+                        expiryDate: inv?.expiryDate
+                            ? moment(inv?.expiryDate).format("YYYY-MM-DD")
+                            : "",
+                    },
+                })),
+            });
+        }
+    }, [data])
+
     const updateReceiptMutation = useMutation({
         mutationFn: (values: any) => updateReceipt({ ...values, id: state.id }),
         onError: (error: any) => {
@@ -54,12 +83,18 @@ const UpdateReceipt: React.FC = () => {
             Yup.object().shape({
                 id: Yup.string().nullable(),
                 name: Yup.string().required('Name is required'),
-                sizeType: Yup.string().required('Size Type is required'),
+                sizeType: Yup.string(),
                 item: Yup.object().shape({
                     location: Yup.string().required('Inventory Location is required'),
-                    quantity: Yup.number().required('Inventory Quantity is required'),
-                    price: Yup.number().required('Inventory Price is required'),
-                    amount: Yup.number().required('Inventory Amount is required'),
+                    quantity: Yup.number()
+                        .required('Inventory Quantity is required')
+                        .typeError('Quantity must be a valid number'),
+                    price: Yup.number()
+                        .required('Inventory Price is required')
+                        .typeError('Price must be a valid number'),
+                    amount: Yup.number()
+                        .required('Inventory Amount is required')
+                        .typeError('Amount must be a valid number'),
                     unit: Yup.string().required('Inventory Unit is required'),
                     size: Yup.string().required('Inventory Size is required'),
                     expiryDate: Yup.string(),
@@ -67,28 +102,6 @@ const UpdateReceipt: React.FC = () => {
             })
         ),
     });
-
-    const initialValues = {
-        source: data?.source,
-        issuanceDirective: data?.issuanceDirective,
-        receipt_date: data?.receiptDate ? moment(data?.receiptDate).format('YYYY-MM-DD') : '',
-        inventory: data?.item?.map((inv: any) => (
-            {
-                id: inv?.id,
-                name: inv?.item_name,
-                sizeType: inv?.sizeType, // wala,
-                item: {
-                    location: inv?.location,
-                    quantity: inv?.quantity,
-                    price: inv?.price,
-                    amount: inv?.amount,
-                    unit: inv?.unit,
-                    size: inv?.size,
-                    expiryDate: inv?.expiryDate ? moment(inv?.expiryDate).format('YYYY-MM-DD') : '',
-                }
-            }
-        ))
-    };
 
     const addItem = useMutation({
         mutationFn: addItemType,
@@ -109,6 +122,10 @@ const UpdateReceipt: React.FC = () => {
         refetchFn();
     };
 
+    if (!initialValues) {
+        return <div>No Data Available</div>;
+    }
+
     return (
         <>
             <AddItemModal
@@ -119,7 +136,9 @@ const UpdateReceipt: React.FC = () => {
             <div className="flex flex-row justify-between pb-4">
                 <Header title={'Update Receipt'} description={'Receipt'} />
                 <TopButtons>
-                    <LinkSecondaryButton to=".." text="Cancel" />
+                    <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
+                        Cancel
+                    </button>
                     <PrimaryButton text="Update" onClick={handleSave} />
                 </TopButtons>
             </div>
