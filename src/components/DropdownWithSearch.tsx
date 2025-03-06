@@ -86,7 +86,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                                 className="bg-transparent h-12 border border-gray-300 rounded-lg p-2 flex justify-between items-center cursor-pointer"
                                 onClick={() => setIsOpen(!isOpen)}
                             >
-                                <span className={`ml-1 ${!selectedOption?.name ? 'text-gray-400' : 'text-black'}`}>{formikSelectedValue || placeholder}</span>
+                                <span className={`ml-1 ${selectedOption?.name || formikSelectedValue ? 'text-black' : 'text-gray-400'}`}>{formikSelectedValue || placeholder}</span>
                                 <svg
                                     className={`w-5 h-5 transition-transform text-gray-400 ${isOpen ? "transform rotate-180" : ""
                                         }`}

@@ -21,7 +21,7 @@ const Receipt: React.FC = () => {
     const navigate = useNavigate()
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
-    const [limit, setLimit] = useState<number>(5)
+    const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('active')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toWithdrawn, setToWithdrawn] = useState<number | null>(null)
@@ -83,7 +83,7 @@ const Receipt: React.FC = () => {
     const handleArchive = () => {
         updateStatus.mutate({
             id: toArchive,
-            status: 'archived'
+            status: 'archive'
         })
         setIsArchiveModalOpen(false)
     }
@@ -91,7 +91,7 @@ const Receipt: React.FC = () => {
     const handleActive = () => {
         updateStatus.mutate({
             id: toActive,
-            status: 'pending'
+            status: 'unarchive'
         })
         setIsArchiveModalOpen(false)
     }
@@ -137,7 +137,7 @@ const Receipt: React.FC = () => {
             // },
             {
                 label: 'Source',
-                name: 'issuanceDirective',
+                name: 'source',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <p className="font-normal">{value}</p>
@@ -267,24 +267,24 @@ const Receipt: React.FC = () => {
             />
             <Modal
                 isOpen={isArchiveModalOpen}
-                title={'Archive Issuance'}
+                title={'Archive Receipt'}
                 onClose={() => setIsArchiveModalOpen(false)}
                 handleFunction={() => handleArchive()}
-                message={'Are you sure you want to archive this issuance?'}
+                message={'Are you sure you want to archive this receipt?'}
             />
             <Modal
                 isOpen={isActiveModalOpen}
-                title={'Restore Issuance'}
+                title={'Restore Receipt'}
                 onClose={() => setIsActiveModalOpen(false)}
                 handleFunction={() => handleActive()}
-                message={'Are you sure you want to restore this issuance?'}
+                message={'Are you sure you want to restore this receipt?'}
             />
             <Modal
                 isOpen={isWithdrawnModalOpen}
-                title={'Withdraw Issuance'}
+                title={'Withdraw Receipt'}
                 onClose={() => setIsWithdrawnModalOpen(false)}
                 handleFunction={() => handleWithdrawn()}
-                message={'Are you sure you want to withdraw this issuance?'}
+                message={'Are you sure you want to withdraw this receipt?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Receipt'} description={'Showing all receipts'} />

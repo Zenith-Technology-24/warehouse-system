@@ -33,23 +33,23 @@ interface updateUserStatusProps {
 }
 
 export const fetchUsers = async ({ search, page, limit, status }: fetchUsersProps) => {
-    const { data } = await apiService.get(`user/users?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+    const { data } = await apiService.get(`user?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
 };
 
 export const createUser = async (data: createUserProps) => {
-    const res = await apiService.post("user/users", data);
+    const res = await apiService.post("user", data);
     return res;
 };
 
 export const updateUser = async (data: updateUserProps) => {
-    const res = await apiService.put(`/user/users/${data.id}`, data);
+    const res = await apiService.put(`/user/${data.id}`, data);
     return res;
 };
 
 
 export const updateUserStatus = async ({ id, status }: updateUserStatusProps) => {
-    const { data } = await apiService.put(`/user/users/${id}`, { status });
+    const { data } = await apiService.put(`/user/${id}`, { status });
     return data;
 };
 

@@ -13,14 +13,13 @@ import { exportExpenses } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import { fetchUsers, updateUserStatus } from "../../api/users/usersApi"
-import FilterButton from "../../components/buttons/FilterButton"
 
 const ManageUsers: React.FC = () => {
     const { showToast } = useToast()
     const navigate = useNavigate()
     const [search, setSearch] = useState<string>('')
     const [page, setPage] = useState<number>(1)
-    const [limit, setLimit] = useState<number>(5)
+    const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('active')
     const [toDeactivate, setToDeactivate] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
