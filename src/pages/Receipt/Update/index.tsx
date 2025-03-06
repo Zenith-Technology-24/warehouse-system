@@ -44,9 +44,9 @@ const UpdateReceipt: React.FC = () => {
                         itemId: inv?.inventoryId || null,
                         id: inv?.inventoryId || null,
                         location: inv?.location,
-                        quantity: inv?.quantity,
-                        price: inv?.price,
-                        amount: inv?.amount,
+                        quantity: Number(inv?.quantity?.replace(/,/g, '')),
+                        price: Number(inv?.price?.replace(/,/g, '')),
+                        amount: Number(inv?.amount?.replace(/,/g, '')),
                         unit: inv?.unit,
                         size: inv?.size,
                         expiryDate: inv?.expiryDate
@@ -74,7 +74,6 @@ const UpdateReceipt: React.FC = () => {
     });
 
     const handleSave = () => {
-        console.log(formRef.current)
         if (formRef?.current) {
             formRef.current?.submitForm()
         }
