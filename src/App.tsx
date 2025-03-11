@@ -24,6 +24,8 @@ const CreateExpense = React.lazy(() => import('./pages/Expenses/Create'))
 const UpdateExpense = React.lazy(() => import('./pages/Expenses/Update'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 
+const ActivityLogs = React.lazy(() => import('./pages/ActivityLogs'))
+
 const ManageUsers = React.lazy(() => import('./pages/ManageUsers'))
 const CreateUser = React.lazy(() => import('./pages/ManageUsers/Create'))
 const UpdateUser = React.lazy(() => import('./pages/ManageUsers/Update'))
@@ -125,6 +127,11 @@ function App() {
                 <Route index={true} element={<ReturnOfItems />} />
                 <Route path="create" element={<CreateReturnOfItems />} />
                 <Route path="update" element={<UpdateReturnOfItems />} />
+              </Route>
+
+              <Route path='activity-logs'>
+                <Route index={true} element={<ActivityLogs />} />
+
               </Route>
 
               <Route path="receipt">
