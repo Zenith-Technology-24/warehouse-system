@@ -269,11 +269,11 @@ const CreateIssuance: React.FC = () => {
                                                                     refetchData={handleRefetch}
                                                                     setSelectedValue={(value: any) => {
                                                                         const mappedItems = Object.values(
-                                                                            value?.items?.reduce((acc, { id, name, size, unit, price, inventoryId }) => {
+                                                                            value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                                                                 if (!acc[name]) {
-                                                                                    acc[name] = { id, name, size: [{ name: size }], unit, price, inventoryId };
+                                                                                    acc[name] = { id, name, size: [{ name: size, price }], unit, price, inventoryId };
                                                                                 } else {
-                                                                                    acc[name].size.push({ name: size });
+                                                                                    acc[name].size.push({ name: size, price });
                                                                                 }
                                                                                 return acc;
                                                                             }, {}) || {}
@@ -323,12 +323,17 @@ const CreateIssuance: React.FC = () => {
                                                                     name={`endUsers[${index}].inventory[${_index}].item.size`}
                                                                     placeholder="Size"
                                                                     className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                                                        const selectedSize = e.target.value;
+                                                                        const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.size`, selectedSize);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, price);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, price * values.endUsers[index].inventory[_index].item.quantity);
+                                                                    }}
                                                                 >
-                                                                    {
-                                                                        values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
-                                                                            <option value={size.name}>{size.name}</option>
-                                                                        ))
-                                                                    }
+                                                                    {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
+                                                                        <option key={size.name} value={size.name}>{size.name}</option>
+                                                                    ))}
                                                                 </Field>
                                                                 <div className="h-6">
                                                                     <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.size`} component="div" />
