@@ -54,6 +54,6 @@ export const updateUserStatus = async ({ id, status }: updateUserStatusProps) =>
 };
 
 export const fetchEndUsers = async () => {
-    const { data } = await apiService.get('end-user/end-users');
+    const { data } = await apiService.get('end-user');
     return data;
 };

@@ -7,33 +7,72 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation } from "@tanstack/react-query"
-import ItemTable from "../../../components/Issuance/ItemTable"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import DropdownWithNew from "../../../components/DropdownWithNew"
-import { createIssuance, updateIssuance } from "../../../api/issuance/issuanceApi"
+import { createIssuance, fetchOneIssuance, fetchReceiptRefs, updateIssuance } from "../../../api/issuance/issuanceApi"
+import { fetchEndUsers } from "../../../api/users/usersApi"
+import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import moment from "moment"
 
 const UpdateIssuance: React.FC = () => {
     const { state } = useLocation()
-    const [isCustomerNew, setIsCustomerNew] = useState<boolean>(false)
-    const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
-    const [total, setTotal] = useState(0);
-
     const navigate = useNavigate()
     const { showToast } = useToast()
     const formRef = useRef<any>()
+    const [itemNames, setItemNames] = useState<any>([])
+    const [initialValues, setInitialValues] = useState<any>(null)
+
+    const queryClient = useQueryClient()
+    const { data } = useQuery({
+        queryKey: ["receipt_details", state.id],
+        queryFn: () => fetchOneIssuance(state.id),
+    });
+
+    useEffect(() => {
+        if (data) {
+            setInitialValues({
+                documentNo: data?.documentNo,
+                issuanceDirective: data?.issuanceDirective,
+                issuanceDate: moment(data?.issuanceDate).format("YYYY-MM-DD"),
+                validityDate: moment(data?.validityDate).format("YYYY-MM-DD"),
+                endUsers: data?.endUsers?.map((user: any) => ({
+                    id: user?.id,
+                    name: user?.name,
+                    inventory: user?.inventory.map((inv: any) => ({
+                        id: inv?.id,
+                        receiptRef: inv?.item?.receiptRef,
+                        name: inv?.name,
+                        item: {
+                            id: inv?.item?.id,
+                            size: inv?.item?.size,
+                            unit: inv?.unit,
+                            quantity: inv?.quantity,
+                            price: inv?.item?.price,
+                            amount: inv?.item?.amount
+                        }
+                    }))
+                }))
+            });
+        }
+    }, [state, data])
 
     const updateIssuanceMutation = useMutation({
-        mutationFn: (values: any) => updateIssuance({ ...values, id: state.id }),
+        mutationFn: (values: any) => updateIssuance(values),
         onError: (error: any) => {
-            console.log(error)
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
         },
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["receipt_details", state.id] })
             showToast(
-                "Expenses Successfully Updated!",
+                "Issuance Successfully Updated!",
                 "",
                 "success"
             );
+            setInitialValues(null)
             navigate("/issuance", { replace: true })
         },
     });
@@ -45,65 +84,46 @@ const UpdateIssuance: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        document_no: Yup.string().required('Document No is required') as any,
-        directive_no: Yup.string().required('Issuance Directive Nr. is required') as any,
-        issuance_date: Yup.string().required('Issuance Date is required') as any,
-        expiry_date: Yup.string().required('Expiry Date is required') as any,
+        documentNo: Yup.string().required('Document No is required') as any,
+        issuanceDirective: Yup.string().required('Issuance Directive Nr. is required') as any,
+        issuanceDate: Yup.string().required('Issuance Date is required') as any,
+        validityDate: Yup.string().required('Validity Date is required') as any,
         endUsers: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
                 name: Yup.string().required('End User is required'),
-                items: Yup.array().of(
+                inventory: Yup.array().of(
                     Yup.object().shape({
-                        inventoryId: Yup.string().nullable(),
-                        itemName: Yup.string().required('Inventory Item Name is required'),
-                        location: Yup.string().required('Inventory Location is required'),
-                        supplier: Yup.string().required('Inventory Supplier is required'),
-                        quantity: Yup.number().required('Inventory Quantity is required'),
-                        price: Yup.number().required('Inventory Price is required'),
-                        amount: Yup.number().required('Inventory Amount is required'),
-                        unit: Yup.string().required('Inventory Unit is required'),
-                        size: Yup.string().required('Inventory Size is required'),
+                        id: Yup.string().nullable(),
+                        receiptRef: Yup.string().required('Receipt Ref is required') as any,
+                        name: Yup.string().required('Item Name is required'),
+                        item: Yup.object().shape({
+                            quantity: Yup.string().required('Inventory Quantity is required'),
+                            price: Yup.number().required('Inventory Price is required'),
+                            amount: Yup.number().required('Inventory Amount is required'),
+                            unit: Yup.string().required('Inventory Unit is required'),
+                            size: Yup.string(),
+                        })
                     })
                 )
             })
         ),
     });
 
-    const initialValues = {
-        document_no: state?.documentNum || '',
-        directive_no: state?.directiveNo || '',
-        issuance_date: state?.issuanceDate ? moment(state?.issuanceDate).format('YYYY-MM-DD') : '',
-        expiry_date: state?.expiryDate ? moment(state?.expiryDate).format('YYYY-MM-DD') : '',
-        endUsers: state?.endUsers?.map((end: any) => ({
-            id: end?.id,
-            name: end?.endUser?.name || '',
-            items: end?.items?.map((item: any) => ({
-                inventoryId: item?.id,
-                itemName: item?.inventory?.itemName || '',
-                location: item?.inventory?.location || '',
-                supplier: item?.inventory?.supplier || '',
-                quantity: item?.inventory?.quantity || 0,
-                price: item?.inventory?.price || 0,
-                amount: item?.inventory?.amount || 0,
-                unit: item?.inventory?.unit || '',
-                size: item?.inventory?.size || '',
-            }))
-        })) || []
+    const handleRefetch = (refetchFn: () => void) => {
+        refetchFn();
     };
-    
-    useEffect(() => {
-        setSelectedCustomer(null)
-    }, [isCustomerNew])
+
+    if (!initialValues) {
+        return <div>No Data Available</div>;
+    }
 
     return (
         <>
             <div className="flex flex-row justify-between pb-4">
                 <Header title={'Update Issuance'} description={'Issuance'} />
                 <TopButtons>
-                    <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
-                        Cancel
-                    </button>
+                    <LinkSecondaryButton to=".." text="Cancel" />
                     <PrimaryButton text="Save" onClick={handleSave} />
                 </TopButtons>
             </div>
@@ -111,46 +131,49 @@ const UpdateIssuance: React.FC = () => {
                 <Formik
                     innerRef={formRef}
                     initialValues={initialValues}
-                    enableReinitialize={true}
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
-                        console.log(values)
                         const formattedValues = {
+                            id: state.id,
                             ...values,
-                            issuance_date: values.issuance_date ? `${values.issuance_date}T00:00:00.000Z` : null,
-                            expiry_date: values.issuance_date ? `${values.expiry_date}T00:00:00.000Z` : null,
+                            issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
+                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
                         };
                         updateIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
+                        const updateAmount = (index: number, _index: number, quantity: number) => {
+                            const amount = values.endUsers[index].inventory[_index].item.price * quantity;
+                            setFieldValue(`endUsers.${index}.inventory.${_index}.item.amount`, amount);
+                        };
+
                         return (
                             <Form className="w-full">
                                 <div className="rounded-lg border border-gray-200 p-4">
                                     <h1 className="text-lg">Issuance Details</h1>
                                     <div className="w-full grid grid-cols-2 gap-1 mb-5">
                                         <div className="flex h-auto flex-col py-3">
-                                            <label className="pb-2" htmlFor="document_no">Document No.</label>
+                                            <label className="pb-2" htmlFor="documenNo">Document No.</label>
                                             <Field
                                                 as="input"
-                                                name="document_no"
+                                                name="documentNo"
                                                 placeholder="Document No."
                                                 className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                 fullWidth
                                                 variant="outlined"
                                                 size="small"
-                                                value={values.document_no}
                                             />
                                             <div className="h-6">
-                                                <ErrorMessage className="text-red-400" name="document_no" component="div" />
+                                                <ErrorMessage className="text-red-400" name="documentNo" component="div" />
                                             </div>
                                         </div>
                                         <div className="flex h-auto flex-col py-3">
-                                            <label className="pb-2" htmlFor="directive_no">Issuance Directive Nr.</label>
+                                            <label className="pb-2" htmlFor="issuanceDirective">Issuance Directive Nr.</label>
                                             <Field
                                                 as="input"
-                                                name="directive_no"
+                                                name="issuanceDirective"
                                                 placeholder="Issuance Directive Nr."
                                                 className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                 fullWidth
@@ -158,29 +181,29 @@ const UpdateIssuance: React.FC = () => {
                                                 size="small"
                                             />
                                             <div className="h-6">
-                                                <ErrorMessage className="text-red-400" name="directive_no" component="div" />
+                                                <ErrorMessage className="text-red-400" name="issuanceDirective" component="div" />
                                             </div>
                                         </div>
                                         <div className="flex h-auto flex-col py-3">
-                                            <label className="pb-2" htmlFor="issuance_date">Issuance Date</label>
+                                            <label className="pb-2" htmlFor="issuanceDate">Issuance Date</label>
                                             <Field
                                                 type="date"
-                                                name="issuance_date"
+                                                name="issuanceDate"
                                                 className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                             />
                                             <div className="h-6">
-                                                <ErrorMessage className="text-red-400" name="issuance_date" component="div" />
+                                                <ErrorMessage className="text-red-400" name="issuanceDate" component="div" />
                                             </div>
                                         </div>
                                         <div className="flex h-auto flex-col py-3">
-                                            <label className="pb-2" htmlFor="expiry_date">Expiry Date</label>
+                                            <label className="pb-2" htmlFor="validityDate">Validity Date</label>
                                             <Field
                                                 type="date"
-                                                name="expiry_date"
+                                                name="validityDate"
                                                 className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                             />
                                             <div className="h-6">
-                                                <ErrorMessage className="text-red-400" name="expiry_date" component="div" />
+                                                <ErrorMessage className="text-red-400" name="validityDate" component="div" />
                                             </div>
                                         </div>
                                     </div>
@@ -188,28 +211,29 @@ const UpdateIssuance: React.FC = () => {
                                     <h1 className="text-lg">End User & Item Details</h1>
                                     {values.endUsers.map((user: any, index: number) => {
                                         return (
-                                            <div key={index} className="w-full grid grid-cols-2 gap-1 border-b mb-5">
-                                                <div className="flex h-auto flex-col py-3">
+                                            <div key={index} className="w-full grid grid-cols-2 gap-1 mb-5">
+                                                <div className="flex h-auto flex-col">
                                                     <DropdownWithNew
                                                         placeholder="End User"
-                                                        name={`endUser[${index}].name`}
-                                                        fetchNames={null}
+                                                        id={`endUsers[${index}].id`}
+                                                        name={`endUsers[${index}].name`}
+                                                        fetchNames={fetchEndUsers}
                                                         setFieldValue={setFieldValue}
                                                         data={user.name}
                                                         setSelectedValue={(value) => console.log("Selected:", value)}
                                                     />
                                                     <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`endUser[${index}].name`} component="div" />
+                                                        <ErrorMessage className="text-red-400" name={`endUsers[${index}].name`} component="div" />
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-row gap-5 mx-5">
-                                                    <div className="py-6">
+                                                    <div className="pt-4">
                                                         <div
                                                             onClick={() => {
-                                                                if (values.endUser.length > 1) {
-                                                                    const updatedEndUsers = [...values.endUser];
+                                                                if (values.endUsers.length > 1) {
+                                                                    const updatedEndUsers = [...values.endUsers];
                                                                     updatedEndUsers.splice(index, 1);
-                                                                    setFieldValue('endUser', updatedEndUsers);
+                                                                    setFieldValue('endUsers', updatedEndUsers);
                                                                 }
                                                             }}
                                                             className={`flex flex-row gap-2 items-center text-sm text-red-300 ${values.inventories?.length > 1 && 'hover:text-red-400'} cursor-pointer`}>
@@ -219,14 +243,14 @@ const UpdateIssuance: React.FC = () => {
                                                             <p>Remove End User</p>
                                                         </div>
                                                     </div>
-                                                    <div className="py-6">
-                                                        <div onClick={() => setFieldValue('endUser', [...values.endUser, {
-                                                            id: null,
+                                                    <div className="pt-4">
+                                                        <div onClick={() => setFieldValue('endUsers', [...values.endUsers, {
+                                                            id: '',
                                                             name: '',
-                                                            inventoryItems: [
+                                                            items: [
                                                                 {
-                                                                    id: null,
-                                                                    item_name: '',
+                                                                    inventoryId: '',
+                                                                    itemName: '',
                                                                     location: '',
                                                                     supplier: '',
                                                                     quantity: 1,
@@ -244,7 +268,167 @@ const UpdateIssuance: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <ItemTable index={index} values={values} setFieldValue={setFieldValue} />
+                                                {user?.inventory?.map((inventory: any, _index: number) => {
+                                                    return (
+                                                        <div key={_index} className="w-full col-span-2 gap-1 bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-2">
+                                                            <div className="flex h-auto flex-col py-3 col-span-2">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].receiptRef`}>Receipt Ref</label>
+                                                                <DropdownWithSearch
+                                                                    values={values}
+                                                                    _index={_index}
+                                                                    placeholder="Receipt Ref"
+                                                                    name={`endUsers[${index}].inventory[${_index}].receiptRef`}
+                                                                    fetchNames={fetchReceiptRefs}
+                                                                    setFieldValue={setFieldValue}
+                                                                    refetchData={handleRefetch}
+                                                                    forUpdate={inventory?.receiptRef}
+                                                                    setSelectedValue={(value: any) => {
+                                                                        const mappedItems = Object.values(
+                                                                            value?.items?.reduce((acc, { id, name, size, unit, price, inventoryId }) => {
+                                                                                if (!acc[name]) {
+                                                                                    acc[name] = { id, name, size: [{ name: size }], unit, price, inventoryId };
+                                                                                } else {
+                                                                                    acc[name].size.push({ name: size });
+                                                                                }
+                                                                                return acc;
+                                                                            }, {}) || {}
+                                                                        );
+                                                                        setItemNames(mappedItems)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].name`, '')
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.size`, '')
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.quantity`, 1)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, 0)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, 0)
+                                                                    }}
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].receiptRef`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
+                                                                <DropdownWithSearch
+                                                                    values={values}
+                                                                    _index={index}
+                                                                    placeholder="Item Name"
+                                                                    name={`endUsers[${index}].inventory[${_index}].name`}
+                                                                    fetchNames={() => itemNames}
+                                                                    setFieldValue={setFieldValue}
+                                                                    refetchData={handleRefetch}
+                                                                    forUpdate={inventory?.name}
+                                                                    setSelectedValue={(value: any) => {
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.unit`, value?.unit)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, value?.price)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, value?.price * values?.endUsers[index].inventory[_index].item.quantity)
+                                                                    }}
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].name`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.size`}>Size</label>
+                                                                <Field as="select"
+                                                                    name={`endUsers[${index}].inventory[${_index}].item.size`}
+                                                                    placeholder="Size"
+                                                                    className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                                                >
+                                                                    {/* {
+                                                                        values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
+                                                                            <option value={size.name}>{size.name}</option>
+                                                                        ))
+                                                                    } */}
+                                                                    <option value={values.endUsers[index].inventory[_index].item.size}>{values.endUsers[index].inventory[_index].item.size}</option>
+                                                                </Field>
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.size`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.quantity`}>Qty</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    type="number"
+                                                                    name={`endUsers[${index}].inventory[${_index}].item.quantity`}
+                                                                    placeholder="Qty"
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const newQuantity = parseFloat(e.target.value);
+                                                                        setFieldValue(`endUsers[${index}].inventory.${_index}.item.quantity`, newQuantity);
+                                                                        updateAmount(index, _index, newQuantity);
+                                                                    }}
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.quantity`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.unit`}>UoM</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    name={`endUsers[${index}].inventory[${_index}].item.unit`}
+                                                                    placeholder="UoM"
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                    disabled
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.unit`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.price`}>Price</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    name={`endUsers[${index}].inventory[${_index}].item.price`}
+                                                                    placeholder="Price"
+                                                                    disabled
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.price`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col py-3">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.amount`}>Amount</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    type="number"
+                                                                    name={`endUsers[${index}].inventory[${_index}].item.amount`}
+                                                                    placeholder="Amount"
+                                                                    disabled
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.amount`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                                <div className="flex flex-row gap-5">
+                                                    <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
+                                                        id: '',
+                                                        receiptRef: '',
+                                                        name: '',
+                                                        sizeType: '',
+                                                        item: {
+                                                            location: '',
+                                                            size: '',
+                                                            unit: '',
+                                                            quantity: 1,
+                                                            price: 0,
+                                                            amount: 0
+                                                        }
+                                                    }])} className="flex flex-row gap-2 items-center text-sm text-gray-500 hover:text-gray-800 cursor-pointer">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        </svg>
+                                                        <p>Add Item</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )
                                     })}

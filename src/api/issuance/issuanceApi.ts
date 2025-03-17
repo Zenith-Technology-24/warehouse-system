@@ -60,21 +60,35 @@ interface updateIssuanceStatusProps {
 }
 
 export const fetchIssuance = async ({ search, page, limit, status }: fetchExpensesProps) => {
-    const { data } = await apiService.get(`issuance/issuances?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+    const { data } = await apiService.get(`issuance?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
 };
 
 export const createIssuance = async (data: createIssuanceProps) => {
-    const res = await apiService.post("/issuance/issuances", data);
+    const res = await apiService.post("/issuance", data);
     return res;
 };
 
 export const updateIssuance = async (data: updateIssuanceProps) => {
-    const res = await apiService.put(`/issuance/issuances/${data.id}`, data);
+    const res = await apiService.put(`/issuance/${data.id}`, data);
     return res;
 };
 
 export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusProps) => {
     const { data } = await apiService.put(`/issuance/issuances/${id}`, { status });
+    return data;
+};
+
+export const fetchReceiptRefs = async () => {
+    const { data } = await apiService.get('/issuance/refs');
+
+    return data.map(({ receipt, ...rest }) => ({
+        name: receipt,
+        ...rest
+    }));
+};
+
+export const fetchOneIssuance = async (id: number) => {
+    const { data } = await apiService.get(`/issuance/${id}`);
     return data;
 };

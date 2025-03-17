@@ -74,7 +74,6 @@ const UpdateReceipt: React.FC = () => {
     });
 
     const handleSave = () => {
-        console.log(formRef.current)
         if (formRef?.current) {
             formRef.current?.submitForm()
         }

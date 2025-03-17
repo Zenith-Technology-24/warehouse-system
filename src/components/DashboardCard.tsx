@@ -11,18 +11,26 @@ interface Props {
 
 const getStyle = (type: string) => {
     switch (type) {
+        case 'primary':
+            return 'bg-[#575B421A]';
         case 'inventory':
             return 'bg-[#575B421A]';
         case 'issued':
-            return 'bg-[#2196F31A]';
+            return 'bg-[#FFC1071A]';
+        case 'success':
+            return 'bg-[#4CAF501A]';
         case 'in stock':
             return 'bg-[#4CAF501A]';
         case 'returned':
-            return 'bg-[#FFC1071A]';
+            return 'bg-[#F443361A]';
+        case 'error':
+            return 'bg-[#F443361A]';
         case 'total amount':
             return 'bg-[#9A59EE1A]';
         case 'pending':
             return 'bg-[#FFC1071A]';
+        case 'received':
+            return 'bg-[#2196F31A]';
         case 'available':
             return 'bg-[#4CAF501A]';
         case 'gross':
