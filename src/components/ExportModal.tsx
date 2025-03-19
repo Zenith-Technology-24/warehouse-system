@@ -39,6 +39,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ search, status, isOpen, onClo
             end_date: moment().endOf('month').format('YYYY-MM-DD'),
         },
         validationSchema: VALIDATION_SCHEMA,
+
         onSubmit(values) {
             toExportData.mutate({ ...values, search, status } as any)
         }

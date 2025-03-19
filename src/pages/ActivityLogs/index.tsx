@@ -8,7 +8,7 @@ import moment from "moment"
 import { exportExpenses } from "../../api/expenses/expensesApi"
 import Table from "../../components/Table"
 import { useQuery } from "@tanstack/react-query"
-import { fetchActivityLogs } from "../../api/activityLogs/activityLogsApi"
+import { fetchActivityLogs, helloWorld } from "../../api/activityLogs/activityLogsApi"
 
 const ActivityLogs = () => {
     
@@ -19,10 +19,9 @@ const ActivityLogs = () => {
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(10)
     const { data: rows, refetch } = useQuery({
-      queryKey: ["activityLogs", search, page, limit, status],
-      queryFn: () => fetchActivityLogs({ search, page, limit, status }) as any
-    });
-    
+      queryKey: ["activityLogs", search, page, limit],
+      queryFn: () => fetchActivityLogs({ search, page, limit }) as any
+    });    
     const handleSearch = (searchInput = '') => {
         setSearch(searchInput)
     };
@@ -32,52 +31,34 @@ const ActivityLogs = () => {
     }
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 10 },
-            { header: 'Name', key: 'name', width: 15 },
-            { header: 'Expense Type', key: 'type', width: 15 },
-            { header: 'Amount', key: 'amount', width: 15 },
-            { header: 'Description', key: 'description', width: 35 },
-            { header: 'Created At', key: 'created_at', width: 15 }
+            { header: 'Activity Logs ID ', key: 'id', width: 10 },
+            { header: 'Date', key: 'date', width: 15 },
+            { header: 'Activity', key: 'activity', width: 15 },
+            { header: 'Performed By', key: 'performedBy', width: 15 },
         ];
-
-        let overall = 0
 
         let data = toExport?.map((row: {
             id: number,
-            first_name: string
-            last_name: string
-            expense_type: string,
-            amount: string,
-            description: string,
+            activity: string,
+            performedBy: {
+                userName: string,
+                role: string
+            },
             created_at: string,
         }) => {
-            overall += parseFloat(row.amount);
             return {
                 id: row.id,
-                name: row.first_name + row.last_name,
-                type: row.expense_type,
-                amount: "₱" + row.amount,
-                description: row.description,
-                created_at: moment(row.created_at).format('L')
+                date: moment(row.created_at).format('YYYY-MM-DD'),
+                activity: row.activity,
+                performedBy: row.performedBy.userName + ' - ' + row.performedBy.role,
             }
         })
 
-        data = [...data, {
-            id: '',
-            name: '',
-            type: '',
-            amount: '',
-            description: '',
-            created_at: ''
-        }, {
-            id: '',
-            name: '',
-            type: 'OVERALL TOTAL',
-            amount: '₱' + overall,
-            description: '',
-            created_at: ''
-        }]
-        exportToExcel({ data, headers, filename: `${status}-expenses-${start_date}-to-${end_date}` })
+        data = [...data, 
+          { id: '', date: '', activity: '', performedBy: '' }, 
+          { id: '', date: '', activity: '', performedBy: '' }
+      ];
+      exportToExcel({ data, headers, filename: `${status}-activityLogs-${start_date}-to-${end_date}` })
     }
 
     const columns = useMemo(() => {
@@ -86,9 +67,10 @@ const ActivityLogs = () => {
             label: 'Date',
             name: 'date',
             render(row: object, value: string, rowIndex: number) {
+              const date = new Date(value);
               return (
                 <div className="font-normal">
-                  {value}
+                  {date.toLocaleString()}
                 </div>
               )
             }
@@ -110,15 +92,14 @@ const ActivityLogs = () => {
             render(row: object, value: { userName: string, role: string }, rowIndex: number) {
               return (
                 <div className="font-normal flex flex-col">
-                  <p>{value?.userName}</p>
-                  <p className="text-xs text-gray-700">{value?.role}</p>
+                  <p>{value?.username}</p>
+                  <p className="text-xs text-gray-700">{value?.roles[0].description}</p>
                 </div>
               )
             }
           },
         ]
-      }, [rows])
-
+    }, [rows])
 
 
     return (
@@ -150,6 +131,9 @@ const ActivityLogs = () => {
                   <Search
                     handleFetchData={handleSearch}
                   />
+                  <button onClick={helloWorld}>
+                    Hello
+                  </button>
                   <PrimaryButton
                       onClick={() => { setIsExportModalOpen(true)}}
                       text={'Export'} 

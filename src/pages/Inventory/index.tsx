@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Table from "../../components/Table"
 import Header from "../../components/Header"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -29,6 +29,10 @@ const Inventory: React.FC = () => {
         queryKey: ["inventory", search, page, limit, status],
         queryFn: () => fetchInventory({ search, page, limit, status }) as any,
     });
+
+    useEffect(() => {
+        console.log(rows)
+    }, [rows])
 
     const updateStatus = useMutation({
         mutationFn: updateInventoryStatus,

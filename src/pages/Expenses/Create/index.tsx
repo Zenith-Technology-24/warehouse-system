@@ -21,6 +21,7 @@ const CreateExpense: React.FC = () => {
         onError: (error: any) => {
             console.log(error)
         },
+
         onSuccess: () => {
             showToast(
                 "Expense Created Successfully!",
@@ -28,7 +29,6 @@ const CreateExpense: React.FC = () => {
                 'success'
             );
             navigate("/expenses", { replace: true })
-
         },
     });
 
