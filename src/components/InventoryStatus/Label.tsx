@@ -8,7 +8,7 @@ interface LabelProps {
 const Label: React.FC<LabelProps> = ({ label, value, bulletColor, bulletSize = 15 }) => {
 
     return (
-        <div className="text-center flex flex-col justify-center px-6 mx-6">
+        <div className="text-center flex flex-col justify-center mx-6">
             <div className="flex items-center justify-center space-x-2">
                 <div
                     className={`rounded-full`}

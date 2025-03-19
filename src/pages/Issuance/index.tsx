@@ -117,25 +117,11 @@ const Issuance: React.FC = () => {
             },
             {
                 label: 'Issuance Directive Nr',
-                name: 'directiveNo',
+                name: 'issuanceDirective',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
                     )
-                }
-            },
-            {
-                label: 'Item Name',
-                name: 'itemName',
-                render(row: { endUsers: any[] }, value: string, rowIndex: number) {
-                    const itemNames = row?.endUsers
-                        ?.flatMap((endUser) => endUser.items.map((item: any) => item.inventory.itemName));
-
-                    const displayText = itemNames.length > 2
-                        ? `${itemNames.slice(0, 2).join(', ')}..`
-                        : itemNames.join(', ');
-
-                    return <p>{displayText}</p>;
                 }
             },
             {
@@ -146,7 +132,7 @@ const Issuance: React.FC = () => {
                         <div className={`
                             ${value === 'withdrawn' && 'bg-green-50 text-green-500 w-20'}
                             ${value === 'pending' && 'bg-yellow-50 text-yellow-500 w-20'}
-                            ${value === 'archived' && 'bg-grayy-50 text-gray-500 w-20'}
+                            ${value === 'archived' && 'bg-gray-50 text-gray-500 w-20'}
                                 rounded-full flex flex-row items-center justify-center`}>
                             <div className={`w-2 h-2 rounded-full mr-1 
                                 ${value === 'withdrawn' && 'bg-green-500'}
