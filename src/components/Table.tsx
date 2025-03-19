@@ -98,7 +98,6 @@ const Table: React.FC<Props> = ({
                                 <p className="text-sm text-gray-700">
                                     Showing <span className="font-medium">{(currentPage - 1) * rowsPerPage + 1}</span> to{" "}
                                     <span className="font-medium">
-                                        {/* {Math.min(rowsPerPage * currentPage, totalRows)} */}
                                         {((rowsPerPage * currentPage) - rowsPerPage) + totalRows}
                                     </span>{" "}
                                     of <span className="font-medium">{totalRows}</span> results
