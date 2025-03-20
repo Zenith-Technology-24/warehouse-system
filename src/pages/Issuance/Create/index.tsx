@@ -58,13 +58,11 @@ const CreateIssuance: React.FC = () => {
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Receipt Ref is required') as any,
                         name: Yup.string().required('Item Name is required'),
-                        item: Yup.object().shape({
-                            quantity: Yup.string().required('Inventory Quantity is required'),
-                            price: Yup.number().required('Inventory Price is required'),
-                            amount: Yup.number().required('Inventory Amount is required'),
-                            unit: Yup.string().required('Inventory Unit is required'),
-                            size: Yup.string(),
-                        })
+                        quantity: Yup.string().required('Inventory Quantity is required'),
+                        price: Yup.number().required('Inventory Price is required'),
+                        amount: Yup.number().required('Inventory Amount is required'),
+                        unit: Yup.string().required('Inventory Unit is required'),
+                        size: Yup.string(),
                     })
                 )
             })
@@ -85,14 +83,11 @@ const CreateIssuance: React.FC = () => {
                         id: '',
                         receiptRef: '',
                         name: '',
-                        item: {
-                            id: '',
-                            size: '',
-                            unit: '',
-                            quantity: 1,
-                            price: 0,
-                            amount: 0
-                        }
+                        size: '',
+                        unit: '',
+                        quantity: 1,
+                        price: 0,
+                        amount: 0
                     }
                 ]
             }
@@ -129,8 +124,8 @@ const CreateIssuance: React.FC = () => {
                 >
                     {({ values, setFieldValue }) => {
                         const updateAmount = (index: number, _index: number, quantity: number) => {
-                            const amount = values.endUsers[index].inventory[_index].item.price * quantity;
-                            setFieldValue(`endUsers.${index}.inventory.${_index}.item.amount`, amount);
+                            const amount = values.endUsers[index].inventory[_index].price * quantity;
+                            setFieldValue(`endUsers.${index}.inventory.${_index}.amount`, amount);
                         };
 
                         return (
@@ -268,6 +263,7 @@ const CreateIssuance: React.FC = () => {
                                                                     setFieldValue={setFieldValue}
                                                                     refetchData={handleRefetch}
                                                                     setSelectedValue={(value: any) => {
+                                                                        console.log(value.items)
                                                                         const mappedItems = Object.values(
                                                                             value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                                                                 if (!acc[name]) {
@@ -283,10 +279,10 @@ const CreateIssuance: React.FC = () => {
                                                                             [`${index}-${_index}`]: mappedItems
                                                                         }));
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].name`, '')
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.size`, '')
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.quantity`, 1)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, 0)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, 0)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, '')
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].quantity`, 1)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, 0)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, 0)
                                                                     }}
                                                                 />
                                                                 <div className="h-6">
@@ -305,12 +301,12 @@ const CreateIssuance: React.FC = () => {
                                                                     refetchData={handleRefetch}
                                                                     setSelectedValue={(value: any) => {
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.size`, value?.size[0]?.name);
+                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.unit`, value?.unit)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, value?.price)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, value?.price * values?.endUsers[index].inventory[_index].item.quantity)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, value?.price)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
                                                                     }}
                                                                 />
                                                                 <div className="h-6">
@@ -318,17 +314,17 @@ const CreateIssuance: React.FC = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.size`}>Size</label>
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size</label>
                                                                 <Field as="select"
-                                                                    name={`endUsers[${index}].inventory[${_index}].item.size`}
+                                                                    name={`endUsers[${index}].inventory[${_index}].size`}
                                                                     placeholder="Size"
                                                                     className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                                                                         const selectedSize = e.target.value;
                                                                         const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.size`, selectedSize);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.price`, price);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].item.amount`, price * values.endUsers[index].inventory[_index].item.quantity);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
                                                                     }}
                                                                 >
                                                                     {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
@@ -336,65 +332,65 @@ const CreateIssuance: React.FC = () => {
                                                                     ))}
                                                                 </Field>
                                                                 <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.size`} component="div" />
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].size`} component="div" />
                                                                 </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.quantity`}>Qty</label>
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].quantity`}>Qty</label>
                                                                 <Field
                                                                     as="input"
                                                                     type="number"
-                                                                    name={`endUsers[${index}].inventory[${_index}].item.quantity`}
+                                                                    name={`endUsers[${index}].inventory[${_index}].quantity`}
                                                                     placeholder="Qty"
                                                                     className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                         const newQuantity = parseFloat(e.target.value);
-                                                                        setFieldValue(`endUsers[${index}].inventory.${_index}.item.quantity`, newQuantity);
+                                                                        setFieldValue(`endUsers[${index}].inventory.${_index}.quantity`, newQuantity);
                                                                         updateAmount(index, _index, newQuantity);
                                                                     }}
                                                                 />
                                                                 <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.quantity`} component="div" />
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].quantity`} component="div" />
                                                                 </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.unit`}>UoM</label>
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].unit`}>UoM</label>
                                                                 <Field
                                                                     as="input"
-                                                                    name={`endUsers[${index}].inventory[${_index}].item.unit`}
+                                                                    name={`endUsers[${index}].inventory[${_index}].unit`}
                                                                     placeholder="UoM"
                                                                     className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                                     disabled
                                                                 />
                                                                 <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.unit`} component="div" />
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].unit`} component="div" />
                                                                 </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.price`}>Price</label>
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].price`}>Price</label>
                                                                 <Field
                                                                     as="input"
-                                                                    name={`endUsers[${index}].inventory[${_index}].item.price`}
+                                                                    name={`endUsers[${index}].inventory[${_index}].price`}
                                                                     placeholder="Price"
                                                                     disabled
                                                                     className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                                 />
                                                                 <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.price`} component="div" />
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].price`} component="div" />
                                                                 </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].item.amount`}>Amount</label>
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].amount`}>Amount</label>
                                                                 <Field
                                                                     as="input"
                                                                     type="number"
-                                                                    name={`endUsers[${index}].inventory[${_index}].item.amount`}
+                                                                    name={`endUsers[${index}].inventory[${_index}].amount`}
                                                                     placeholder="Amount"
                                                                     disabled
                                                                     className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                                 />
                                                                 <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].item.amount`} component="div" />
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].amount`} component="div" />
                                                                 </div>
                                                             </div>
                                                         </div>
