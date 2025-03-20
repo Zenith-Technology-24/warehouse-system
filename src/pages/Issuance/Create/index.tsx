@@ -263,7 +263,6 @@ const CreateIssuance: React.FC = () => {
                                                                     setFieldValue={setFieldValue}
                                                                     refetchData={handleRefetch}
                                                                     setSelectedValue={(value: any) => {
-                                                                        console.log(value.items)
                                                                         const mappedItems = Object.values(
                                                                             value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                                                                 if (!acc[name]) {

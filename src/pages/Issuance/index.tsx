@@ -13,7 +13,7 @@ import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expenses
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import FilterButton from "../../components/buttons/FilterButton"
-import { fetchIssuance, updateIssuanceStatus } from "../../api/issuance/issuanceApi"
+import { fetchIssuance, updateIssuanceStatus, withdrawAllIssuance } from "../../api/issuance/issuanceApi"
 
 const Issuance: React.FC = () => {
     const { showToast } = useToast()
@@ -37,6 +37,26 @@ const Issuance: React.FC = () => {
 
     const updateStatus = useMutation({
         mutationFn: updateIssuanceStatus,
+        onError: (error: any) => {
+            console.log(error)
+        },
+        onSuccess: (data: any) => {
+            setIsActiveModalOpen(false)
+            setIsArchiveModalOpen(false)
+            refetch()
+            showToast(
+                `Issuance Successfully ${data?.status}!`,
+                `Issuance has been successfully ${data?.status}.`,
+                'success'
+            );
+            setToArchive(null)
+            setToActive(null)
+            setToWithdrawn(null)
+        },
+    });
+
+    const withdrawAll = useMutation({
+        mutationFn: withdrawAllIssuance,
         onError: (error: any) => {
             console.log(error)
         },
@@ -95,9 +115,8 @@ const Issuance: React.FC = () => {
     }
 
     const handleWithdrawn = () => {
-        updateStatus.mutate({
-            id: toWithdrawn,
-            status: 'withdrawn'
+        withdrawAll.mutate({
+            id: toWithdrawn
         })
         setIsWithdrawnModalOpen(false)
     }
@@ -127,7 +146,7 @@ const Issuance: React.FC = () => {
             {
                 label: 'Status',
                 name: 'status',
-                render(row: object, value: string, rowIndex: number) {
+                render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div className={`
                             ${value === 'withdrawn' && 'bg-green-50 text-green-500 w-20'}
@@ -289,10 +308,10 @@ const Issuance: React.FC = () => {
             />
             <Modal
                 isOpen={isWithdrawnModalOpen}
-                title={'Withdraw Issuance'}
+                title={'Pending to Withdrawn'}
                 onClose={() => setIsWithdrawnModalOpen(false)}
                 handleFunction={() => handleWithdrawn()}
-                message={'Are you sure you want to withdraw this issuance?'}
+                message={'Are you sure you want to change the status of this issuance from Pending to Withdrawn? This action cannot be undone.'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Issuance'} description={'Showing all issuance'} />
