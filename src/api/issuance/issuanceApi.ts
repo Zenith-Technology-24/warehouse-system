@@ -59,6 +59,14 @@ interface updateIssuanceStatusProps {
     status: string;
 }
 
+interface withdrawIssuanceProps {
+    id: string | null;
+}
+
+interface withdrawAllIssuanceProps {
+    id: string | null;
+}
+
 export const fetchIssuance = async ({ search, page, limit, status }: fetchExpensesProps) => {
     const { data } = await apiService.get(`issuance?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
@@ -90,5 +98,15 @@ export const fetchReceiptRefs = async () => {
 
 export const fetchOneIssuance = async (id: number) => {
     const { data } = await apiService.get(`/issuance/${id}`);
+    return data;
+};
+
+export const withdrawIssuance = async ({ id }: withdrawIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/withdraw/${id}`);
+    return data;
+};
+
+export const withdrawAllIssuance = async ({ id }: withdrawAllIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/withdraw/all/${id}`);
     return data;
 };
