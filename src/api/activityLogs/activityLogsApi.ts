@@ -12,11 +12,12 @@ import apiService from "../axios";
 interface fetchActivityLogsProps {
     search: string
     page: number
-    limit: number
+    limit: number,
+    date: string | null | number
 }
 
-export const fetchActivityLogs = async ({ search, page, limit }: fetchActivityLogsProps) => {
-    const { data } = await apiService.get(`/activity-log?page=${page}&limit=${limit}&search=${search}`);
+export const fetchActivityLogs = async ({ search, page, limit, date }: fetchActivityLogsProps) => {
+    const { data } = await apiService.get(`/activity-log?page=${page}&limit=${limit}&search=${search}&date=${date}`);
     return data;
 };
 

@@ -19,9 +19,10 @@ const ActivityLogs = () => {
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(10)
     const { data: rows, refetch } = useQuery({
-      queryKey: ["activityLogs", search, page, limit],
-      queryFn: () => fetchActivityLogs({ search, page, limit }) as any
-    });    
+      queryKey: ["activityLogs", search, page, limit, date],
+      queryFn: () => fetchActivityLogs({ search, page, limit, date }) as any
+    });
+    
     const handleSearch = (searchInput = '') => {
         setSearch(searchInput)
     };
@@ -119,21 +120,18 @@ const ActivityLogs = () => {
                 </div>
                 <div className="flex gap-5">
                   <input
-                    name="end_date"
+                    name="activity-log-date"
                     value={date === null ? '' : date}
                     onChange={(e) => setDate(e.target.value)}
                     type="date"
-                    id="end_date"
+                    id="activity-log-date"
                     className="bg-transparent text-gray-500 h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                    placeholder="Enter End Date"
+                    placeholder="Enter Date"
                     required
                   />
                   <Search
                     handleFetchData={handleSearch}
                   />
-                  <button onClick={helloWorld}>
-                    Hello
-                  </button>
                   <PrimaryButton
                       onClick={() => { setIsExportModalOpen(true)}}
                       text={'Export'} 
