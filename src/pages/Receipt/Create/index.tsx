@@ -18,7 +18,6 @@ const CreateReceipt: React.FC = () => {
     const { showToast } = useToast()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
-    // const [sizeType, setSizeType] = useState<string>('none');
     const createReceiptMutation = useMutation({
         mutationFn: (values: any) => createReceipt(values),
         onError: (error: any) => {
@@ -91,7 +90,11 @@ const CreateReceipt: React.FC = () => {
     const addItem = useMutation({
         mutationFn: addItemType,
         onError: (error: any) => {
-            console.log(error)
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
         },
         onSuccess: () => {
             showToast(
