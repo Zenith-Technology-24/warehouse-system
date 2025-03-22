@@ -23,7 +23,7 @@ const Issuance: React.FC = () => {
     const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('all')
     const [toArchive, setToArchive] = useState<number | null>(null)
-    const [toWithdrawn, setToWithdrawn] = useState<number | null>(null)
+    const [toWithdrawn, setToWithdrawn] = useState<string | null | number>(null)
     const [toActive, setToActive] = useState<number | null>(null)
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
     const [isWithdrawnModalOpen, setIsWithdrawnModalOpen] = useState<boolean>(false)
@@ -38,7 +38,11 @@ const Issuance: React.FC = () => {
     const updateStatus = useMutation({
         mutationFn: updateIssuanceStatus,
         onError: (error: any) => {
-            console.log(error)
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
         },
         onSuccess: (data: any) => {
             setIsActiveModalOpen(false)
@@ -58,7 +62,11 @@ const Issuance: React.FC = () => {
     const withdrawAll = useMutation({
         mutationFn: withdrawAllIssuance,
         onError: (error: any) => {
-            console.log(error)
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
         },
         onSuccess: (data: any) => {
             setIsActiveModalOpen(false)

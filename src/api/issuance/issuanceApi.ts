@@ -64,7 +64,7 @@ interface withdrawIssuanceProps {
 }
 
 interface withdrawAllIssuanceProps {
-    id: string | null;
+    id: string | null | number;
 }
 
 export const fetchIssuance = async ({ search, page, limit, status }: fetchExpensesProps) => {
