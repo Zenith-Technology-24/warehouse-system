@@ -201,9 +201,6 @@ const CreateIssuance: React.FC = () => {
                                                         data={user.name}
                                                         setSelectedValue={(value) => console.log("Selected:", value)}
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`endUsers[${index}].name`} component="div" />
-                                                    </div>
                                                 </div>
                                                 <div className="flex flex-row gap-5 mx-5">
                                                     <div className="pt-4">
@@ -284,9 +281,6 @@ const CreateIssuance: React.FC = () => {
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, 0)
                                                                     }}
                                                                 />
-                                                                <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].receiptRef`} component="div" />
-                                                                </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
                                                                 <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
@@ -308,9 +302,6 @@ const CreateIssuance: React.FC = () => {
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
                                                                     }}
                                                                 />
-                                                                <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].name`} component="div" />
-                                                                </div>
                                                             </div>
                                                             <div className="flex h-auto flex-col py-3">
                                                                 <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size</label>
