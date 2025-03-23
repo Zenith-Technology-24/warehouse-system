@@ -59,6 +59,13 @@ interface updateReceiptStatusProps {
     status: string;
 }
 
+interface exportReceiptProps {
+    search: string;
+    status: string;
+    start_date: string;
+    end_date: string;
+}
+
 export const fetchReceipt = async ({ search, page, limit, status }: fetchExpensesProps) => {
     const { data } = await apiService.get(`receipt?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
@@ -68,6 +75,11 @@ export const fetchOneReceipt = async (id: number) => {
     const { data } = await apiService.get(`/receipt/${id}`);
     return data;
 };
+
+export const exportReceipt = async ({ search, status, start_date, end_date }: exportReceiptProps) => {
+    const { data } = await apiService.post('/receipt/export', { search, status, start_date, end_date });
+    return data;
+}
 
 export const createReceipt = async (data: createReceiptProps) => {
     const res = await apiService.post("/receipt", data);

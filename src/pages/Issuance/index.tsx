@@ -9,11 +9,9 @@ import { useToast } from "../../providers/ToastContext"
 import moment from "moment"
 import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
-import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import FilterButton from "../../components/buttons/FilterButton"
-import { fetchIssuance, updateIssuanceStatus, withdrawAllIssuance } from "../../api/issuance/issuanceApi"
+import { exportIssuance, fetchIssuance, updateIssuanceStatus, withdrawAllIssuance } from "../../api/issuance/issuanceApi"
 
 const Issuance: React.FC = () => {
     const { showToast } = useToast()
@@ -242,51 +240,25 @@ const Issuance: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 10 },
-            { header: 'Name', key: 'name', width: 15 },
-            { header: 'Expense Type', key: 'type', width: 15 },
-            { header: 'Amount', key: 'amount', width: 15 },
-            { header: 'Description', key: 'description', width: 35 },
-            { header: 'Created At', key: 'created_at', width: 15 }
+            { header: 'Expenses ID', key: 'id', width: 40 },
+            { header: 'Issuance Date', key: 'issuanceDate', width: 40 },
+            { header: 'Issuance Directive Nr', key: 'issuanceDirective', width: 20 },
+            { header: 'Status', key: 'status', width: 20 },
         ];
-
-        let overall = 0
 
         let data = toExport?.map((row: {
             id: number,
-            first_name: string
-            last_name: string
-            expense_type: string,
-            amount: string,
-            description: string,
-            created_at: string,
+            issuanceDate: string,
+            issuanceDirective: string,
+            status: string
         }) => {
-            overall += parseFloat(row.amount);
             return {
                 id: row.id,
-                name: row.first_name + row.last_name,
-                type: row.expense_type,
-                amount: "₱" + row.amount,
-                description: row.description,
-                created_at: moment(row.created_at).format('L')
+                issuanceDate: row.issuanceDate,
+                issuanceDirective: row.issuanceDirective,
+                status: row.status
             }
         })
-
-        data = [...data, {
-            id: '',
-            name: '',
-            type: '',
-            amount: '',
-            description: '',
-            created_at: ''
-        }, {
-            id: '',
-            name: '',
-            type: 'OVERALL TOTAL',
-            amount: '₱' + overall,
-            description: '',
-            created_at: ''
-        }]
         exportToExcel({ data, headers, filename: `${status}-expenses-${start_date}-to-${end_date}` })
     }
 
@@ -298,7 +270,7 @@ const Issuance: React.FC = () => {
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
                 handleFunction={handleExport}
-                exportFunction={exportExpenses}
+                exportFunction={exportIssuance}
             />
             <Modal
                 isOpen={isArchiveModalOpen}
