@@ -38,7 +38,7 @@ const UpdateReceipt: React.FC = () => {
                 inventory: data?.item?.map((inv: any) => ({
                     id: inv?.id,
                     name: inv?.item_name,
-                    sizeType: inv?.sizeType,
+                    sizeType: inv?.inventory?.sizeType,
                     inventoryId: inv?.inventoryId || null,
                     itemId: inv?.inventoryId || null,
                     item: {
