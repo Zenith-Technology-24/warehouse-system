@@ -53,7 +53,7 @@ const UpdateIssuance: React.FC = () => {
                     id: user?.id,
                     name: user?.name,
                     inventory: user?.inventory?.map((inv: any, _index: number) => {
-                        const matchItem = receiptRefs?.find((ref: { receipt: string }) => ref.receipt === inv?.receiptRef);
+                        const matchItem = receiptRefs?.find((ref: { name: string }) => ref.name === inv?.item?.receiptRef);
                         const mappedItems = Object.values(
                             matchItem?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                 if (!acc[name]) {
@@ -64,7 +64,7 @@ const UpdateIssuance: React.FC = () => {
                                 return acc;
                             }, {}) || {}
                         );
-                        const item = (mappedItems as MappedItem[])?.find(item => item?.inventoryId === inv?.item?.id);
+                        const item = (mappedItems as MappedItem[])?.find(item => item?.inventoryId === inv?.id);
                         setItemNamesMap(prev => ({
                             ...prev,
                             [`${index}-${_index}`]: mappedItems
@@ -348,9 +348,8 @@ const UpdateIssuance: React.FC = () => {
                                                                     refetchData={handleRefetch}
                                                                     forUpdate={inventory?.name}
                                                                     setSelectedValue={(value: any) => {
+                                                                        console.log(value)
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
-                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].price`, value?.price)
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
