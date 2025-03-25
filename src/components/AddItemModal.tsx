@@ -67,8 +67,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
                             required
                         >
                             <option value="none">No Size</option>
-                            <option value="apparrel">Apparrel (S, M, L, XL, 2XL)</option>
-                            <option value="numerical">Numerical (6-12)</option>
+                            <option value="standard">Standard (XS, S, M, L, XL, 2XL, 3XL)</option>
+                            <option value="numerical">Numeric (5-12.5)</option>
+                            <option value="length">Length Variants (XXS, SS, SR, SL, MS, MR, ML, LS, LR, LL)</option>
+                            <option value="fit">Fit Variants (5R-12R, 5W-12W)</option>
+                            <option value="expanded">Expanded Numeric (52-60)</option>
+                            <option value="roman">Roman Numerals (I-X)</option>
                         </select>
                         {schema.errors.sizeType && (
                             <p className='text-red-500 text-sm'>{schema.errors.sizeType}</p>
