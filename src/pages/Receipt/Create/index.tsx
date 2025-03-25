@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Formik, FormikValues, Form } from "formik"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useRef, useState } from "react"
 import * as Yup from 'yup'
 import Header from "../../../components/Header"
 import TopButtons from "../../../components/TopButtons"
@@ -7,11 +7,12 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import AddItemModal from "../../../components/AddItemModal"
 import { addItemType, fetchItemType } from "../../../api/item/itemApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import { createReceipt } from "../../../api/receipt/receiptApi"
+import SizeSelector from "../../../components/SizeSelector"
 
 const CreateReceipt: React.FC = () => {
     const navigate = useNavigate()
@@ -227,9 +228,8 @@ const CreateReceipt: React.FC = () => {
                                                         setFieldValue={setFieldValue}
                                                         refetchData={handleRefetch}
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
-                                                            // setSizeType(value.sizeType)
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
-                                                            setFieldValue(`inventory[${index}].item.size`, value.sizeType === 'numerical' ? '6' : value.sizeType === 'apparrel' ? 'S' : 'none')
+                                                            setFieldValue(`inventory[${index}].item.size`, value.sizeType === 'numerical' ? '6' : value.sizeType === 'standard' ? 'S' : 'none')
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                     />
@@ -237,52 +237,7 @@ const CreateReceipt: React.FC = () => {
                                                         <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
                                                     </div>
                                                 </div>
-                                                <div className="flex h-auto flex-col py-3 col-span-2">
-                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
-                                                    <Field as="select"
-                                                        name={`inventory[${index}].item.size`}
-                                                        disabled={inventory?.sizeType === 'none'}
-                                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                                    >
-                                                        {
-                                                            inventory?.sizeType === 'none' && (
-                                                                <>
-                                                                    <option selected value="none">None</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            inventory?.sizeType === 'apparrel' && (
-                                                                <>
-                                                                    <option selected value="S">S</option>
-                                                                    <option value="M">M</option>
-                                                                    <option value="L">L</option>
-                                                                    <option value="XL">XL</option>
-                                                                    <option value="2XL">2XL</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            inventory?.sizeType === 'numerical' && (
-                                                                <>
-                                                                    <option selected value="6">6</option>
-                                                                    <option value="7">7</option>
-                                                                    <option value="8">8</option>
-                                                                    <option value="9">9</option>
-                                                                    <option value="10">10</option>
-                                                                    <option value="11">11</option>
-                                                                    <option value="12">12</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                    </Field>
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].item.size`} component="div" />
-                                                    </div>
-                                                </div>
+                                                <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].item.quantity`}>Qty</label>
                                                     <Field
