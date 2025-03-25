@@ -12,6 +12,7 @@ import AddItemModal from "../../../components/AddItemModal"
 import { addItemType, fetchItemType } from "../../../api/item/itemApi"
 import { fetchOneReceipt, updateReceipt } from "../../../api/receipt/receiptApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
+import SizeSelector from "../../../components/SizeSelector"
 
 const UpdateReceipt: React.FC = () => {
     const { state } = useLocation()
@@ -262,52 +263,7 @@ const UpdateReceipt: React.FC = () => {
                                                         <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
                                                     </div>
                                                 </div>
-                                                <div className="flex h-auto flex-col py-3 col-span-2">
-                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
-                                                    <Field as="select"
-                                                        name={`inventory[${index}].item.size`}
-                                                        disabled={sizeType === 'none'}
-                                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                                    >
-                                                        {
-                                                            sizeType === 'none' && (
-                                                                <>
-                                                                    <option value="none">None</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            sizeType === 'apparrel' && (
-                                                                <>
-                                                                    <option selected value="S">S</option>
-                                                                    <option value="M">M</option>
-                                                                    <option value="L">L</option>
-                                                                    <option value="XL">XL</option>
-                                                                    <option value="2XL">2XL</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            sizeType === 'numerical' && (
-                                                                <>
-                                                                    <option selected value="6">6</option>
-                                                                    <option value="7">7</option>
-                                                                    <option value="8">8</option>
-                                                                    <option value="9">9</option>
-                                                                    <option value="10">10</option>
-                                                                    <option value="11">11</option>
-                                                                    <option value="12">12</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                    </Field>
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].item.size`} component="div" />
-                                                    </div>
-                                                </div>
+                                                <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].item.quantity`}>Qty</label>
                                                     <Field

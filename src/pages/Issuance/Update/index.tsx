@@ -64,7 +64,7 @@ const UpdateIssuance: React.FC = () => {
                                 return acc;
                             }, {}) || {}
                         );
-                        const item = (mappedItems as MappedItem[])?.find(item => item?.inventoryId === inv?.id);
+                        const item = (mappedItems as MappedItem[])?.find(item => item?.size === inv?.size);
                         setItemNamesMap(prev => ({
                             ...prev,
                             [`${index}-${_index}`]: mappedItems

@@ -153,7 +153,7 @@ const Issuance: React.FC = () => {
             },
             {
                 label: 'Status',
-                name: 'status',
+                name: 'issuanceStatus',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div className={`
