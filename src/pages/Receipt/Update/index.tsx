@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import moment from "moment"
-import AddItemModal from "../../../components/AddItemModal"
+import AddItemModal from "../../../components/ItemType/AddItemModal"
 import { addItemType, fetchItemType } from "../../../api/item/itemApi"
 import { fetchOneReceipt, updateReceipt } from "../../../api/receipt/receiptApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
@@ -259,9 +259,6 @@ const UpdateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
-                                                    </div>
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">

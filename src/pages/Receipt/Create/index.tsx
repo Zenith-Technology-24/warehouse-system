@@ -8,17 +8,22 @@ import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
 import { useMutation } from "@tanstack/react-query"
-import AddItemModal from "../../../components/AddItemModal"
-import { addItemType, fetchItemType } from "../../../api/item/itemApi"
+import AddItemModal from "../../../components/ItemType/AddItemModal"
+import { addItemType, deleteItemType, fetchItemType, updateItemType } from "../../../api/item/itemApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import { createReceipt } from "../../../api/receipt/receiptApi"
 import SizeSelector from "../../../components/SizeSelector"
+import Modal from "../../../components/Modal"
+import UpdateItemModal from "../../../components/ItemType/UpdateItemModal"
 
 const CreateReceipt: React.FC = () => {
     const navigate = useNavigate()
     const { showToast } = useToast()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
+    const [updateItemModalOpen, setIsUpdateItemModalOpen] = useState<boolean>(false)
+    const [isDeleteTypeModalOpen, setIsDeleteTypeModalOpen] = useState<boolean>(false)
+    const [selectedItemType, setSelectedItemType] = useState<any>(null)
     const createReceiptMutation = useMutation({
         mutationFn: (values: any) => createReceipt(values),
         onError: (error: any) => {
@@ -35,6 +40,63 @@ const CreateReceipt: React.FC = () => {
                 "success"
             );
             navigate("/receipt", { replace: true })
+        },
+    });
+
+    const addItem = useMutation({
+        mutationFn: addItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Added',
+                'Item Type has been successfully added.',
+                'success'
+            );
+            setIsAddItemModalOpen(false);
+        },
+    });
+
+    const updateItem = useMutation({
+        mutationFn: updateItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Updated',
+                'Item Type has been successfully updated.',
+                'success'
+            );
+            setIsUpdateItemModalOpen(false);
+        },
+    });
+
+    const deleteItem = useMutation({
+        mutationFn: deleteItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Deleted',
+                'Item Type has been successfully deleted.',
+                'success'
+            );
+            setIsDeleteTypeModalOpen(false);
         },
     });
 
@@ -88,35 +150,33 @@ const CreateReceipt: React.FC = () => {
         ]
     };
 
-    const addItem = useMutation({
-        mutationFn: addItemType,
-        onError: (error: any) => {
-            showToast(
-                error?.response?.data?.message,
-                "",
-                "error"
-            );
-        },
-        onSuccess: () => {
-            showToast(
-                'Item Type Successfully Added',
-                'Item Type has been successfully added.',
-                'success'
-            );
-            setIsAddItemModalOpen(false);
-        },
-    });
-
     const handleRefetch = (refetchFn: () => void) => {
         refetchFn();
     };
 
+    const handleDeleteItemType = () => {
+        deleteItem.mutate(selectedItemType.id)
+    }
+
     return (
         <>
+            <Modal
+                isOpen={isDeleteTypeModalOpen}
+                title={'Delete Item Type'}
+                onClose={() => setIsDeleteTypeModalOpen(false)}
+                handleFunction={() => handleDeleteItemType()}
+                message={`Are you sure you want to delete this item type ${selectedItemType?.name}?`}
+            />
             <AddItemModal
                 isOpen={addItemModalOpen}
                 onClose={() => setIsAddItemModalOpen(false)}
                 handleFunction={(e) => addItem.mutate(e)}
+            />
+            <UpdateItemModal
+                data={selectedItemType}
+                isOpen={updateItemModalOpen}
+                onClose={() => setIsUpdateItemModalOpen(false)}
+                handleFunction={(e) => updateItem.mutate(e)}
             />
             <div className="flex flex-row justify-between pb-4">
                 <Header title={'Create Receipt'} description={'Receipt'} />
@@ -232,10 +292,16 @@ const CreateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].item.size`, value.sizeType === 'numerical' ? '6' : value.sizeType === 'standard' ? 'S' : 'none')
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
+                                                        onUpdate={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsUpdateItemModalOpen(true)
+                                                        }}
+                                                        onDelete={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsDeleteTypeModalOpen(true)
+                                                        }
+                                                        }
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
-                                                    </div>
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
