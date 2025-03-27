@@ -9,15 +9,20 @@ import { useToast } from "../../../providers/ToastContext"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import moment from "moment"
 import AddItemModal from "../../../components/ItemType/AddItemModal"
-import { addItemType, fetchItemType } from "../../../api/item/itemApi"
+import { addItemType, deleteItemType, fetchItemType, updateItemType } from "../../../api/item/itemApi"
 import { fetchOneReceipt, updateReceipt } from "../../../api/receipt/receiptApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import SizeSelector from "../../../components/SizeSelector"
+import Modal from "../../../components/Modal"
+import UpdateItemModal from "../../../components/ItemType/UpdateItemModal"
 
 const UpdateReceipt: React.FC = () => {
     const { state } = useLocation()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
+    const [updateItemModalOpen, setIsUpdateItemModalOpen] = useState<boolean>(false)
+    const [isDeleteTypeModalOpen, setIsDeleteTypeModalOpen] = useState<boolean>(false)
+    const [selectedItemType, setSelectedItemType] = useState<any>(null)
     const [sizeType, setSizeType] = useState<string>('none')
     const [initialValues, setInitialValues] = useState<any>(null)
     const navigate = useNavigate()
@@ -127,6 +132,48 @@ const UpdateReceipt: React.FC = () => {
         },
     });
 
+    const updateItem = useMutation({
+        mutationFn: updateItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Updated',
+                'Item Type has been successfully updated.',
+                'success'
+            );
+            setIsUpdateItemModalOpen(false);
+        },
+    });
+
+    const deleteItem = useMutation({
+        mutationFn: deleteItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Deleted',
+                'Item Type has been successfully deleted.',
+                'success'
+            );
+            setIsDeleteTypeModalOpen(false);
+        },
+    });
+
+    const handleDeleteItemType = () => {
+        deleteItem.mutate(selectedItemType.id)
+    }
+
     const handleRefetch = (refetchFn: () => void) => {
         refetchFn();
     };
@@ -137,10 +184,23 @@ const UpdateReceipt: React.FC = () => {
 
     return (
         <>
+            <Modal
+                isOpen={isDeleteTypeModalOpen}
+                title={'Delete Item Type'}
+                onClose={() => setIsDeleteTypeModalOpen(false)}
+                handleFunction={() => handleDeleteItemType()}
+                message={`Are you sure you want to delete this item type ${selectedItemType?.name}?`}
+            />
             <AddItemModal
                 isOpen={addItemModalOpen}
                 onClose={() => setIsAddItemModalOpen(false)}
                 handleFunction={(e) => addItem.mutate(e)}
+            />
+            <UpdateItemModal
+                data={selectedItemType}
+                isOpen={updateItemModalOpen}
+                onClose={() => setIsUpdateItemModalOpen(false)}
+                handleFunction={(e) => updateItem.mutate(e)}
             />
             <div className="flex flex-row justify-between pb-4">
                 <Header title={'Update Receipt'} description={'Receipt'} />
@@ -258,6 +318,15 @@ const UpdateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
+                                                        onUpdate={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsUpdateItemModalOpen(true)
+                                                        }}
+                                                        onDelete={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsDeleteTypeModalOpen(true)
+                                                        }
+                                                        }
                                                     />
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />
