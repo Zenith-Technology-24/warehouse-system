@@ -6,7 +6,7 @@ import TopButtons from "../../../components/TopButtons"
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import moment from "moment"
 import AddItemModal from "../../../components/ItemType/AddItemModal"
 import { addItemType, deleteItemType, fetchItemType, updateItemType } from "../../../api/item/itemApi"
@@ -17,6 +17,7 @@ import Modal from "../../../components/Modal"
 import UpdateItemModal from "../../../components/ItemType/UpdateItemModal"
 
 const UpdateReceipt: React.FC = () => {
+    const queryClient = useQueryClient();
     const { state } = useLocation()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
@@ -75,6 +76,8 @@ const UpdateReceipt: React.FC = () => {
                 "",
                 "success"
             );
+            setInitialValues(null)
+            queryClient.invalidateQueries(["receipt_details", state.id] as any)
             navigate("/receipt", { replace: true })
         },
     });
