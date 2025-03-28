@@ -53,7 +53,7 @@ const UpdateIssuance: React.FC = () => {
                     id: user?.id,
                     name: user?.name,
                     inventory: user?.inventory?.map((inv: any, _index: number) => {
-                        const matchItem = receiptRefs?.find((ref: { receipt: string }) => ref.receipt === inv?.receiptRef);
+                        const matchItem = receiptRefs?.find((ref: { name: string }) => ref.name === inv?.item?.receiptRef);
                         const mappedItems = Object.values(
                             matchItem?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                 if (!acc[name]) {
@@ -64,7 +64,7 @@ const UpdateIssuance: React.FC = () => {
                                 return acc;
                             }, {}) || {}
                         );
-                        const item = (mappedItems as MappedItem[])?.find(item => item?.inventoryId === inv?.item?.id);
+                        const item = (mappedItems as MappedItem[])?.find(item => item?.name === inv?.item?.name);
                         setItemNamesMap(prev => ({
                             ...prev,
                             [`${index}-${_index}`]: mappedItems
@@ -312,11 +312,11 @@ const UpdateIssuance: React.FC = () => {
                                                                     forUpdate={inventory?.receiptRef}
                                                                     setSelectedValue={(value: any) => {
                                                                         const mappedItems = Object.values(
-                                                                            value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
+                                                                            value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number, id: string }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                                                                 if (!acc[name]) {
-                                                                                    acc[name] = { id, name, size: [{ name: size, price }], unit, price, inventoryId };
+                                                                                    acc[name] = { id, name, size: [{ name: size, price, id }], unit, price, inventoryId };
                                                                                 } else {
-                                                                                    acc[name].size.push({ name: size, price });
+                                                                                    acc[name].size.push({ name: size, price, id });
                                                                                 }
                                                                                 return acc;
                                                                             }, {}) || {}
@@ -349,8 +349,8 @@ const UpdateIssuance: React.FC = () => {
                                                                     forUpdate={inventory?.name}
                                                                     setSelectedValue={(value: any) => {
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
-                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].price`, value?.price)
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
@@ -368,14 +368,14 @@ const UpdateIssuance: React.FC = () => {
                                                                     className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                                                                         const selectedSize = e.target.value;
-                                                                        const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
+                                                                        const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { id: string }) => size.id === selectedSize)?.price;
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
                                                                         setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
                                                                     }}
                                                                 >
-                                                                    {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
-                                                                        <option key={size.name} value={size.name}>{size.name}</option>
+                                                                    {values.endUsers[index].inventory[_index].itemSizes?.map((size: { id: string, name: string }) => (
+                                                                        <option key={size.id} value={size.id}>{size.name}</option>
                                                                     ))}
                                                                 </Field>
                                                                 <div className="h-6">

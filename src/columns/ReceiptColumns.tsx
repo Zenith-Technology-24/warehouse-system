@@ -8,7 +8,7 @@ export const useReceiptColumns = (inventoryData: any) => {
                 label: 'Receipt Date',
                 name: 'receiptDate',
                 render(row: { receiptDate: string }, value: string) {
-                    return <p className="font-normal">{moment(value).format('DD MMM YYYY')}</p>
+                    return <p>{moment(value).format('DD MMM YYYY')}</p>
                 }
             },
             {

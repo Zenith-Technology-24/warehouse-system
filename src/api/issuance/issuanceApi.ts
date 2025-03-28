@@ -96,7 +96,7 @@ export const updateIssuance = async (data: updateIssuanceProps) => {
 };
 
 export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusProps) => {
-    const { data } = await apiService.put(`/issuance/issuances/${id}`, { status });
+    const { data } = await apiService.put(`/issuance/${status === 'archived' ? 'archive' : 'unarchive'}/${id}`);
     return data;
 };
 

@@ -183,7 +183,7 @@ const View: React.FC = () => {
                         data?.issuance.length > 0 ? (
                             <Table
                                 columns={pendingIssuanceColumns}
-                                rows={{ data: state?.issuance }}
+                                rows={{ data: data?.issuance }}
                                 classes="!h-0"
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>

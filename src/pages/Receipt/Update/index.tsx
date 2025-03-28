@@ -6,17 +6,24 @@ import TopButtons from "../../../components/TopButtons"
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import moment from "moment"
-import AddItemModal from "../../../components/AddItemModal"
-import { addItemType, fetchItemType } from "../../../api/item/itemApi"
+import AddItemModal from "../../../components/ItemType/AddItemModal"
+import { addItemType, deleteItemType, fetchItemType, updateItemType } from "../../../api/item/itemApi"
 import { fetchOneReceipt, updateReceipt } from "../../../api/receipt/receiptApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
+import SizeSelector from "../../../components/SizeSelector"
+import Modal from "../../../components/Modal"
+import UpdateItemModal from "../../../components/ItemType/UpdateItemModal"
 
 const UpdateReceipt: React.FC = () => {
+    const queryClient = useQueryClient();
     const { state } = useLocation()
     const formRef = useRef<any>()
     const [addItemModalOpen, setIsAddItemModalOpen] = useState<boolean>(false)
+    const [updateItemModalOpen, setIsUpdateItemModalOpen] = useState<boolean>(false)
+    const [isDeleteTypeModalOpen, setIsDeleteTypeModalOpen] = useState<boolean>(false)
+    const [selectedItemType, setSelectedItemType] = useState<any>(null)
     const [sizeType, setSizeType] = useState<string>('none')
     const [initialValues, setInitialValues] = useState<any>(null)
     const navigate = useNavigate()
@@ -37,7 +44,7 @@ const UpdateReceipt: React.FC = () => {
                 inventory: data?.item?.map((inv: any) => ({
                     id: inv?.id,
                     name: inv?.item_name,
-                    sizeType: inv?.sizeType,
+                    sizeType: inv?.inventory?.sizeType,
                     inventoryId: inv?.inventoryId || null,
                     itemId: inv?.inventoryId || null,
                     item: {
@@ -69,6 +76,8 @@ const UpdateReceipt: React.FC = () => {
                 "",
                 "success"
             );
+            setInitialValues(null)
+            queryClient.invalidateQueries(["receipt_details", state.id] as any)
             navigate("/receipt", { replace: true })
         },
     });
@@ -126,8 +135,60 @@ const UpdateReceipt: React.FC = () => {
         },
     });
 
+    const updateItem = useMutation({
+        mutationFn: updateItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Updated',
+                'Item Type has been successfully updated.',
+                'success'
+            );
+            setIsUpdateItemModalOpen(false);
+        },
+    });
+
+    const deleteItem = useMutation({
+        mutationFn: deleteItemType,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: () => {
+            showToast(
+                'Item Type Successfully Deleted',
+                'Item Type has been successfully deleted.',
+                'success'
+            );
+            setIsDeleteTypeModalOpen(false);
+        },
+    });
+
+    const handleDeleteItemType = () => {
+        deleteItem.mutate(selectedItemType.id)
+    }
+
     const handleRefetch = (refetchFn: () => void) => {
         refetchFn();
+    };
+
+    const defaultSizeMap = {
+        numerical: "5",
+        standard: "S",
+        length: "XXS",
+        fit: "5R",
+        expanded: "52",
+        roman: "I",
+        none: "none"
     };
 
     if (!initialValues) {
@@ -136,10 +197,23 @@ const UpdateReceipt: React.FC = () => {
 
     return (
         <>
+            <Modal
+                isOpen={isDeleteTypeModalOpen}
+                title={'Delete Item Type'}
+                onClose={() => setIsDeleteTypeModalOpen(false)}
+                handleFunction={() => handleDeleteItemType()}
+                message={`Are you sure you want to delete this item type ${selectedItemType?.name}?`}
+            />
             <AddItemModal
                 isOpen={addItemModalOpen}
                 onClose={() => setIsAddItemModalOpen(false)}
                 handleFunction={(e) => addItem.mutate(e)}
+            />
+            <UpdateItemModal
+                data={selectedItemType}
+                isOpen={updateItemModalOpen}
+                onClose={() => setIsUpdateItemModalOpen(false)}
+                handleFunction={(e) => updateItem.mutate(e)}
             />
             <div className="flex flex-row justify-between pb-4">
                 <Header title={'Update Receipt'} description={'Receipt'} />
@@ -255,59 +329,21 @@ const UpdateReceipt: React.FC = () => {
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string }) => {
                                                             setSizeType(value.sizeType)
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
+                                                            setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none")
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
+                                                        onUpdate={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsUpdateItemModalOpen(true)
+                                                        }}
+                                                        onDelete={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsDeleteTypeModalOpen(true)
+                                                        }
+                                                        }
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
-                                                    </div>
                                                 </div>
-                                                <div className="flex h-auto flex-col py-3 col-span-2">
-                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
-                                                    <Field as="select"
-                                                        name={`inventory[${index}].item.size`}
-                                                        disabled={sizeType === 'none'}
-                                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                                    >
-                                                        {
-                                                            sizeType === 'none' && (
-                                                                <>
-                                                                    <option value="none">None</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            sizeType === 'apparrel' && (
-                                                                <>
-                                                                    <option selected value="S">S</option>
-                                                                    <option value="M">M</option>
-                                                                    <option value="L">L</option>
-                                                                    <option value="XL">XL</option>
-                                                                    <option value="2XL">2XL</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            sizeType === 'numerical' && (
-                                                                <>
-                                                                    <option selected value="6">6</option>
-                                                                    <option value="7">7</option>
-                                                                    <option value="8">8</option>
-                                                                    <option value="9">9</option>
-                                                                    <option value="10">10</option>
-                                                                    <option value="11">11</option>
-                                                                    <option value="12">12</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                    </Field>
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].item.size`} component="div" />
-                                                    </div>
-                                                </div>
+                                                <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].item.quantity`}>Qty</label>
                                                     <Field

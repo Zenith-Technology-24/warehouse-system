@@ -3,12 +3,20 @@ import React from 'react';
 import * as Yup from 'yup'
 
 interface AddItemModalProps {
+    data: {
+        id: string
+        name: string
+        sizeType: string
+        unit: string
+    }
     isOpen: boolean
     onClose: () => void
     handleFunction: (values: any) => void
 }
 
 const VALIDATION_SCHEMA = Yup.object().shape({
+    id: Yup.string()
+        .required('ID is required'),
     name: Yup.string()
         .required('Item name is required'),
     sizeType: Yup.string()
@@ -18,15 +26,16 @@ const VALIDATION_SCHEMA = Yup.object().shape({
 });
 
 
-const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunction }) => {
+const UpdateItemModal: React.FC<AddItemModalProps> = ({ data, isOpen, onClose, handleFunction }) => {
     if (!isOpen) return null;
 
     const schema = useFormik({
         validateOnMount: false,
         initialValues: {
-            name: '',
-            sizeType: 'none',
-            unit: ''
+            id: data?.id,
+            name: data?.name,
+            sizeType: data?.sizeType,
+            unit: data?.unit
         },
         validationSchema: VALIDATION_SCHEMA,
         onSubmit(values) {
@@ -37,7 +46,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center !z-[9999]">
             <div className="bg-white rounded-lg shadow-lg p-6 min-w-[500px]">
-                <h2 className="text-xl font-medium text-gray-800 mb-4">Add Item Type</h2>
+                <h2 className="text-xl font-medium text-gray-800 mb-4">Update Item Type</h2>
                 <div className="flex flex-col gap-3">
                     <div className='flex flex-col'>
                         <label className='label text-sm'>Item Name</label>
@@ -67,8 +76,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
                             required
                         >
                             <option value="none">No Size</option>
-                            <option value="apparrel">Apparrel (S, M, L, XL, 2XL)</option>
-                            <option value="numerical">Numerical (6-12)</option>
+                            <option value="standard">Standard (XS, S, M, L, XL, 2XL, 3XL)</option>
+                            <option value="numerical">Numeric (5-12.5)</option>
+                            <option value="length">Length Variants (XXS, SS, SR, SL, MS, MR, ML, LS, LR, LL)</option>
+                            <option value="fit">Fit Variants (5R-12R, 5W-12W)</option>
+                            <option value="expanded">Expanded Numeric (52-60)</option>
+                            <option value="roman">Roman Numerals (I-X)</option>
                         </select>
                         {schema.errors.sizeType && (
                             <p className='text-red-500 text-sm'>{schema.errors.sizeType}</p>
@@ -104,7 +117,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
                         onClick={schema.handleSubmit as any}
                         className="grow bg-aaa hover:border-aaa text-white py-2 px-4 rounded-lg"
                     >
-                        Add Item
+                        Update Item
                     </button>
                 </div>
             </div>
@@ -112,4 +125,4 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose, handleFunc
     );
 }
 
-export default AddItemModal
+export default UpdateItemModal
