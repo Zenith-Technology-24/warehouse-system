@@ -158,6 +158,16 @@ const CreateReceipt: React.FC = () => {
         deleteItem.mutate(selectedItemType.id)
     }
 
+    const defaultSizeMap = {
+        numerical: "6",
+        standard: "S",
+        length: "XXS",
+        fit: "5R",
+        expanded: "52",
+        roman: "I",
+        none: "none"
+    };
+
     return (
         <>
             <Modal
@@ -289,7 +299,7 @@ const CreateReceipt: React.FC = () => {
                                                         refetchData={handleRefetch}
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
-                                                            setFieldValue(`inventory[${index}].item.size`, value.sizeType === 'numerical' ? '6' : value.sizeType === 'standard' ? 'S' : 'none')
+                                                            setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none")
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                         onUpdate={(option: object) => {

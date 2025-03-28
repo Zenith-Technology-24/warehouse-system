@@ -46,7 +46,7 @@ const UpdateItemModal: React.FC<AddItemModalProps> = ({ data, isOpen, onClose, h
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center !z-[9999]">
             <div className="bg-white rounded-lg shadow-lg p-6 min-w-[500px]">
-                <h2 className="text-xl font-medium text-gray-800 mb-4">Add Item Type</h2>
+                <h2 className="text-xl font-medium text-gray-800 mb-4">Update Item Type</h2>
                 <div className="flex flex-col gap-3">
                     <div className='flex flex-col'>
                         <label className='label text-sm'>Item Name</label>
@@ -117,7 +117,7 @@ const UpdateItemModal: React.FC<AddItemModalProps> = ({ data, isOpen, onClose, h
                         onClick={schema.handleSubmit as any}
                         className="grow bg-aaa hover:border-aaa text-white py-2 px-4 rounded-lg"
                     >
-                        Add Item
+                        Update Item
                     </button>
                 </div>
             </div>

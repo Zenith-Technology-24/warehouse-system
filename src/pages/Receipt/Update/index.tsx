@@ -178,6 +178,16 @@ const UpdateReceipt: React.FC = () => {
         refetchFn();
     };
 
+    const defaultSizeMap = {
+        numerical: "6",
+        standard: "S",
+        length: "XXS",
+        fit: "5R",
+        expanded: "52",
+        roman: "I",
+        none: "none"
+    };
+
     if (!initialValues) {
         return <div>No Data Available</div>;
     }
@@ -316,6 +326,7 @@ const UpdateReceipt: React.FC = () => {
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string }) => {
                                                             setSizeType(value.sizeType)
                                                             setFieldValue(`inventory[${index}].item.unit`, value.unit)
+                                                            setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none")
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                         onUpdate={(option: object) => {
