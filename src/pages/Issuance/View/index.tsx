@@ -61,15 +61,6 @@ const View: React.FC = () => {
                 }
             },
             {
-                label: 'Location',
-                name: 'location',
-                render(row: { item: { location: string } }, value: string, rowIndex: number) {
-                    return (
-                        <p>{row?.item?.location}</p>
-                    )
-                }
-            },
-            {
                 label: 'Receipt Ref',
                 name: 'receiptRef',
                 render(row: { item: { receiptRef: string } }, value: string, rowIndex: number) {

@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Formik, FormikValues, Form } from "formik"
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import * as Yup from 'yup'
 import Header from "../../../components/Header"
 import TopButtons from "../../../components/TopButtons"
@@ -107,20 +107,20 @@ const CreateReceipt: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        source: Yup.string().required('Sourse is required') as any,
-        issuanceDirective: Yup.string().required('issuanceDirective is required') as any,
-        receipt_date: Yup.string().required('Receipt Date is required') as any,
+        source: Yup.string().required('Please input the source') as any,
+        issuanceDirective: Yup.string().required('Please enter the issuance directive') as any,
+        receipt_date: Yup.string().required('Please enter the receipt date') as any,
         inventory: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
-                name: Yup.string().required('Name is required'),
+                name: Yup.string().required('Please input the name'),
                 sizeType: Yup.string().required('Size Type is required'),
                 item: Yup.object().shape({
-                    location: Yup.string().required('Inventory Location is required'),
-                    quantity: Yup.number().required('Inventory Quantity is required'),
+                    location: Yup.string().required('Please specify the location'),
+                    quantity: Yup.number().required('Please input inventory quantity'),
                     price: Yup.number().required('Inventory Price is required'),
                     amount: Yup.number().required('Inventory Amount is required'),
-                    unit: Yup.string().required('Inventory Unit is required'),
+                    unit: Yup.string().required('Please input the unit of measure'),
                     size: Yup.string().required('Inventory Size is required'),
                     expiryDate: Yup.string(),
                 })
@@ -302,16 +302,56 @@ const CreateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none")
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
-                                                        onUpdate={(option: object) => {
-                                                            setSelectedItemType(option)
-                                                            setIsUpdateItemModalOpen(true)
-                                                        }}
-                                                        onDelete={(option: object) => {
-                                                            setSelectedItemType(option)
-                                                            setIsDeleteTypeModalOpen(true)
-                                                        }
-                                                        }
                                                     />
+                                                    <div className="h-6">
+                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
+                                                    </div>
+                                                </div>
+                                                <div className="flex h-auto flex-col py-3 col-span-2">
+                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
+                                                    <Field as="select"
+                                                        name={`inventory[${index}].item.size`}
+                                                        disabled={inventory?.sizeType === 'none'}
+                                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                                    >
+                                                        {
+                                                            inventory?.sizeType === 'none' && (
+                                                                <>
+                                                                    <option selected value="none">None</option>
+                                                                </>
+                                                            )
+
+                                                        }
+                                                        {
+                                                            inventory?.sizeType === 'apparrel' && (
+                                                                <>
+                                                                    <option selected value="S">S</option>
+                                                                    <option value="M">M</option>
+                                                                    <option value="L">L</option>
+                                                                    <option value="XL">XL</option>
+                                                                    <option value="2XL">2XL</option>
+                                                                </>
+                                                            )
+
+                                                        }
+                                                        {
+                                                            inventory?.sizeType === 'numerical' && (
+                                                                <>
+                                                                    <option selected value="6">6</option>
+                                                                    <option value="7">7</option>
+                                                                    <option value="8">8</option>
+                                                                    <option value="9">9</option>
+                                                                    <option value="10">10</option>
+                                                                    <option value="11">11</option>
+                                                                    <option value="12">12</option>
+                                                                </>
+                                                            )
+
+                                                        }
+                                                    </Field>
+                                                    <div className="h-6">
+                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].item.size`} component="div" />
+                                                    </div>
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
