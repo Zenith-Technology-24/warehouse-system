@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Formik, FormikValues, Form } from "formik"
+import { ErrorMessage, Field, Formik, FormikValues, Form, FormikErrors } from "formik"
 import React, { useEffect, useRef, useState } from "react"
 import * as Yup from 'yup'
 import Header from "../../../components/Header"
@@ -44,20 +44,20 @@ const CreateReceipt: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        source: Yup.string().required('Sourse is required') as any,
-        issuanceDirective: Yup.string().required('issuanceDirective is required') as any,
-        receipt_date: Yup.string().required('Receipt Date is required') as any,
+        source: Yup.string().required('Please input the source') as any,
+        issuanceDirective: Yup.string().required('Please enter the issuance directive') as any,
+        receipt_date: Yup.string().required('Please enter the receipt date') as any,
         inventory: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
-                name: Yup.string().required('Name is required'),
+                name: Yup.string().required('Please input the name'),
                 sizeType: Yup.string().required('Size Type is required'),
                 item: Yup.object().shape({
-                    location: Yup.string().required('Inventory Location is required'),
-                    quantity: Yup.number().required('Inventory Quantity is required'),
+                    location: Yup.string().required('Please specify the location'),
+                    quantity: Yup.number().required('Please input inventory quantity'),
                     price: Yup.number().required('Inventory Price is required'),
                     amount: Yup.number().required('Inventory Amount is required'),
-                    unit: Yup.string().required('Inventory Unit is required'),
+                    unit: Yup.string().required('Please input the unit of measure'),
                     size: Yup.string().required('Inventory Size is required'),
                     expiryDate: Yup.string(),
                 })
@@ -233,9 +233,6 @@ const CreateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
                                                         }}
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
-                                                    </div>
                                                 </div>
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
@@ -250,7 +247,6 @@ const CreateReceipt: React.FC = () => {
                                                                     <option selected value="none">None</option>
                                                                 </>
                                                             )
-
                                                         }
                                                         {
                                                             inventory?.sizeType === 'apparrel' && (

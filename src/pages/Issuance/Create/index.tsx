@@ -119,15 +119,22 @@ const CreateIssuance: React.FC = () => {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
                             validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
+                            inventory: values.inventory.map((inv: any) => ({
+                                ...inv,
+                                item: {
+                                    ...inv.item,
+                                    amount: inv.item.price * inv.item.quantity,
+                                }
+                            }))
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
 
-                        // const totalAmount = values?.inventory?.reduce((sum: number, inv: { item?: { price?: number, quantity?: number } }) => {
-                        //     return sum + (inv?.item?.price! * inv?.item?.quantity! || 0);
-                        // }, 0);
+                        const totalAmount = values?.endUsers[0].inventory?.reduce((sum: number, inv: { price?: number, quantity?: number }) => {
+                            return sum + (inv?.price! * inv?.quantity! || 0);
+                        }, 0);
 
                         const updateAmount = (index: number, _index: number, quantity: number) => {
                             const amount = values.endUsers[index].inventory[_index].price * quantity;
@@ -421,9 +428,9 @@ const CreateIssuance: React.FC = () => {
                                     })}
                                 </div>
                                 
-                    {/* <div className="flex flex-row-reverse py-1">
-                                        GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </div> */}
+                                <div className="flex flex-row-reverse py-1">
+                                    GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </div>
                             </Form>
                         )
                     }
