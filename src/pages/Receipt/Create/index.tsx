@@ -159,7 +159,7 @@ const CreateReceipt: React.FC = () => {
     }
 
     const defaultSizeMap = {
-        numerical: "6",
+        numerical: "5",
         standard: "S",
         length: "XXS",
         fit: "5R",
