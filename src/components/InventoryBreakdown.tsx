@@ -25,7 +25,7 @@ const InventoryBreakdown: React.FC<InventoryBreakdownProps> = ({ title, classnam
                             <div key={index} className="space-y-1 px-4 py-2">
                                 <p className="text-gray-500 text-md">Size</p>
                                 <p>{item?.size}</p>
-                                <p className="text-gray-500 text-md">Pairs</p>
+                                <p className="text-gray-500 text-md">Quantity</p>
                                 <p>{item?.pairs}</p>
                                 <StockStatusComponent status={item?.status} />
                             </div>
