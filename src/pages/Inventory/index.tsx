@@ -192,34 +192,31 @@ const Inventory: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'ID', key: 'id', width: 10 },
-            { header: 'Product Name', key: 'product_name', width: 15 },
-            { header: 'Category', key: 'category', width: 15 },
-            { header: 'Size', key: 'size', width: 15 },
-            { header: 'In stock', key: 'in_stock', width: 15 },
-            { header: 'Cost', key: 'cost', width: 15 },
-            { header: 'Price', key: 'price', width: 15 },
+            { header: 'ID', key: 'id', width: 40 },
+            { header: 'Item name', key: 'name', width: 40 },
+            { header: 'T/Qty', key: 'totalQuantity', width: 15 },
+            { header: 'UoM', key: 'unit', width: 15 },
+            { header: 'GT/Amount', key: 'grandTotalAmount', width: 15 },
+            { header: 'Stock Level', key: 'stockLevel', width: 15 },
             { header: 'Created At', key: 'created_at', width: 15 },
         ];
 
         const data = toExport?.map((row: {
             id: number,
-            product_name: string,
-            category: string,
-            size: string,
-            in_stock: number,
-            cost: number,
-            price: number,
+            name: string,
+            totalQuantity: number,
+            unit: string,
+            grandTotalAmount: string,
+            stockLevel: string,
             created_at: string
         }) => {
             return {
                 id: row.id,
-                product_name: row.product_name,
-                category: row.category,
-                size: row.size,
-                in_stock: row.in_stock,
-                cost: row.cost,
-                price: row.price,
+                name: row.name,
+                totalQuantity: row.totalQuantity,
+                unit: row.unit,
+                grandTotalAmount: row.grandTotalAmount,
+                stockLevel: row.stockLevel,
                 created_at: moment(row.created_at).format('L')
             }
         })
