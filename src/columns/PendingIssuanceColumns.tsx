@@ -26,6 +26,13 @@ export const usePendingIssuanceColumns = (issuanceData: any) => {
                 }
             },
             {
+                label: 'Size',
+                name: 'size',
+                render(row: object, value: string) {
+                    return <p>{value}</p>
+                }
+            },
+            {
                 label: 'UoM',
                 name: 'unit',
                 render(row: object, value: string) {
