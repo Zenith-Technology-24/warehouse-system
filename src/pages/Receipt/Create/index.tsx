@@ -107,21 +107,21 @@ const CreateReceipt: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        source: Yup.string().required('Sourse is required') as any,
-        issuanceDirective: Yup.string().required('issuanceDirective is required') as any,
-        receipt_date: Yup.string().required('Receipt Date is required') as any,
+        source: Yup.string().required('Please input the Source') as any,
+        issuanceDirective: Yup.string().required('Please input the Issuance Directive') as any,
+        receipt_date: Yup.string().required('Please input the Receipt Date ') as any,
         inventory: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
-                name: Yup.string().required('Name is required'),
-                sizeType: Yup.string().required('Size Type is required'),
+                name: Yup.string().required('Please input the Name'),
+                sizeType: Yup.string().required('Please input the Size Type '),
                 item: Yup.object().shape({
-                    location: Yup.string().required('Inventory Location is required'),
-                    quantity: Yup.number().required('Inventory Quantity is required'),
-                    price: Yup.number().required('Inventory Price is required'),
-                    amount: Yup.number().required('Inventory Amount is required'),
-                    unit: Yup.string().required('Inventory Unit is required'),
-                    size: Yup.string().required('Inventory Size is required'),
+                    location: Yup.string().required('Please input the Inventory Location'),
+                    quantity: Yup.number().required('Please input the Inventory Quantity'),
+                    price: Yup.number().required('Please input the Inventory Price'),
+                    amount: Yup.number().required('Please input the Inventory Amount'),
+                    unit: Yup.string().required('Please input the Inventory Unit'),
+                    size: Yup.string().required('Please input the Inventory Size'),
                     expiryDate: Yup.string(),
                 })
             })

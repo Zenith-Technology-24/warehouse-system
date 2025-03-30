@@ -13,7 +13,7 @@ const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, handleFunction, m
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center !z-[9999]">
-            <div className="bg-white rounded-lg shadow-lg p-6 min-w-[500px]">
+            <div className="bg-white rounded-lg shadow-lg p-6 min-w-[500px] max-w-[700px]">
                 <h2 className="text-xl font-medium text-center text-gray-800 mb-4">{title}</h2>
                 <p className="text-gray-500 mb-6 text-center">{message}</p>
                 <div className="flex space-x-3">

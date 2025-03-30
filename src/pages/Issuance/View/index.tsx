@@ -61,15 +61,6 @@ const View: React.FC = () => {
                 }
             },
             {
-                label: 'Location',
-                name: 'location',
-                render(row: { item: { location: string } }, value: string, rowIndex: number) {
-                    return (
-                        <p>{row?.item?.location}</p>
-                    )
-                }
-            },
-            {
                 label: 'Receipt Ref',
                 name: 'receiptRef',
                 render(row: { item: { receiptRef: string } }, value: string, rowIndex: number) {
@@ -193,27 +184,6 @@ const View: React.FC = () => {
                         <p>Issuance Directive Nr: <span className="text-black ml-2">{data?.issuanceDirective || 'N/A'}</span></p>
                         <p>Issuance Date: <span className="text-black ml-2">{moment(data?.issuanceDate).format('DD MMM YYYY') || 'N/A'}</span></p>
                         <p>Validity Date: <span className="text-black ml-2">{moment(data?.validityDate).format('DD MMM YYYY') || 'N/A'}</span></p>
-                        <div className="flex">
-                            <p>Status:</p>
-                            <div
-                                className={`
-                                    ${data?.issuanceStatus === 'withdrawn' && 'bg-green-50 text-green-500 w-20'} 
-                                    ${data?.issuanceStatus === 'pending' && 'bg-yellow-50 text-yellow-500 w-20'}
-                                    ${data?.issuanceStatus === 'archived' && 'bg-gray-50 text-gray-500 w-20'} 
-                                    rounded-full flex items-center justify-center mx-3`}
-                            >
-                                <div
-                                    className={`w-2 h-2 rounded-full mr-1 
-                                        ${data?.issuanceStatus === 'withdrawn' && 'bg-green-500'}
-                                        ${data?.issuanceStatus === 'pending' && 'bg-yellow-500'}
-                                        ${data?.issuanceStatus === 'archived' && 'bg-gray-500'}
-                                    `}
-                                ></div>
-                                <p className="text-xs">
-                                    {data?.issuanceStatus?.charAt(0).toUpperCase() + data?.issuanceStatus?.slice(1)}
-                                </p>
-                            </div>
-                        </div>
                         <p>Created At: <span className="text-black ml-2">{moment(data?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
                         <p>Created By: <span className="text-black ml-2">{data?.user?.firstname + ' ' + data?.user?.lastname + ' (' + data?.user?.roles[0]?.name + ')' || 'N/A'}</span></p>
                     </div>

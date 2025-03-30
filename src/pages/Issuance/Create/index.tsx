@@ -45,23 +45,23 @@ const CreateIssuance: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        documentNo: Yup.string().required('Document No is required') as any,
-        issuanceDirective: Yup.string().required('Issuance Directive Nr. is required') as any,
-        issuanceDate: Yup.string().required('Issuance Date is required') as any,
-        validityDate: Yup.string().required('Validity Date is required') as any,
+        documentNo: Yup.string().required('Please input the Document No') as any,
+        issuanceDirective: Yup.string().required('Please input the Issuance Directive Nr.') as any,
+        issuanceDate: Yup.string().required('Please input the Issuance Date') as any,
+        validityDate: Yup.string().required('Please input the Validity Date') as any,
         endUsers: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
-                name: Yup.string().required('End User is required'),
+                name: Yup.string().required('Please input the End User'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
                         id: Yup.string().nullable(),
-                        receiptRef: Yup.string().required('Receipt Ref is required') as any,
-                        name: Yup.string().required('Item Name is required'),
-                        quantity: Yup.string().required('Inventory Quantity is required'),
-                        price: Yup.number().required('Inventory Price is required'),
-                        amount: Yup.number().required('Inventory Amount is required'),
-                        unit: Yup.string().required('Inventory Unit is required'),
+                        receiptRef: Yup.string().required('Please input the Receipt Ref') as any,
+                        name: Yup.string().required('Please input the Item Name'),
+                        quantity: Yup.string().required('Please input the Inventory Quantity'),
+                        price: Yup.number().required('Please input the Inventory Price'),
+                        amount: Yup.number().required('Please input the Inventory Amount'),
+                        unit: Yup.string().required('Please input the Inventory Unit'),
                         size: Yup.string(),
                     })
                 )
@@ -118,11 +118,22 @@ const CreateIssuance: React.FC = () => {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
                             validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
+                            inventory: values.inventory.map((inv: any) => ({
+                                ...inv,
+                                item: {
+                                    ...inv.item,
+                                    amount: inv.item.price * inv.item.quantity,
+                                }
+                            }))
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
+
+                        const totalAmount = values?.endUsers[0].inventory?.reduce((sum: number, inv: { price?: number, quantity?: number }) => {
+                            return sum + (inv?.price! * inv?.quantity! || 0);
+                        }, 0);
                         const updateAmount = (index: number, _index: number, quantity: number) => {
                             const amount = values.endUsers[index].inventory[_index].price * quantity;
                             setFieldValue(`endUsers.${index}.inventory.${_index}.amount`, amount);
@@ -248,8 +259,82 @@ const CreateIssuance: React.FC = () => {
                                                 </div>
                                                 {user?.inventory?.map((inventory: any, _index: number) => {
                                                     return (
-                                                        <div key={_index} className="w-full col-span-2 gap-1 bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-2">
-                                                            <div className="flex h-auto flex-col py-3 col-span-2">
+                                                        <div key={_index} className="w-full col-span-2 gap-1 bg-gray-50 px-6 py-4 my-2 rounded-lg border grid grid-cols-4">
+                                                            <div className="flex h-auto flex-col col-span-2">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
+                                                                <DropdownWithSearch
+                                                                    values={values}
+                                                                    _index={index}
+                                                                    placeholder="Item Name"
+                                                                    name={`endUsers[${index}].inventory[${_index}].name`}
+                                                                    fetchNames={() => itemNamesMap[`${index}-${_index}`] || []}
+                                                                    setFieldValue={setFieldValue}
+                                                                    refetchData={handleRefetch}
+                                                                    setSelectedValue={(value: any) => {
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
+                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, value?.price)
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div className="flex h-auto flex-col">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size (Optional)</label>
+                                                                <Field as="select"
+                                                                    name={`endUsers[${index}].inventory[${_index}].size`}
+                                                                    placeholder="Size"
+                                                                    className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                                                        const selectedSize = e.target.value;
+                                                                        const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
+                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
+                                                                    }}
+                                                                >
+                                                                    {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
+                                                                        <option key={size.name} value={size.name}>{size.name}</option>
+                                                                    ))}
+                                                                </Field>
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].size`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].quantity`}>Qty</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    type="number"
+                                                                    name={`endUsers[${index}].inventory[${_index}].quantity`}
+                                                                    placeholder="Qty"
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                        const newQuantity = parseFloat(e.target.value);
+                                                                        setFieldValue(`endUsers[${index}].inventory.${_index}.quantity`, newQuantity);
+                                                                        updateAmount(index, _index, newQuantity);
+                                                                    }}
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].quantity`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].unit`}>UoM</label>
+                                                                <Field
+                                                                    as="input"
+                                                                    name={`endUsers[${index}].inventory[${_index}].unit`}
+                                                                    placeholder="UoM"
+                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                                                    disabled
+                                                                />
+                                                                <div className="h-6">
+                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].unit`} component="div" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex h-auto flex-col col-span-1">
                                                                 <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].receiptRef`}>Receipt Ref</label>
                                                                 <DropdownWithSearch
                                                                     values={values}
@@ -282,82 +367,8 @@ const CreateIssuance: React.FC = () => {
                                                                     }}
                                                                 />
                                                             </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
-                                                                <DropdownWithSearch
-                                                                    values={values}
-                                                                    _index={index}
-                                                                    placeholder="Item Name"
-                                                                    name={`endUsers[${index}].inventory[${_index}].name`}
-                                                                    fetchNames={() => itemNamesMap[`${index}-${_index}`] || []}
-                                                                    setFieldValue={setFieldValue}
-                                                                    refetchData={handleRefetch}
-                                                                    setSelectedValue={(value: any) => {
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                        // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, value?.price)
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, value?.price * values?.endUsers[index].inventory[_index].quantity)
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size</label>
-                                                                <Field as="select"
-                                                                    name={`endUsers[${index}].inventory[${_index}].size`}
-                                                                    placeholder="Size"
-                                                                    className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                                                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                        const selectedSize = e.target.value;
-                                                                        const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
-                                                                        setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
-                                                                    }}
-                                                                >
-                                                                    {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
-                                                                        <option key={size.name} value={size.name}>{size.name}</option>
-                                                                    ))}
-                                                                </Field>
-                                                                <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].size`} component="div" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].quantity`}>Qty</label>
-                                                                <Field
-                                                                    as="input"
-                                                                    type="number"
-                                                                    name={`endUsers[${index}].inventory[${_index}].quantity`}
-                                                                    placeholder="Qty"
-                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                        const newQuantity = parseFloat(e.target.value);
-                                                                        setFieldValue(`endUsers[${index}].inventory.${_index}.quantity`, newQuantity);
-                                                                        updateAmount(index, _index, newQuantity);
-                                                                    }}
-                                                                />
-                                                                <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].quantity`} component="div" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].unit`}>UoM</label>
-                                                                <Field
-                                                                    as="input"
-                                                                    name={`endUsers[${index}].inventory[${_index}].unit`}
-                                                                    placeholder="UoM"
-                                                                    className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                                                    disabled
-                                                                />
-                                                                <div className="h-6">
-                                                                    <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].unit`} component="div" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].price`}>Price</label>
+                                                            <div className="flex h-auto flex-col">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].price`}>U/Price</label>
                                                                 <Field
                                                                     as="input"
                                                                     name={`endUsers[${index}].inventory[${_index}].price`}
@@ -369,8 +380,8 @@ const CreateIssuance: React.FC = () => {
                                                                     <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].price`} component="div" />
                                                                 </div>
                                                             </div>
-                                                            <div className="flex h-auto flex-col py-3">
-                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].amount`}>Amount</label>
+                                                            <div className="flex h-auto flex-col">
+                                                                <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].amount`}>T/Amount</label>
                                                                 <Field
                                                                     as="input"
                                                                     type="number"
@@ -379,6 +390,7 @@ const CreateIssuance: React.FC = () => {
                                                                     disabled
                                                                     className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                                                 />
+                                                                
                                                                 <div className="h-6">
                                                                     <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].amount`} component="div" />
                                                                 </div>
@@ -410,6 +422,9 @@ const CreateIssuance: React.FC = () => {
                                             </div>
                                         )
                                     })}
+                                </div>
+                                <div className="flex flex-row-reverse py-1">
+                                    GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
                             </Form>
                         )
