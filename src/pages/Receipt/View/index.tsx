@@ -107,25 +107,6 @@ const View: React.FC = () => {
                         <p>Receipt Date: <span className="text-black ml-2">{moment(state?.receiptDate).format('DD MMM YYYY') || 'N/A'}</span></p>
                         <p>Issuance Directive Nr: <span className="text-black ml-2">{state?.issuanceDirective || 'N/A'}</span></p>
                         <p>Source: <span className="text-black ml-2">{state?.source || 'N/A'}</span></p>
-                        <div className="flex">
-                            <p>Status:</p>
-                            <div
-                                className={`
-                                    ${state?.status === 'active' && 'bg-green-50 text-green-500 w-20'}
-                                    ${state?.status === 'archived' && 'bg-gray-50 text-gray-500 w-20'} 
-                                    rounded-full flex items-center justify-center mx-3`}
-                            >
-                                <div
-                                    className={`w-2 h-2 rounded-full mr-1 
-                                        ${state?.status === 'active' && 'bg-green-500'}
-                                        ${state?.status === 'archived' && 'bg-gray-500'}
-                                    `}
-                                ></div>
-                                <p className="text-xs">
-                                    {state?.status.charAt(0).toUpperCase() + state?.status.slice(1)}
-                                </p>
-                            </div>
-                        </div>
                         <p>Created At: <span className="text-black ml-2">{moment(state?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
                         <p>Created By: <span className="text-black ml-2">{state?.user?.firstname + ' ' + state?.user?.lastname || 'N/A'}</span></p>
                     </div>

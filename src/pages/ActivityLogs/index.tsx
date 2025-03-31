@@ -4,11 +4,9 @@ import Search from "../../components/Search"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import ExportModal from "../../components/ExportModal"
 import exportToExcel from "../../components/ExportToExcel"
-import moment from "moment"
-import { exportExpenses } from "../../api/expenses/expensesApi"
 import Table from "../../components/Table"
 import { useQuery } from "@tanstack/react-query"
-import { fetchActivityLogs } from "../../api/activityLogs/activityLogsApi"
+import { exportActivityLogs, fetchActivityLogs } from "../../api/activityLogs/activityLogsApi"
 
 const ActivityLogs = () => {
     
@@ -22,7 +20,7 @@ const ActivityLogs = () => {
       queryKey: ["activityLogs", search, page, limit, date],
       queryFn: () => fetchActivityLogs({ search, page, limit, date }) as any
     });
-    
+
     const handleSearch = (searchInput = '') => {
         setSearch(searchInput)
     };
@@ -32,34 +30,30 @@ const ActivityLogs = () => {
     }
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Activity Logs ID ', key: 'id', width: 10 },
-            { header: 'Date', key: 'date', width: 15 },
-            { header: 'Activity', key: 'activity', width: 15 },
-            { header: 'Performed By', key: 'performedBy', width: 15 },
+            { header: 'Activity Logs ID ', key: 'id', width: 40 },
+            { header: 'Date', key: 'date', width: 30},
+            { header: 'Activity', key: 'activity', width: 60 },
+            { header: 'Performed By', key: 'performedBy', width: 40 },
         ];
 
         let data = toExport?.map((row: {
-            id: number,
+            id: string,
+            date: string,
             activity: string,
             performedBy: {
-                userName: string,
-                role: string
+                username: string,
+                roles: { description: string }[]
             },
-            created_at: string,
         }) => {
             return {
                 id: row.id,
-                date: moment(row.created_at).format('YYYY-MM-DD'),
+                date: row.date,
                 activity: row.activity,
-                performedBy: row.performedBy.userName + ' - ' + row.performedBy.role,
+                performedBy: `${row.performedBy.username} - ${row.performedBy.roles[0].description}`,
             }
         })
-
-        data = [...data, 
-          { id: '', date: '', activity: '', performedBy: '' }, 
-          { id: '', date: '', activity: '', performedBy: '' }
-      ];
-      exportToExcel({ data, headers, filename: `${status}-activityLogs-${start_date}-to-${end_date}` })
+        
+      exportToExcel({ data, headers, filename: `activityLogs-${start_date}-to-${end_date}` })
     }
 
     const columns = useMemo(() => {
@@ -111,7 +105,7 @@ const ActivityLogs = () => {
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
                 handleFunction={handleExport}
-                exportFunction={exportExpenses}
+                exportFunction={exportActivityLogs}
             />
             
             <div className="flex flex-row justify-between items-center">

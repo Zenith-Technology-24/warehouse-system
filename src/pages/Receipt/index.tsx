@@ -9,12 +9,9 @@ import { useToast } from "../../providers/ToastContext"
 import moment from "moment"
 import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
-import { exportExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import FilterButton from "../../components/buttons/FilterButton"
-import { fetchIssuance, updateIssuanceStatus } from "../../api/issuance/issuanceApi"
-import { fetchReceipt, updateReceiptStatus } from "../../api/receipt/receiptApi"
+import { exportReceipt, fetchReceipt, updateReceiptStatus } from "../../api/receipt/receiptApi"
 
 const Receipt: React.FC = () => {
     const { showToast } = useToast()
@@ -207,52 +204,31 @@ const Receipt: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 10 },
-            { header: 'Name', key: 'name', width: 15 },
-            { header: 'Expense Type', key: 'type', width: 15 },
-            { header: 'Amount', key: 'amount', width: 15 },
-            { header: 'Description', key: 'description', width: 35 },
-            { header: 'Created At', key: 'created_at', width: 15 }
+            { header: 'Expenses ID', key: 'id', width: 40 },
+            { header: 'Date of Receipt', key: 'receiptDate', width: 30},
+            { header: 'Issuance Directive No.', key: 'issuanceDirective', width: 30},
+            { header: 'Source', key: 'source', width: 30}            
         ];
 
         let overall = 0
 
         let data = toExport?.map((row: {
             id: number,
-            first_name: string
-            last_name: string
-            expense_type: string,
-            amount: string,
-            description: string,
-            created_at: string,
+            receiptDate: string,
+            issuanceDirective: string,
+            source: string,
+            totalAmount: string
         }) => {
-            overall += parseFloat(row.amount);
+            overall += parseFloat(row.totalAmount);
             return {
                 id: row.id,
-                name: row.first_name + row.last_name,
-                type: row.expense_type,
-                amount: "₱" + row.amount,
-                description: row.description,
-                created_at: moment(row.created_at).format('L')
+                receiptDate: row.receiptDate,
+                issuanceDirective: row.issuanceDirective,
+                source: row.source,
+                
             }
         })
-
-        data = [...data, {
-            id: '',
-            name: '',
-            type: '',
-            amount: '',
-            description: '',
-            created_at: ''
-        }, {
-            id: '',
-            name: '',
-            type: 'OVERALL TOTAL',
-            amount: '₱' + overall,
-            description: '',
-            created_at: ''
-        }]
-        exportToExcel({ data, headers, filename: `${status}-expenses-${start_date}-to-${end_date}` })
+        exportToExcel({ data, headers, filename: `${status}-receipt-${start_date}-to-${end_date}` })
     }
 
     return (
@@ -263,7 +239,7 @@ const Receipt: React.FC = () => {
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
                 handleFunction={handleExport}
-                exportFunction={exportExpenses}
+                exportFunction={exportReceipt}
             />
             <Modal
                 isOpen={isArchiveModalOpen}

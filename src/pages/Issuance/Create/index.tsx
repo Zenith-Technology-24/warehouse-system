@@ -19,6 +19,7 @@ const CreateIssuance: React.FC = () => {
     const formRef = useRef<any>()
     const [itemNamesMap, setItemNamesMap] = useState<Record<string, any>>({})
 
+
     const createIssuanceMutation = useMutation({
         mutationFn: (values: any) => createIssuance(values),
         onError: (error: any) => {
@@ -45,23 +46,23 @@ const CreateIssuance: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        documentNo: Yup.string().required('Document No is required') as any,
-        issuanceDirective: Yup.string().required('Issuance Directive Nr. is required') as any,
-        issuanceDate: Yup.string().required('Issuance Date is required') as any,
-        validityDate: Yup.string().required('Validity Date is required') as any,
+        documentNo: Yup.string().required('Please input the Document No.') as any,
+        issuanceDirective: Yup.string().required('Please input the Issuance Directive Nr. ') as any,
+        issuanceDate: Yup.string().required('Pls input the issuance Date') as any,
+        validityDate: Yup.string().required('Please input the Validity Date') as any,
         endUsers: Yup.array().of(
             Yup.object().shape({
                 id: Yup.string().nullable(),
-                name: Yup.string().required('End User is required'),
+                name: Yup.string().required('Please input the End User'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
                         id: Yup.string().nullable(),
-                        receiptRef: Yup.string().required('Receipt Ref is required') as any,
-                        name: Yup.string().required('Item Name is required'),
-                        quantity: Yup.string().required('Inventory Quantity is required'),
-                        price: Yup.number().required('Inventory Price is required'),
-                        amount: Yup.number().required('Inventory Amount is required'),
-                        unit: Yup.string().required('Inventory Unit is required'),
+                        receiptRef: Yup.string().required('Please input the Receipt Ref') as any,
+                        name: Yup.string().required('Pls input the item name'),
+                        quantity: Yup.string().required('Pls input the inventory quality'),
+                        price: Yup.number().required('Pls input the inventory price'),
+                        amount: Yup.number().required('Pls input the inventory amount'),
+                        unit: Yup.string().required('Please input the inventory unit'),
                         size: Yup.string(),
                     })
                 )
@@ -118,6 +119,13 @@ const CreateIssuance: React.FC = () => {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
                             validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
+                            inventory: values.inventory.map((inv: any) => ({
+                                ...inv,
+                                item: {
+                                    ...inv.item,
+                                    amount: inv.item.price * inv.item.quantity,
+                                }
+                            }))
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
@@ -134,12 +142,13 @@ const CreateIssuance: React.FC = () => {
                             setFieldValue(`endUsers.${index}.inventory.${_index}.amount`, amount);
                         };
 
+
                         return (
                             <Form className="w-full">
                                 <div className="rounded-lg border border-gray-200 p-4">
                                     <h1 className="text-lg">Issuance Details</h1>
-                                    <div className="w-full grid grid-cols-2 gap-1 mb-5">
-                                        <div className="flex h-auto flex-col py-3">
+                                    <div className="w-full grid grid-cols-2 mt-2 gap-2 mb-5">
+                                        <div className="flex h-auto flex-col">
                                             <label className="pb-2" htmlFor="documenNo">Document No.</label>
                                             <Field
                                                 as="input"
@@ -154,7 +163,7 @@ const CreateIssuance: React.FC = () => {
                                                 <ErrorMessage className="text-red-400" name="documentNo" component="div" />
                                             </div>
                                         </div>
-                                        <div className="flex h-auto flex-col py-3">
+                                        <div className="flex h-auto flex-col">
                                             <label className="pb-2" htmlFor="issuanceDirective">Issuance Directive Nr.</label>
                                             <Field
                                                 as="input"
@@ -169,7 +178,7 @@ const CreateIssuance: React.FC = () => {
                                                 <ErrorMessage className="text-red-400" name="issuanceDirective" component="div" />
                                             </div>
                                         </div>
-                                        <div className="flex h-auto flex-col py-3">
+                                        <div className="flex h-auto flex-col">
                                             <label className="pb-2" htmlFor="issuanceDate">Issuance Date</label>
                                             <Field
                                                 type="date"
@@ -180,7 +189,7 @@ const CreateIssuance: React.FC = () => {
                                                 <ErrorMessage className="text-red-400" name="issuanceDate" component="div" />
                                             </div>
                                         </div>
-                                        <div className="flex h-auto flex-col py-3">
+                                        <div className="flex h-auto flex-col">
                                             <label className="pb-2" htmlFor="validityDate">Validity Date</label>
                                             <Field
                                                 type="date"
@@ -196,8 +205,9 @@ const CreateIssuance: React.FC = () => {
                                     <h1 className="text-lg">End User & Item Details</h1>
                                     {values.endUsers.map((user: any, index: number) => {
                                         return (
-                                            <div key={index} className="w-full grid grid-cols-2 gap-1 mb-5">
-                                                <div className="flex h-auto flex-col">
+                                            <div key={index} className="w-full grid grid-cols-2 items-center  gap-1 mt-5 mb-5">
+                                                <div className="flex h-auto flex-col gap-2">
+                                                    <label>End User</label>
                                                     <DropdownWithNew
                                                         placeholder="End User"
                                                         id={`endUsers[${index}].id`}
@@ -428,18 +438,18 @@ const CreateIssuance: React.FC = () => {
                                                         <p>Add Item</p>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div >
                                         )
                                     })}
-                                </div>
+                                </div >
                                 <div className="flex flex-row-reverse py-1">
                                     GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </div>
-                            </Form>
+                            </Form >
                         )
                     }
                     }
-                </Formik>
+                </Formik >
             </div >
         </>
     )
