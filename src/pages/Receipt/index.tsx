@@ -126,15 +126,15 @@ const Receipt: React.FC = () => {
                     )
                 }
             },
-            // {
-            //     label: 'T/Qty',
-            //     name: 'quantity',
-            //     render(row: object, value: string, rowIndex: number) {
-            //         return (
-            //             <p className="font-normal">{value}</p>
-            //         )
-            //     }
-            // },
+            {
+                label: 'T/Qty',
+                name: 'quantity_string',
+                render(row: { is_consumed: boolean }, value: string, rowIndex: number) {
+                    return (
+                        <p className={`font-normal ${row?.is_consumed && 'text-gray-400'}`}>{value}</p>
+                    )
+                }
+            },
             {
                 label: 'Source',
                 name: 'source',

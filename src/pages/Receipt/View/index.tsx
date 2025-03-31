@@ -48,12 +48,12 @@ const View: React.FC = () => {
             {
                 label: 'Stock Details',
                 name: 'StockDetails',
-                render(row: { quantity: string, unit: string }, value: string, rowIndex: number) {
+                render(row: { quantity_string: string, unit: string, is_consumed: boolean }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
                             <div>
                                 <p className="text-gray-500">Qty</p>
-                                <p>{row?.quantity}</p>
+                                <p className={`${row?.is_consumed && 'text-gray-400'}text-gray-500`}>{row?.quantity_string}</p>
                             </div>
                             <div>
                                 <p className="text-gray-500">UoM</p>
