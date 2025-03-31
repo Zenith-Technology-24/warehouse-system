@@ -44,7 +44,7 @@ const UpdateReceipt: React.FC = () => {
                 inventory: data?.item?.map((inv: any) => ({
                     id: inv?.id,
                     name: inv?.item_name,
-                    sizeType: inv?.inventory?.sizeType,
+                    sizeType: inv?.inventory[0]?.sizeType,
                     inventoryId: inv?.inventoryId || null,
                     itemId: inv?.inventoryId || null,
                     item: {
@@ -314,12 +314,13 @@ const UpdateReceipt: React.FC = () => {
                                         </div>
                                     </div>
                                     {values?.inventory?.map((inventory: any, index: number) => {
+                                        console.log(inventory)
                                         return (
                                             <div key={index} className="w-full grid grid-cols-12 gap-1 bg-gray-50 px-6 py-2 my-2 rounded-lg">
                                                 <div className="flex h-auto flex-col py-3 col-span-6">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].name`}>Item Name</label>
                                                     <DropdownWithSearch
-                                                        values={values}
+                                                        formikSelectedValue={values?.inventory[index].name}
                                                         _index={index}
                                                         placeholder="Item Name"
                                                         name={`inventory[${index}].name`}
