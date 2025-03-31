@@ -405,6 +405,7 @@ const CreateIssuance: React.FC = () => {
                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                                         </svg>
                                                         <p>Add Item</p>
+                                                        {/* TEST */}
                                                     </div>
                                                 </div>
                                             </div>
