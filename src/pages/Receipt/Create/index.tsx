@@ -7,7 +7,7 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../../providers/ToastContext"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import AddItemModal from "../../../components/ItemType/AddItemModal"
 import { addItemType, deleteItemType, fetchItemType, updateItemType } from "../../../api/item/itemApi"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
@@ -24,6 +24,12 @@ const CreateReceipt: React.FC = () => {
     const [updateItemModalOpen, setIsUpdateItemModalOpen] = useState<boolean>(false)
     const [isDeleteTypeModalOpen, setIsDeleteTypeModalOpen] = useState<boolean>(false)
     const [selectedItemType, setSelectedItemType] = useState<any>(null)
+
+    const { data: itemTypes } = useQuery({
+        queryKey: ['item-types'],
+        queryFn: fetchItemType,
+    });
+
     const createReceiptMutation = useMutation({
         mutationFn: (values: any) => createReceipt(values),
         onError: (error: any) => {
@@ -290,68 +296,21 @@ const CreateReceipt: React.FC = () => {
                                                 <div className="flex h-auto flex-col py-3 col-span-6">
                                                     <label className="pb-2" htmlFor={`inventory[${index}].name`}>Item Name</label>
                                                     <DropdownWithSearch
-                                                        values={values}
+                                                        formikSelectedValue={values?.inventory[index]?.name}
                                                         _index={index}
                                                         placeholder="Item Name"
                                                         name={`inventory[${index}].name`}
-                                                        fetchNames={fetchItemType}
+                                                        fetchNames={() => itemTypes || []}
                                                         setFieldValue={setFieldValue}
                                                         refetchData={handleRefetch}
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
-                                                            setFieldValue(`inventory[${index}].item.unit`, value.unit)
-                                                            setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none")
-                                                            setFieldValue(`inventory[${index}].sizeType`, value.sizeType)
+                                                            setFieldValue(`inventory[${index}].name`, '');
+                                                            setFieldValue(`inventory[${index}].item.unit`, value.unit);
+                                                            setFieldValue(`inventory[${index}].item.size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
+                                                            setFieldValue(`inventory[${index}].sizeType`, value.sizeType);
+                                                            setFieldValue(`inventory[${index}].name`, value.name);
                                                         }}
                                                     />
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].name`} component="div" />
-                                                    </div>
-                                                </div>
-                                                <div className="flex h-auto flex-col py-3 col-span-2">
-                                                    <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>Size <span className="text-gray-500">(Optional)</span></label>
-                                                    <Field as="select"
-                                                        name={`inventory[${index}].item.size`}
-                                                        disabled={inventory?.sizeType === 'none'}
-                                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                                    >
-                                                        {
-                                                            inventory?.sizeType === 'none' && (
-                                                                <>
-                                                                    <option selected value="none">None</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            inventory?.sizeType === 'apparrel' && (
-                                                                <>
-                                                                    <option selected value="S">S</option>
-                                                                    <option value="M">M</option>
-                                                                    <option value="L">L</option>
-                                                                    <option value="XL">XL</option>
-                                                                    <option value="2XL">2XL</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                        {
-                                                            inventory?.sizeType === 'numerical' && (
-                                                                <>
-                                                                    <option selected value="6">6</option>
-                                                                    <option value="7">7</option>
-                                                                    <option value="8">8</option>
-                                                                    <option value="9">9</option>
-                                                                    <option value="10">10</option>
-                                                                    <option value="11">11</option>
-                                                                    <option value="12">12</option>
-                                                                </>
-                                                            )
-
-                                                        }
-                                                    </Field>
-                                                    <div className="h-6">
-                                                        <ErrorMessage className="text-red-400" name={`inventory[${index}].item.size`} component="div" />
-                                                    </div>
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />
                                                 <div className="flex h-auto flex-col py-3 col-span-2">
@@ -446,7 +405,7 @@ const CreateReceipt: React.FC = () => {
                                                                     setFieldValue('inventory', updatedinventory);
                                                                 }
                                                             }}
-                                                            className={`flex flex-row gap-2 items-center text-sm text-red-300 ${values.inventories?.length > 1 && 'hover:text-red-400'} cursor-pointer`}>
+                                                            className={`flex flex-row gap-2 items-center text-sm text-red-300 ${values.inventory.length > 1 && 'hover:text-red-400'} cursor-pointer`}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                                             </svg>
