@@ -118,7 +118,11 @@ const CreateIssuance: React.FC = () => {
                         const formattedValues = {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
-                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null
+                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
+                            inventory: values.endUsers[0].inventory.map((inv: any) => ({
+                                ...inv,
+                                amount: inv.price * inv.quantity,
+                            }))
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
