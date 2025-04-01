@@ -46,9 +46,9 @@ const CreateIssuance: React.FC = () => {
     }
 
     const validationSchema = Yup.object().shape({
-        documentNo: Yup.string().required('Please input the Document No') as any,
-        issuanceDirective: Yup.string().required('Please input the Issuance Directive Nr.') as any,
-        issuanceDate: Yup.string().required('Please input the Issuance Date') as any,
+        documentNo: Yup.string().required('Please input the Document No.') as any,
+        issuanceDirective: Yup.string().required('Please input the Issuance Directive Nr. ') as any,
+        issuanceDate: Yup.string().required('Pls input the issuance Date') as any,
         validityDate: Yup.string().required('Please input the Validity Date') as any,
         endUsers: Yup.array().of(
             Yup.object().shape({
@@ -58,11 +58,11 @@ const CreateIssuance: React.FC = () => {
                     Yup.object().shape({
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Please input the Receipt Ref') as any,
-                        name: Yup.string().required('Please input the Item Name'),
-                        quantity: Yup.string().required('Please input the Inventory Quantity'),
-                        price: Yup.number().required('Please input the Inventory Price'),
-                        amount: Yup.number().required('Please input the Inventory Amount'),
-                        unit: Yup.string().required('Please input the Inventory Unit'),
+                        name: Yup.string().required('Pls input the item name'),
+                        quantity: Yup.string().required('Pls input the inventory quality'),
+                        price: Yup.number().required('Pls input the inventory price'),
+                        amount: Yup.number().required('Pls input the inventory amount'),
+                        unit: Yup.string().required('Please input the inventory unit'),
                         size: Yup.string(),
                     })
                 )
@@ -118,7 +118,7 @@ const CreateIssuance: React.FC = () => {
                         const formattedValues = {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
-                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
+                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
