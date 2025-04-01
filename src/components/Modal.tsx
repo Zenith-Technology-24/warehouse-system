@@ -1,11 +1,11 @@
 import React from 'react';
 
 interface ModalProps {
-    title: string
-    isOpen: boolean
-    onClose: () => void
-    handleFunction: () => void
-    message: string
+    title: string;
+    isOpen: boolean;
+    onClose: () => void;
+    handleFunction: () => void;
+    message: string;
 }
 
 const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, handleFunction, message }) => {
@@ -19,13 +19,13 @@ const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, handleFunction, m
                 <div className="flex space-x-3">
                     <button
                         onClick={onClose}
-                        className="grow border-aaa hover:border-aaa text-aaa py-2 px-4 rounded-lg"
+                        className="grow border-aaa hover:border-aaa text-aaa py-2 px-3 rounded-lg text-sm"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleFunction}
-                        className="grow bg-aaa hover:border-aaa text-white py-2 px-4 rounded-lg"
+                        className="grow bg-aaa hover:border-aaa text-white py-2 px-3 rounded-lg text-sm"
                     >
                         Confirm
                     </button>

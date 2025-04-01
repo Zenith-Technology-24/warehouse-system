@@ -67,6 +67,13 @@ interface withdrawAllIssuanceProps {
     id: string | null | number;
 }
 
+interface exportIssuanceProps {
+    search: string;
+    status: string;
+    start_date: string;
+    end_date: string;
+}
+
 export const fetchIssuance = async ({ search, page, limit, status }: fetchExpensesProps) => {
     const { data } = await apiService.get(`issuance?page=${page}&limit=${limit}&search=${search}&status=${status}`);
     return data;
@@ -76,6 +83,12 @@ export const createIssuance = async (data: createIssuanceProps) => {
     const res = await apiService.post("/issuance", data);
     return res;
 };
+
+export const exportIssuance = async ({ search, status, start_date, end_date }: exportIssuanceProps) => {
+    const { data } = await apiService.post('/issuance/export', { search, status, start_date, end_date });
+    return data;
+    
+}
 
 export const updateIssuance = async (data: updateIssuanceProps) => {
     const res = await apiService.put(`/issuance/${data.id}`, data);

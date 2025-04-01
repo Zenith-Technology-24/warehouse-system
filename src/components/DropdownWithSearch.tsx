@@ -11,7 +11,7 @@ interface DropdownWithSearchProps {
     fetchNames: any
     forUpdate?: any
     setSelectedValue?: any
-    values?: any
+    formikSelectedValue?: any
     refetchData?: any;
     onDelete?: any;
     onUpdate?: any;
@@ -26,7 +26,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     fetchNames,
     forUpdate,
     setSelectedValue,
-    values,
+    formikSelectedValue,
     refetchData,
     onDelete = null,
     onUpdate = null
@@ -35,7 +35,6 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [selectedOption, setSelectedOption] = useState<any>(null)
     const dropdownRef = useRef<HTMLUListElement>(null)
-    const formikSelectedValue = values?.inventory?.[_index as any]?.name || ""
 
     useEffect(() => {
         if (forUpdate) {
@@ -43,7 +42,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
         } else {
             setSelectedOption(null);
         }
-    }, [name])
+    }, [name, formikSelectedValue])
 
     const { data: options, refetch } = useQuery({
         queryKey: [`${name}-list`],
@@ -107,7 +106,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
                             </div>
 
                             {isOpen && (
-                                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                                <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                                     <input
                                         type="text"
                                         value={searchTerm}
