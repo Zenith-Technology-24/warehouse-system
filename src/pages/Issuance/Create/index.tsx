@@ -56,6 +56,7 @@ const CreateIssuance: React.FC = () => {
                 name: Yup.string().required('Please input the End User'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
+                        itemId: Yup.string().nullable(),
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Please input the Receipt Ref') as any,
                         name: Yup.string().required('Please input the Item Name'),
@@ -81,6 +82,7 @@ const CreateIssuance: React.FC = () => {
                 name: '',
                 inventory: [
                     {
+                        itemId: '',
                         id: '',
                         receiptRef: '',
                         name: '',
@@ -234,6 +236,7 @@ const CreateIssuance: React.FC = () => {
                                                             name: '',
                                                             inventory: [
                                                                 {
+                                                                    itemId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
@@ -300,6 +303,7 @@ const CreateIssuance: React.FC = () => {
                                                                         setFieldValue={setFieldValue}
                                                                         refetchData={handleRefetch}
                                                                         setSelectedValue={(value: any) => {
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].itemId`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
                                                                             // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
@@ -408,18 +412,15 @@ const CreateIssuance: React.FC = () => {
                                                                         </div>
                                                                     </div>
                                                                     <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
+                                                                        itemId: '',
                                                                         id: '',
                                                                         receiptRef: '',
                                                                         name: '',
-                                                                        sizeType: '',
-                                                                        item: {
-                                                                            location: '',
-                                                                            size: '',
-                                                                            unit: '',
-                                                                            quantity: 1,
-                                                                            price: 0,
-                                                                            amount: 0
-                                                                        }
+                                                                        size: '',
+                                                                        unit: '',
+                                                                        quantity: 1,
+                                                                        price: 0,
+                                                                        amount: 0
                                                                     }])} className="flex flex-row gap-2 items-center text-sm text-gray-500 hover:text-gray-800 cursor-pointer">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

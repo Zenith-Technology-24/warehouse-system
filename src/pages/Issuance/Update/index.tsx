@@ -70,6 +70,7 @@ const UpdateIssuance: React.FC = () => {
                             [`${index}-${_index}`]: mappedItems
                         }));
                         return ({
+                            itemId: inv?.itemId,
                             id: inv?.id,
                             receiptRef: inv?.item?.receiptRef,
                             name: inv?.item?.name,
@@ -124,6 +125,7 @@ const UpdateIssuance: React.FC = () => {
                 name: Yup.string().required('End User is required'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
+                        itemId: Yup.string().nullable(),
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Receipt Ref is required') as any,
                         name: Yup.string().required('Item Name is required'),
@@ -283,6 +285,7 @@ const UpdateIssuance: React.FC = () => {
                                                             name: '',
                                                             inventory: [
                                                                 {
+                                                                    itemId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
@@ -464,18 +467,15 @@ const UpdateIssuance: React.FC = () => {
                                                                     </div>
                                                                 </div>
                                                                 <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
+                                                                    itemId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
-                                                                    sizeType: '',
-                                                                    item: {
-                                                                        location: '',
-                                                                        size: '',
-                                                                        unit: '',
-                                                                        quantity: 1,
-                                                                        price: 0,
-                                                                        amount: 0
-                                                                    }
+                                                                    size: '',
+                                                                    unit: '',
+                                                                    quantity: 1,
+                                                                    price: 0,
+                                                                    amount: 0
                                                                 }])} className="flex flex-row gap-2 items-center text-sm text-gray-500 hover:text-gray-800 cursor-pointer">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
