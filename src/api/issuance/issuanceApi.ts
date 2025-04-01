@@ -102,7 +102,6 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
 
 export const fetchReceiptRefs = async () => {
     const { data } = await apiService.get('/issuance/refs');
-
     return data.map(({ receipt, ...rest }) => ({
         name: receipt,
         ...rest
