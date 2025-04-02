@@ -56,7 +56,7 @@ const CreateIssuance: React.FC = () => {
                 name: Yup.string().required('Please input the End User'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
-                        itemId: Yup.string().nullable(),
+                        refId: Yup.string().nullable(),
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Please input the Receipt Ref') as any,
                         name: Yup.string().required('Please input the Item Name'),
@@ -82,7 +82,7 @@ const CreateIssuance: React.FC = () => {
                 name: '',
                 inventory: [
                     {
-                        itemId: '',
+                        refId: '',
                         id: '',
                         receiptRef: '',
                         name: '',
@@ -236,7 +236,7 @@ const CreateIssuance: React.FC = () => {
                                                             name: '',
                                                             inventory: [
                                                                 {
-                                                                    itemId: '',
+                                                                    refId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
@@ -303,7 +303,7 @@ const CreateIssuance: React.FC = () => {
                                                                         setFieldValue={setFieldValue}
                                                                         refetchData={handleRefetch}
                                                                         setSelectedValue={(value: any) => {
-                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].itemId`, value?.id);
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
                                                                             // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
@@ -412,7 +412,7 @@ const CreateIssuance: React.FC = () => {
                                                                         </div>
                                                                     </div>
                                                                     <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
-                                                                        itemId: '',
+                                                                        refId: '',
                                                                         id: '',
                                                                         receiptRef: '',
                                                                         name: '',
