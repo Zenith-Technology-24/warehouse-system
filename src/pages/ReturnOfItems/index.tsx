@@ -90,7 +90,7 @@ const ReturnOfItems: React.FC = () => {
         return [
             {
                 label: 'Item Name',
-                name: 'id',
+                name: 'itemName',
                 render(row: object, value: string, rowIndex: number) {
                     return (
                         <div>
@@ -101,16 +101,16 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Return Date & Time',
-                name: 'first_name',
+                name: 'returnedDateTime',
                 render(row: { last_name: string }, value: string, rowIndex: number) {
                     return (
-                        <p>{value} {row.last_name}</p>
+                        <p>{value}</p>
                     )
                 }
             },
             {
                 label: 'Personnel',
-                name: 'expense_type',
+                name: 'personnel',
                 render(row: { amount: number }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
@@ -128,7 +128,7 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Notes',
-                name: 'description',
+                name: 'notes',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <p>{value}</p>
@@ -137,7 +137,7 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Created At',
-                name: 'created_at',
+                name: 'createdAt',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
                         <div className="space-y-3">
