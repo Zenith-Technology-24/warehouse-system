@@ -70,7 +70,7 @@ const UpdateIssuance: React.FC = () => {
                             [`${index}-${_index}`]: mappedItems
                         }));
                         return ({
-                            itemId: inv?.itemId,
+                            refId: inv?.refId,
                             id: inv?.id,
                             receiptRef: inv?.item?.receiptRef,
                             name: inv?.item?.name,
@@ -125,7 +125,7 @@ const UpdateIssuance: React.FC = () => {
                 name: Yup.string().required('End User is required'),
                 inventory: Yup.array().of(
                     Yup.object().shape({
-                        itemId: Yup.string().nullable(),
+                        refId: Yup.string().nullable(),
                         id: Yup.string().nullable(),
                         receiptRef: Yup.string().required('Receipt Ref is required') as any,
                         name: Yup.string().required('Item Name is required'),
@@ -285,7 +285,7 @@ const UpdateIssuance: React.FC = () => {
                                                             name: '',
                                                             inventory: [
                                                                 {
-                                                                    itemId: '',
+                                                                    refId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
@@ -467,7 +467,7 @@ const UpdateIssuance: React.FC = () => {
                                                                     </div>
                                                                 </div>
                                                                 <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
-                                                                    itemId: '',
+                                                                    refId: '',
                                                                     id: '',
                                                                     receiptRef: '',
                                                                     name: '',
