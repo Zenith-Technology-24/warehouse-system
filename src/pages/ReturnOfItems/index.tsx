@@ -14,6 +14,7 @@ import CsvDownloader from 'react-csv-downloader'
 import { exportExpenses, fetchExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
+import { fetchReturnedItems } from "../../api/returnedItems/returnedItemsApi"
 
 const ReturnOfItems: React.FC = () => {
     const { showToast } = useToast()
@@ -29,8 +30,8 @@ const ReturnOfItems: React.FC = () => {
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["expenses", search, page, limit, status],
-        queryFn: () => fetchExpenses({ search, page, limit, status }) as any,
+        queryKey: ["returned-items", search, page, limit],
+        queryFn: () => fetchReturnedItems({ search, page, limit }) as any,
     });
 
     const updateStatus = useMutation({
@@ -101,10 +102,10 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Return Date & Time',
-                name: 'returnedDateTime',
-                render(row: { last_name: string }, value: string, rowIndex: number) {
+                name: 'date',
+                render(row: { date: string, time: string }, value: string, rowIndex: number) {
                     return (
-                        <p>{value}</p>
+                        <p>{row?.date} {row?.time}</p>
                     )
                 }
             },
@@ -113,17 +114,8 @@ const ReturnOfItems: React.FC = () => {
                 name: 'personnel',
                 render(row: { amount: number }, value: string, rowIndex: number) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Expenses Type</p>
-                                <p>{value}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Amount</p>
-                                <p>₱{row.amount}</p>
-                            </div>
-                        </div>
-                    );
+                        <p>{value}</p>
+                    )
                 },
             },
             {
@@ -137,22 +129,10 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Created At',
-                name: 'createdAt',
+                name: 'created_at',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Created At</p>
-                                <p>{moment(value).format('D MMM YYYY')}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Status</p>
-                                <div className={`${row.status === 'active' ? 'bg-green-50 text-green-500 w-14' : 'bg-gray-50 text-gray-500 w-20'} rounded-full flex flex-row items-center justify-center`}>
-                                    <div className={`w-2 h-2 rounded-full mr-1 ${row.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-                                    <p className="text-xs">{row.status.charAt(0).toUpperCase() + row.status.slice(1)}</p>
-                                </div>
-                            </div>
-                        </div>
+                        <p>{value}</p>
                     )
                 }
             },

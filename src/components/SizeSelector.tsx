@@ -2,7 +2,9 @@ import { ErrorMessage, Field } from "formik";
 
 interface SizeSelectorProps {
     inventory: any
-    index: number
+    index?: number
+    classes?: string
+    name?: string | null
 }
 
 const sizeOptions = [
@@ -53,18 +55,18 @@ const sizeOptions = [
     }
 ];
 
-export default function SizeSelector({ inventory, index }: SizeSelectorProps) {
+export default function SizeSelector({ name = null, inventory, index = 0, classes }: SizeSelectorProps) {
     const selectedSizeType = inventory?.sizeType;
     const selectedOptions = sizeOptions.find(option => option.type === selectedSizeType)?.options || [];
 
     return (
-        <div className="flex h-auto flex-col py-3 col-span-2">
-            <label className="pb-2" htmlFor={`inventory[${index}].item.size`}>
+        <div className={`flex h-auto flex-col py-3 col-span-2 ${classes}`}>
+            <label className="pb-2" htmlFor={name || `inventory[${index}].item.size`}>
                 Size <span className="text-gray-500">(Optional)</span>
             </label>
 
             <Field as="select"
-                name={`inventory[${index}].item.size`}
+                name={name || `inventory[${index}].item.size`}
                 disabled={selectedSizeType === 'none'}
                 className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
             >
