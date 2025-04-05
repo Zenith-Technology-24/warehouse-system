@@ -20,11 +20,6 @@ const CreateReturnOfItems: React.FC = () => {
     const [itemNames, setItemNames] = useState<any>('')
     const formRef = useRef<any>();
 
-    const { data: itemTypes } = useQuery({
-        queryKey: ['item-types'],
-        queryFn: fetchItemType,
-    });
-
     const createReturnedItemsMutation = useMutation({
         mutationFn: (values: any) => createReturnedItems(values),
         onError: (error: any) => {
@@ -52,7 +47,7 @@ const CreateReturnOfItems: React.FC = () => {
         itemName: Yup.string().required('Item name is required'),
         size: Yup.string().required('Size is required'),
         personnel: Yup.string().required('Personnel is required'),
-        sizeType: Yup.string().required('Please input the Size Type '),
+        sizeType: Yup.string(),
         date: Yup.string().required('Date is required'),
         time: Yup.string().required('Time is required'),
         notes: Yup.string().required('Notes is required')
@@ -128,11 +123,6 @@ const CreateReturnOfItems: React.FC = () => {
                                                 }, {}) || {}
                                             );
                                             setItemNames(mappedItems);
-                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].name`, '')
-                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].size`, '')
-                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].quantity`, 1)
-                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].price`, 0)
-                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, 0)
                                         }}
                                     />
                                 </div>
@@ -142,15 +132,12 @@ const CreateReturnOfItems: React.FC = () => {
                                         formikSelectedValue={values?.itemName}
                                         placeholder="Item Name"
                                         name='itemName'
-                                        fetchNames={() => itemTypes || []}
+                                        fetchNames={() => itemNames || []}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
-                                            // setFieldValue(`inventory[${index}].name`, '');
-                                            // setFieldValue(`inventory[${index}].item.unit`, value.unit);
                                             setFieldValue(`size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
                                             setFieldValue(`sizeType`, value.sizeType);
-                                            // setFieldValue(`inventory[${index}].name`, value.name);
                                         }}
                                     />
                                 </div>
