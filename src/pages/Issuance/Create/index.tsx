@@ -304,7 +304,6 @@ const CreateIssuance: React.FC = () => {
                                                                         setSelectedValue={(value: any) => {
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)

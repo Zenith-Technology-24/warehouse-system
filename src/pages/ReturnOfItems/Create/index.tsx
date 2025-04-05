@@ -58,6 +58,7 @@ const CreateReturnOfItems: React.FC = () => {
         itemName: '',
         size: '',
         personnel: '',
+        itemSizes: null,
         sizeType: '',
         date: '',
         time: '',
@@ -94,7 +95,7 @@ const CreateReturnOfItems: React.FC = () => {
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
-                        const { sizeType, ...filteredValues } = values;
+                        const { itemSizes, sizeType, ...filteredValues } = values;
                         createReturnedItemsMutation.mutate(filteredValues);
                     }
                     }
@@ -124,6 +125,53 @@ const CreateReturnOfItems: React.FC = () => {
                                             );
                                             setItemNames(mappedItems);
                                         }}
+                                    />
+                                </div>
+                                <div className="flex h-auto flex-col py-3">
+                                    <label className="pb-2" htmlFor='itemName'>Item Name</label>
+                                    <DropdownWithSearch
+                                        formikSelectedValue={values?.itemName}
+                                        placeholder="Item Name"
+                                        name='itemName'
+                                        fetchNames={() => itemNames || []}
+                                        setFieldValue={setFieldValue}
+                                        refetchData={handleRefetch}
+                                        setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
+                                            setFieldValue(`size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
+                                            setFieldValue(`sizeType`, value.sizeType);
+                                            setFieldValue('itemSizes', value?.size);
+                                        }}
+                                    />
+                                </div>
+                                <div className="flex h-auto flex-col">
+                                    <label className="pb-2" htmlFor='size'>Size</label>
+                                    <Field as="select"
+                                        name='size'
+                                        placeholder="Size"
+                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            const selectedSize = e.target.value;
+                                            setFieldValue('size', selectedSize);
+                                        }}
+                                    >
+                                        {values?.itemSizes?.map((size: { id: string, name: string }) => (
+                                            <option key={size?.id} value={size?.id}>{size?.name}</option>
+                                        ))}
+                                    </Field>
+                                    <div className="h-6">
+                                        <ErrorMessage className="text-red-400" name='size' component="div" />
+                                    </div>
+                                </div>
+                                <div className=" flex h-auto flex-col">
+                                    <label className="pb-2" htmlFor="personnel">Personnel</label>
+                                    <Field
+                                        as="input"
+                                        name="amount"
+                                        placeholder="Item Name"
+                                        className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
+                                        fullWidth
+                                        variant="outlined"
+                                        size="small"
                                     />
                                 </div>
                                 <div className="flex h-auto flex-col py-3">
@@ -200,9 +248,13 @@ const CreateReturnOfItems: React.FC = () => {
                                 </div>
                             </div>
 
-                        </Form>
+                        </Form >
                     )}
-                </Formik>
+<<<<<<< Updated upstream
+                </Formik >
+=======
+                </Formik >
+>>>>>>> Stashed changes
             </div >
         </>
     )
