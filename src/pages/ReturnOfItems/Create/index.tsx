@@ -250,11 +250,7 @@ const CreateReturnOfItems: React.FC = () => {
 
                         </Form >
                     )}
-<<<<<<< Updated upstream
                 </Formik >
-=======
-                </Formik >
->>>>>>> Stashed changes
             </div >
         </>
     )
