@@ -14,6 +14,7 @@ import CsvDownloader from 'react-csv-downloader'
 import { exportExpenses, fetchExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
+import { fetchReturnedItems, updateReturnedItemStatus } from "../../api/returnedItems/returnedItemsApi"
 
 const ReturnOfItems: React.FC = () => {
     const { showToast } = useToast()
@@ -29,12 +30,12 @@ const ReturnOfItems: React.FC = () => {
     const [isSeeMore, setIsSeeMore] = useState<{ [key: number]: boolean }>({})
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["expenses", search, page, limit, status],
-        queryFn: () => fetchExpenses({ search, page, limit, status }) as any,
+        queryKey: ["returned-items", status, search, page, limit],
+        queryFn: () => fetchReturnedItems({ status, search, page, limit }) as any,
     });
 
     const updateStatus = useMutation({
-        mutationFn: updateExpenseStatus,
+        mutationFn: updateReturnedItemStatus,
         onError: (error: any) => {
             console.log(error)
         },
@@ -43,8 +44,8 @@ const ReturnOfItems: React.FC = () => {
             setIsArchiveModalOpen(false)
             refetch()
             showToast(
-                `Expense Successfully ${data?.expense?.status === 'active' ? 'Restored' : 'Archived'}!`,
-                `Expense has been successfully ${data?.expense?.status === 'active' ? 'restored' : 'archived'}.`,
+                `Returned item Successfully ${data?.status === 'active' ? 'Restored' : 'Archived'}!`,
+                `Returned item has been successfully ${data?.status === 'active' ? 'restored' : 'archived'}.`,
                 'success'
             );
             setToArchive(null)
@@ -93,7 +94,7 @@ const ReturnOfItems: React.FC = () => {
                 name: 'itemName',
                 render(row: object, value: string, rowIndex: number) {
                     return (
-                        <div>
+                        <div className="font-normal">
                             {value}
                         </div>
                     )
@@ -101,10 +102,10 @@ const ReturnOfItems: React.FC = () => {
             },
             {
                 label: 'Return Date & Time',
-                name: 'returnedDateTime',
-                render(row: { last_name: string }, value: string, rowIndex: number) {
+                name: 'date',
+                render(row: { date: string, time: string }, value: string, rowIndex: number) {
                     return (
-                        <p>{value}</p>
+                        <p className="font-normal">{row?.date} {row?.time}</p>
                     )
                 }
             },
@@ -113,17 +114,8 @@ const ReturnOfItems: React.FC = () => {
                 name: 'personnel',
                 render(row: { amount: number }, value: string, rowIndex: number) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Expenses Type</p>
-                                <p>{value}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Amount</p>
-                                <p>₱{row.amount}</p>
-                            </div>
-                        </div>
-                    );
+                        <p className="font-normal">{value}</p>
+                    )
                 },
             },
             {
@@ -131,28 +123,16 @@ const ReturnOfItems: React.FC = () => {
                 name: 'notes',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
-                        <p>{value}</p>
+                        <p className="font-normal">{value}</p>
                     )
                 }
             },
             {
                 label: 'Created At',
-                name: 'createdAt',
+                name: 'created_at',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
-                        <div className="space-y-3">
-                            <div>
-                                <p className="text-gray-500">Created At</p>
-                                <p>{moment(value).format('D MMM YYYY')}</p>
-                            </div>
-                            <div>
-                                <p className="text-gray-500">Status</p>
-                                <div className={`${row.status === 'active' ? 'bg-green-50 text-green-500 w-14' : 'bg-gray-50 text-gray-500 w-20'} rounded-full flex flex-row items-center justify-center`}>
-                                    <div className={`w-2 h-2 rounded-full mr-1 ${row.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-                                    <p className="text-xs">{row.status.charAt(0).toUpperCase() + row.status.slice(1)}</p>
-                                </div>
-                            </div>
-                        </div>
+                        <p className="font-normal">{value}</p>
                     )
                 }
             },
@@ -162,7 +142,7 @@ const ReturnOfItems: React.FC = () => {
                 render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
-                            <div onClick={() => navigate('/expenses/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => navigate('/return-of-items/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -271,17 +251,17 @@ const ReturnOfItems: React.FC = () => {
             />
             <Modal
                 isOpen={isArchiveModalOpen}
-                title={'Archive Expense'}
+                title={'Archive Returned Item'}
                 onClose={() => setIsArchiveModalOpen(false)}
                 handleFunction={() => handleArchive()}
-                message={'Are you sure you want to archive this expenses?'}
+                message={'Are you sure you want to archive this item?'}
             />
             <Modal
                 isOpen={isActiveModalOpen}
-                title={'Restore Expense'}
+                title={'Restore Returned Item'}
                 onClose={() => setIsActiveModalOpen(false)}
                 handleFunction={() => handleActive()}
-                message={'Are you sure you want to restore this expenses?'}
+                message={'Are you sure you want to restore this item?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Return of Items'} description={'Showing all return of items'} />

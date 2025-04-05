@@ -19,7 +19,6 @@ const CreateIssuance: React.FC = () => {
     const formRef = useRef<any>()
     const [itemNamesMap, setItemNamesMap] = useState<Record<string, any>>({})
 
-
     const createIssuanceMutation = useMutation({
         mutationFn: (values: any) => createIssuance(values),
         onError: (error: any) => {
