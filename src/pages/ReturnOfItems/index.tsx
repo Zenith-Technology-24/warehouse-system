@@ -105,7 +105,7 @@ const ReturnOfItems: React.FC = () => {
                 name: 'date',
                 render(row: { date: string, time: string }, value: string, rowIndex: number) {
                     return (
-                        <p className="font-normal">{row?.date} {row?.time}</p>
+                        <p className="font-normal">{moment(row?.date).format('DD MMM YYYY') + ' ' + moment(row?.time, "HH:mm").format('h:mm A')}</p>
                     )
                 }
             },
@@ -132,7 +132,7 @@ const ReturnOfItems: React.FC = () => {
                 name: 'created_at',
                 render(row: { status: string }, value: string, rowIndex: number) {
                     return (
-                        <p className="font-normal">{value}</p>
+                        <p className="font-normal">{moment(value).format('DD MMM YYYY h:mm A')}</p>
                     )
                 }
             },
@@ -142,6 +142,14 @@ const ReturnOfItems: React.FC = () => {
                 render(row: { id: number | null, status: string }, value: number, rowIndex: number) {
                     return (
                         <div className="flex flex-row gap-2">
+                            <div onClick={() => navigate('/return-of-items/view', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" d="M9 4.46A9.8 9.8 0 0 1 12 4c4.182 0 7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296A14.5 14.5 0 0 1 5 6.821" />
+                                        <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z" />
+                                    </g>
+                                </svg>
+                            </div>
                             <div onClick={() => navigate('/return-of-items/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -178,7 +186,7 @@ const ReturnOfItems: React.FC = () => {
                                     </div>
                                 )
                             }
-                        </div>
+                        </div >
                     )
                 }
             }

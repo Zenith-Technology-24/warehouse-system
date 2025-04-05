@@ -10,7 +10,7 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import { fetchReceiptRefs } from "../../../api/issuance/issuanceApi"
-import { createReturnedItems, fetchOneReturnedItems, updateReturnedItems } from "../../../api/returnedItems/returnedItemsApi"
+import { fetchOneReturnedItems, updateReturnedItems } from "../../../api/returnedItems/returnedItemsApi"
 
 interface MappedItem {
     id: string;
@@ -274,10 +274,3 @@ const UpdateReturnOfItems: React.FC = () => {
 }
 
 export default UpdateReturnOfItems
-
-
-
-
-
-
-
