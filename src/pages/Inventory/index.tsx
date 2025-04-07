@@ -7,7 +7,6 @@ import Modal from "../../components/Modal"
 import TopButtons from "../../components/TopButtons"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../providers/ToastContext"
-import moment from "moment"
 import Search from "../../components/Search"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
@@ -192,32 +191,47 @@ const Inventory: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'ID', key: 'id', width: 40 },
             { header: 'Item name', key: 'name', width: 40 },
-            { header: 'T/Qty', key: 'totalQuantity', width: 15 },
-            { header: 'UoM', key: 'unit', width: 15 },
-            { header: 'GT/Amount', key: 'grandTotalAmount', width: 15 },
-            { header: 'Stock Level', key: 'stockLevel', width: 15 },
-            { header: 'Created At', key: 'created_at', width: 15 },
+            { header: 'Size', key: 'size', width: 40 },
+            { header: 'Total Quantity', key: 'totalQuantity', width: 40 },
+            { header: 'Pending Quantity', key: 'pendingQuantity', width: 40 },
+            { header: 'Available Quantity', key: 'availableQuantity', width: 40 },
+            { header: 'UoM', key: 'unit', width: 40 },
+            { header: 'Stock Status', key: 'stockLevel', width: 15 },
+            { header: 'Total Amount', key: 'grandTotalAmount', width: 15 },
         ];
 
         const data = toExport?.map((row: {
-            id: number,
             name: string,
+            receipts: {
+                item: {
+                    size: string
+                }[]
+            }[],
             totalQuantity: number,
+            pendingQuantity: number,
+            availableQuantity: number,
             unit: string,
-            grandTotalAmount: string,
             stockLevel: string,
-            created_at: string
+            grandTotalAmount: string
         }) => {
+            
+            const sizes = [
+                ...new Set(
+                    row.receipts?.flatMap(receipt =>
+                        receipt.item?.map(i => i.size) || []
+                    )
+                )
+            ];
             return {
-                id: row.id,
                 name: row.name,
+                size: sizes.join(', ') || 'N/A', // Combine all sizes
                 totalQuantity: row.totalQuantity,
+                pendingQuantity: row.pendingQuantity,
+                availableQuantity: row.availableQuantity,
                 unit: row.unit,
-                grandTotalAmount: row.grandTotalAmount,
                 stockLevel: row.stockLevel,
-                created_at: moment(row.created_at).format('L')
+                grandTotalAmount: row.grandTotalAmount
             }
         })
         exportToExcel({ data, headers, filename: `${status}-inventory-${start_date}-to-${end_date}` })

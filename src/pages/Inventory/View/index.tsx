@@ -25,14 +25,6 @@ const View: React.FC = () => {
         <>
             <div className="flex flex-row justify-between">
                 <Header title={'View Inventory'} description={'Inventory'} />
-                <TopButtons >
-                    <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
-                        Cancel
-                    </button>
-                    <button onClick={() => navigate('/receipt/update', { state: state })} className="rounded-lg font-lato bg-aaa text-white p-3">
-                        Update
-                    </button>
-                </TopButtons>
             </div>
             <div className="border rounded-lg py-4 px-6 space-y-4">
                 <div className="grid grid-columns-2">
