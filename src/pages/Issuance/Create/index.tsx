@@ -120,20 +120,11 @@ const CreateIssuance: React.FC = () => {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
                             validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
-                            inventory: values.endUsers[0].inventory.map((inv: any) => ({
-                                ...inv,
-                                amount: inv.price * inv.quantity,
-                            }))
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
-                        const totalAmount = values.endUsers.reduce((sum: number, user: { inventory: any }) => {
-                            return sum + user.inventory.reduce((invSum: number, inv: { amount: number }) => {
-                                return invSum + inv?.amount;
-                            }, 0);
-                        }, 0);
 
                         const updateAmount = (index: number, _index: number, quantity: number) => {
                             const amount = values.endUsers[index].inventory[_index].price * quantity;
@@ -438,9 +429,6 @@ const CreateIssuance: React.FC = () => {
                                         )
                                     })}
                                 </div >
-                                <div className="flex flex-row-reverse py-1">
-                                    GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </div>
                             </Form >
                         )
                     }

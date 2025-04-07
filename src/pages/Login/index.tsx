@@ -18,13 +18,14 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const [passwordType, setPasswordType] = useState<string>('password');
 
-    const { mutate, isPending } = useMutation({
+    const loginRequest = useMutation({
         mutationFn: login,
         onError: () => {
             alert('Account not found. Please try again.');
         },
         onSuccess: (data: any) => {
             localStorage.setItem('user', JSON.stringify(data));
+
             showToast("Logged In Successfully!", "", 'success');
             navigate('/');
         },
@@ -38,7 +39,7 @@ const Login: React.FC = () => {
         },
         validationSchema: Yup.object(VALIDATION_SCHEMA),
         onSubmit(values) {
-            mutate(values);
+            loginRequest.mutate(values);
         }
     });
 
@@ -118,10 +119,10 @@ const Login: React.FC = () => {
                             <button
                                 type='submit'
                                 onClick={schema.handleSubmit as any}
-                                disabled={isPending}
+                                disabled={loginRequest.isPending}
                                 className="text-white bg-aaa opacity-90 hover:opacity-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center disabled:opacity-60"
-                            >
-                                {isPending ? (
+                            >                                
+                            {loginRequest.isPending ? (
                                     <div className="flex justify-center items-center gap-2">
                                         <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
