@@ -238,28 +238,71 @@ const Issuance: React.FC = () => {
         return value === status && 'border-b-2 border-black'
     }
 
+
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 40 },
             { header: 'Issuance Date', key: 'issuanceDate', width: 40 },
-            { header: 'Issuance Directive Nr', key: 'issuanceDirective', width: 20 },
-            { header: 'Status', key: 'status', width: 20 },
+            { header: 'Document No', key: 'documentNo', width: 40 },
+            { header: 'Directive Nr', key: 'issuanceDirective', width: 30 },
+            { header: 'Validity Date', key: 'validityDate', width: 20 },
+            { header: 'End User', key: 'endUser', width: 20 },
+            { header: 'Item Name', key: 'itemName', width: 30 },
+            { header: 'Size', key: 'size', width: 30 }, 
+            { header: 'Quantity', key: 'quantity', width: 30 },
+            { header: 'UoM', key: 'unit', width: 30 },
+            { header: 'Unit Price', key: 'unitPrice', width: 30 }, 
+            { header: 'Total Amount', key: 'unit', width: 30 }, 
+            { header: 'Status', key: 'status', width: 30 }, 
+            { header: 'Created At', key: 'createdAt', width: 30 },
+            { header: 'Created By', key: 'createdBy', width: 30 },
         ];
 
         let data = toExport?.map((row: {
-            id: number,
             issuanceDate: string,
+            documentNo: string,
+            validityDate: string,
             issuanceDirective: string,
-            status: string
+            endUsers: { name: string }[],
+            issuanceDetails: {
+                createdAt: string,
+                inventory: {
+                    name: string,
+                    unit: string,
+                    status: string
+                }
+            }[],
+            quantity: string,
+            user: {
+                firstname: string,
+                lastname: string
+            },
+            size: string,
+            price: string,
+            totalAmount: string
         }) => {
+            
+            const fullName = row.user
+            ? `${row.user.firstname} ${row.user.lastname}`
+            : 'N/A';
+            
             return {
-                id: row.id,
                 issuanceDate: row.issuanceDate,
+                documentNo: row.documentNo,
+                validityDate: row.validityDate,
                 issuanceDirective: row.issuanceDirective,
-                status: row.status
+                endUser: row.endUsers[0].name,
+                totalAmount: row.totalAmount,
+                itemName: row.issuanceDetails[0].inventory.name,
+                quantity: row.quantity,
+                size: row.size,
+                price: row.price,
+                unit: row.issuanceDetails[0].inventory.unit,
+                status: row.issuanceDetails[0].inventory.status,
+                createdAt: row.issuanceDetails[0].createdAt,
+                createdBy: fullName
             }
         })
-        exportToExcel({ data, headers, filename: `${status}-expenses-${start_date}-to-${end_date}` })
+        exportToExcel({ data, headers, filename: `${status}-issuance-${start_date}-to-${end_date}` })
     }
 
     return (
