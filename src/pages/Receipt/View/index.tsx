@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Header from "../../../components/Header"
 import Table from "../../../components/Table"
 import TopButtons from "../../../components/TopButtons"
@@ -9,12 +9,33 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchOneReceipt } from "../../../api/receipt/receiptApi"
 
 const View: React.FC = () => {
+    const [gAmount, setGamount] = useState(0)
     const { state } = useLocation()
     const navigate = useNavigate()
     const { data } = useQuery({
         queryKey: ["receipt_details", state.id],
         queryFn: () => fetchOneReceipt(state.id),
     });
+
+    
+    const calculateGrossTotal = (items: any[]) => {
+        if (!Array.isArray(items)) return 0;
+    
+        return items.reduce((total, item) => {
+            const amount = typeof item.amount === "string" 
+                ? Number(item.amount.replace(/,/g, "")) 
+                : Number(item.amount);
+    
+            return total + (isNaN(amount) ? 0 : amount); 
+        }, 0);
+    };
+
+
+    useEffect(() => {
+        if (data?.item) {
+            setGamount(calculateGrossTotal(data.item));
+        }
+    }, [data]);
 
     const columns = useMemo(() => {
         return [
@@ -117,6 +138,7 @@ const View: React.FC = () => {
                         columns={columns}
                         rows={{ data: data?.item }}
                         classes="!h-0"
+                        gAmount={gAmount}
                     />
                 </div>
             </div>
