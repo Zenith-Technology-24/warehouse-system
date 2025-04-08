@@ -167,7 +167,7 @@ const CreateReturnOfItems: React.FC = () => {
                                     <Field
                                         as="input"
                                         name="amount"
-                                        placeholder="Item Name"
+                                        placeholder="Personnel"
                                         className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                         fullWidth
                                         variant="outlined"

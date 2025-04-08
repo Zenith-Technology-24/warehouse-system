@@ -50,7 +50,7 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     });
 
     const filteredOptions = options?.filter((option: any) =>
-        option.name.toLowerCase().includes(searchTerm.toLowerCase())
+        option.name?.toLowerCase().includes(searchTerm?.toLowerCase())
     );
 
     const handleOptionClick = (option: any) => {
