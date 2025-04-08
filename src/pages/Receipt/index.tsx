@@ -204,10 +204,18 @@ const Receipt: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 40 },
-            { header: 'Date of Receipt', key: 'receiptDate', width: 30},
+            { header: 'Receipt Date', key: 'receiptDate', width: 40 },
             { header: 'Issuance Directive No.', key: 'issuanceDirective', width: 30},
-            { header: 'Source', key: 'source', width: 30}            
+            { header: 'Source', key: 'source', width: 30},
+            { header: 'Item Name', key: 'itemName', width: 30},
+            { header: 'Size', key: 'size', width: 30},
+            { header: 'Quantity', key: 'quantity', width: 30},
+            { header: 'UoM', key: 'unit', width: 30},
+            { header: 'Total Amount', key: 'totalAmount', width: 30},
+            { header: 'Expiry Date', key: 'expiryDate', width: 30},
+            { header: 'Location', key: 'location', width: 30},
+            { header: 'Created At', key: 'createdAt', width: 30},          
+            { header: 'Created By', key: 'createdBy', width: 30},            
         ];
 
         let overall = 0
@@ -217,15 +225,39 @@ const Receipt: React.FC = () => {
             receiptDate: string,
             issuanceDirective: string,
             source: string,
-            totalAmount: string
+            inventory: { name: string }[],
+            quantity: string,
+            createdAt: string,
+            user: {
+                firstname: string,
+                lastname: string
+            },
+            totalAmount: string,
+            size: string,
+            unit: string,
+            expiryDate: string,
+            location: string
         }) => {
             overall += parseFloat(row.totalAmount);
+
+            const fullName = row.user
+            ? `${row.user.firstname} ${row.user.lastname}`
+            : 'N/A';
+
             return {
                 id: row.id,
                 receiptDate: row.receiptDate,
                 issuanceDirective: row.issuanceDirective,
                 source: row.source,
-                
+                itemName: row.inventory?.[0]?.name || 'N/A',
+                size: row.size,
+                unit: row.unit,
+                expiryDate: row.expiryDate,
+                location: row.location,
+                quantity: row.quantity,
+                createdAt: row.createdAt,
+                createdBy: fullName,
+                totalAmount: row.totalAmount
             }
         })
         exportToExcel({ data, headers, filename: `${status}-receipt-${start_date}-to-${end_date}` })
