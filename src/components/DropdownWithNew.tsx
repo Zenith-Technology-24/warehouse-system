@@ -31,6 +31,7 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
     const [searchTerm, setSearchTerm] = useState<string>(data);
     const [selectedOption, setSelectedOption] = useState<any>(null);
     const dropdownRef = useRef<HTMLUListElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null); 
 
     useEffect(() => {
         if (data) {
@@ -88,8 +89,21 @@ const DropdownWithNew: React.FC<DropdownWithNewProps> = ({
         }
     };
 
+    useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                    setIsOpen(false);
+                }
+            };
+    
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, []);
+
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full" ref={containerRef}>
             <div className="relative w-full">
                 <Field name={name}>
                     {() => (
