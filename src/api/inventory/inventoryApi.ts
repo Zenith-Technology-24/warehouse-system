@@ -1,11 +1,11 @@
 import apiService from "../axios";
-import InventoryData from "../../dummy/InventoryData.json";
 
 interface fetchInventoryProps {
     search: string
     page: number
     limit: number
     status: string
+    filter: string
 }
 
 interface exportInventoryProps {
@@ -38,8 +38,8 @@ interface updateInventoryStatusProps {
     status: string;
 }
 
-export const fetchInventory = async ({ search, page, limit, status }: fetchInventoryProps) => {
-    const { data } = await apiService.get(`/inventory?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+export const fetchInventory = async ({ search, page, limit, status, filter }: fetchInventoryProps) => {
+    const { data } = await apiService.get(`/inventory?page=${page}&limit=${limit}&search=${search}&status=${status}&filter=${filter}`);
     return data;
 };
 
