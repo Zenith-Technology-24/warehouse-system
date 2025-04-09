@@ -167,46 +167,13 @@ const CreateReturnOfItems: React.FC = () => {
                                     <Field
                                         as="input"
                                         name="amount"
-                                        placeholder="Item Name"
-                                        className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                                        fullWidth
-                                        variant="outlined"
-                                        size="small"
-                                    />
-                                </div>
-                                <div className="flex h-auto flex-col py-3">
-                                    <label className="pb-2" htmlFor='itemName'>Item Name</label>
-                                    <DropdownWithSearch
-                                        formikSelectedValue={values?.itemName}
-                                        placeholder="Item Name"
-                                        name='itemName'
-                                        fetchNames={() => itemNames || []}
-                                        setFieldValue={setFieldValue}
-                                        refetchData={handleRefetch}
-                                        setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
-                                            setFieldValue(`size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
-                                            setFieldValue(`sizeType`, value.sizeType);
-                                        }}
-                                    />
-                                </div>
-                                <SizeSelector name={'size'} inventory={values} classes="!col-span-1 !py-1" />
-                                <div className=" flex h-auto flex-col p-1">
-                                    <label className="pb-2" htmlFor="personnel">Personnel</label>
-                                    <Field
-                                        as="input"
-                                        name="personnel"
                                         placeholder="Personnel"
                                         className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-
                                         fullWidth
                                         variant="outlined"
                                         size="small"
                                     />
-                                    <div className="h-6">
-                                        <ErrorMessage className="text-red-400" name="personnel" component="div" />
-                                    </div>
                                 </div>
-
                                 <div className="flex h-auto flex-col py-3">
                                     <label className="pb-2" htmlFor="date">Return Date</label>
                                     <Field

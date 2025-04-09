@@ -87,7 +87,7 @@ export const createIssuance = async (data: createIssuanceProps) => {
 export const exportIssuance = async ({ search, status, start_date, end_date }: exportIssuanceProps) => {
     const { data } = await apiService.post('/issuance/export', { search, status, start_date, end_date });
     return data;
-    
+
 }
 
 export const updateIssuance = async (data: updateIssuanceProps) => {
@@ -102,9 +102,9 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
 
 export const fetchReceiptRefs = async () => {
     const { data } = await apiService.get('/issuance/refs');
-
-    return data.map(({ receipt, ...rest }) => ({
+    return data.map(({ receipt, items, ...rest }: any) => ({
         name: receipt,
+        items: items.map((item: any) => ({ ...item, name: item.item_name })),
         ...rest
     }));
 };
