@@ -11,6 +11,7 @@ import Search from "../../components/Search"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import StockStatusComponent from "../../components/StockStatus"
+import Filter from "../../components/Filter"
 
 const Inventory: React.FC = () => {
     const { showToast } = useToast()
@@ -21,13 +22,16 @@ const Inventory: React.FC = () => {
     const [status, setStatus] = useState<string>('active')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
+    const [filterString, setFilterString] = useState<string>('')
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
     const [isActiveModalOpen, setIsActiveModalOpen] = useState<boolean>(false)
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["inventory", search, page, limit, status],
-        queryFn: () => fetchInventory({ search, page, limit, status }) as any,
+        queryKey: ["inventory", search, page, limit, status, filterString],
+        queryFn: () => fetchInventory({ search, page, limit, status, filter: filterString }) as any,
     });
+
+    const listItems = ['High Stock', 'Mid Stock', 'Low Stock'];
 
     const updateStatus = useMutation({
         mutationFn: updateInventoryStatus,
@@ -274,9 +278,16 @@ const Inventory: React.FC = () => {
                     <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
                     <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
-                <Search
-                    handleFetchData={handleSearch}
-                />
+                <div className="flex items-center gap-5">
+                    <Filter 
+                        listItems={listItems}
+                        filterString={filterString}
+                        setFilterString={setFilterString}
+                    />
+                    <Search
+                        handleFetchData={handleSearch}
+                    />
+                </div>
             </div>
             <Table
                 currentPage={page}
