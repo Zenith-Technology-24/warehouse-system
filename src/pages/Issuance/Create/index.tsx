@@ -252,8 +252,29 @@ const CreateIssuance: React.FC = () => {
                                                 {
                                                     user?.inventory?.map((inventory: any, _index: number) => {
                                                         return (
-                                                            <div key={_index} className="w-full col-span-2 gap-4 bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-[3fr_1fr_1fr_4fr_4fr]">
-                                                                <div className="flex h-auto flex-col py-3 col-span-3">
+                                                            
+                                                            <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-[3fr_1fr_1fr_4fr_4fr]">
+                                                                <div className="flex flex-row gap-5 absolute right-6 top-0">
+                                                                    <div className="py-6">
+                                                                        <div
+                                                                            onClick={() => {
+                                                                                if (values.endUsers[index].inventory.length > 1) {
+                                                                                    const updatedInventory = [...values.endUsers[index].inventory];
+                                                                                    updatedInventory.splice(_index, 1);
+                                                                                    setFieldValue(`endUsers[${index}].inventory`, updatedInventory);
+                                                                                }
+                                                                            }}
+                                                                            className={`flex text-gray-500 flex-row gap-2 items-center text-sm hover:text-gray-800 cursor-pointer`}>
+    
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                            </svg>
+                                                                            
+                                                                            <p className="sr-only">Remove Item</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex h-auto flex-col py-3 col-span-3 mt-7">
                                                                     <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].receiptRef`}>Receipt Ref</label>
                                                                     <DropdownWithSearch
                                                                         formikSelectedValue={values?.endUsers[index].inventory[_index].receiptRef}
@@ -287,7 +308,7 @@ const CreateIssuance: React.FC = () => {
                                                                     />
                                                                 </div>
 
-                                                                <div className="flex h-auto flex-col py-3 col-span-2">
+                                                                <div className="flex h-auto flex-col py-3 col-span-2 mt-7">
                                                                     <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
                                                                     <DropdownWithSearch
                                                                         formikSelectedValue={values?.endUsers[index]?.inventory[_index].name}
