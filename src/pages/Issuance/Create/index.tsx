@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorMessage, Field, Formik, FormikValues, Form } from "formik"
 import React, { useRef, useState } from "react"
 import * as Yup from 'yup'
@@ -204,7 +205,7 @@ const CreateIssuance: React.FC = () => {
                                                         fetchNames={fetchEndUsers}
                                                         setFieldValue={setFieldValue}
                                                         data={user.name}
-                                                        setSelectedValue={(value) => console.log("Selected:", value)}
+                                                        setSelectedValue={(value: any) => console.log("Selected:", value)}
                                                     />
                                                 </div>
                                                 <div className="flex flex-row gap-5 mx-5">
@@ -286,11 +287,36 @@ const CreateIssuance: React.FC = () => {
                                                                         refetchData={handleRefetch}
                                                                         setSelectedValue={(value: any) => {
                                                                             const mappedItems = Object.values(
-                                                                                value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
-                                                                                    if (!acc[name]) {
-                                                                                        acc[name] = { id, name, size: [{ name: size, price }], unit, price, inventoryId };
+                                                                                value?.items?.reduce((acc: { 
+                                                                                    [key: string]: { 
+                                                                                        id: string, 
+                                                                                        name: string, 
+                                                                                        size: Array<{ name: string, price: number, itemId: string }>, 
+                                                                                        unit: string, 
+                                                                                        price: number, 
+                                                                                        inventoryId: string 
+                                                                                    } 
+                                                                                }, { id, name, size, unit, price, inventoryId }: { 
+                                                                                    id: string, 
+                                                                                    name: string, 
+                                                                                    size: string, 
+                                                                                    unit: string, 
+                                                                                    price: number, 
+                                                                                    inventoryId: string 
+                                                                                }) => {
+                                                                                    const uniqueSizeKey = `${name}-${size}`;
+                                                                                    if (!acc[uniqueSizeKey]) {
+                                                                                        acc[uniqueSizeKey] = { 
+                                                                                            id, 
+                                                                                            name, 
+                                                                                            size: [{ name: size, price, itemId: id }], 
+                                                                                            unit, 
+                                                                                            price, 
+                                                                                            inventoryId 
+                                                                                        };
                                                                                     } else {
-                                                                                        acc[name].size.push({ name: size, price });
+                                                                                        // If item with this name already exists, preserve it and add new size
+                                                                                        acc[uniqueSizeKey].size.push({ name: size, price, itemId: id });
                                                                                     }
                                                                                     return acc;
                                                                                 }, {}) || {}
@@ -333,19 +359,35 @@ const CreateIssuance: React.FC = () => {
                                                                 <div className="flex h-auto flex-col py-3">
                                                                     <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size <span className="text-gray-400">(Optional)</span></label>
                                                                     <Field as="select"
-                                                                        name={`endUsers[${index}].inventory[${_index}].size`}
+                                                                        name={`endUsers[${index}].inventory[${_index}].itemId`}
                                                                         placeholder="Size"
                                                                         className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                                                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                            const selectedSize = e.target.value;
-                                                                            const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
-                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
+                                                                            const selectedId = e.target.value;
+                                                                            const price = values.endUsers[
+                                                                                index
+                                                                            ].inventory[_index].itemSizes.find(
+                                                                                (size: { name: string, itemId: string }) =>
+                                                                                size.itemId === selectedId
+                                                                            )?.price;
+
+                                                                            const size = values.endUsers[
+                                                                                index
+                                                                            ].inventory[_index].itemSizes.find(
+                                                                                (size: { name: string, itemId: string }) =>
+                                                                                size.itemId === selectedId
+                                                                            )?.name;
+                                                                            
+                                                                            // Log them appropriately for easier tracking
+                                                                            console.log("Selected Size:", selectedId, price, size);
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, selectedId);
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].size`, size);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
                                                                         }}
                                                                     >
-                                                                        {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
-                                                                            <option key={size.name} value={size.name}>{size.name}</option>
+                                                                        {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string, itemId: string }, sizeIndex: number) => (
+                                                                            <option key={`${size.name}-${sizeIndex}`} value={size.itemId}>{size.name}</option>
                                                                         ))}
                                                                     </Field>
                                                                     <div className="h-6">
