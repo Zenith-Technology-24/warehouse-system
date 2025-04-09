@@ -181,7 +181,7 @@ const CreateReceipt: React.FC = () => {
                 title={'Delete Item Type'}
                 onClose={() => setIsDeleteTypeModalOpen(false)}
                 handleFunction={() => handleDeleteItemType()}
-                message={`Are you sure you want to delete this item type ${selectedItemType?.name}? This action cannot be undone.`}
+                message={`Are you sure you want to delete this item type ${selectedItemType?.name}?`}
             />
             <AddItemModal
                 isOpen={addItemModalOpen}
