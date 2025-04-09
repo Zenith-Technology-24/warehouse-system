@@ -35,6 +35,8 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
     const [searchTerm, setSearchTerm] = useState<string>("")
     const [selectedOption, setSelectedOption] = useState<any>(null)
     const dropdownRef = useRef<HTMLUListElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null); 
+
 
     useEffect(() => {
         if (forUpdate) {
@@ -74,8 +76,21 @@ const DropdownWithSearch: React.FC<DropdownWithSearchProps> = ({
         }
     }, [refetchData, refetch])
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div key={_index} className="flex flex-col w-full">
+        <div key={_index} className="flex flex-col w-full" ref={containerRef}>
             {
                 label && (
                     <label className="pb-2 text-gray-500">{label}</label>
