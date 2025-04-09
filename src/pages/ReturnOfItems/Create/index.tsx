@@ -37,6 +37,7 @@ const CreateReturnOfItems: React.FC = () => {
     });
 
     const handleSave = () => {
+        console.log(formRef?.current);
         if (formRef?.current) {
             formRef.current?.submitForm()
         }
@@ -166,7 +167,7 @@ const CreateReturnOfItems: React.FC = () => {
                                     <label className="pb-2" htmlFor="personnel">Personnel</label>
                                     <Field
                                         as="input"
-                                        name="amount"
+                                        name="personnel"
                                         placeholder="Personnel"
                                         className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
                                         fullWidth
