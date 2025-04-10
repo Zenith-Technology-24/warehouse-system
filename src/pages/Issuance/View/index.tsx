@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Header from "../../../components/Header"
 import Table from "../../../components/Table"
 import TopButtons from "../../../components/TopButtons"
@@ -36,6 +36,24 @@ const View: React.FC = () => {
             setToWithdrawn(null)
         },
     });
+
+    const calculateGrossTotal = (endUser: any) => {
+        if (!endUser.inventory) return 0;
+        
+        return endUser.inventory.reduce((total, inventory) => {
+            const amount = typeof inventory.item.amount === "string" 
+                ? Number(inventory.item.amount.replace(/,/g, "")) 
+                : Number(inventory.item.amount);
+            return total + (isNaN(amount) ? 0 : amount);
+        }, 0);
+    };
+
+     useEffect(() => {
+            if (data?.endUsers) {
+                calculateGrossTotal(data.endUsers)
+            }
+            
+        }, [data]);
 
     const handleWithdrawn = () => {
         withdraw.mutate({
@@ -189,13 +207,14 @@ const View: React.FC = () => {
                     </div>
                 </div>
                 {
-                    data?.endUsers.map((end: any, index: number) => (
+                    data?.endUsers.map((endUser: any, index: number) => (
                         <div key={index}>
-                            <h1 className="text-md font-semibold mb-2">End User: {end?.name}</h1>
+                            <h1 className="text-md font-semibold mb-2">End User: {endUser?.name}</h1>
                             <Table
                                 columns={columns}
-                                rows={{ data: end?.inventory }}
+                                rows={{ data: endUser?.inventory }}
                                 classes="!h-0"
+                                gAmount={calculateGrossTotal(endUser)}
                             />
                         </div>
                     ))
