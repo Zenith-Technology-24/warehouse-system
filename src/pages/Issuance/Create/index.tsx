@@ -304,20 +304,28 @@ const CreateIssuance: React.FC = () => {
                                                                                     price: number, 
                                                                                     inventoryId: string 
                                                                                 }) => {
-                                                                                    const uniqueSizeKey = `${name}-${size}`;
-                                                                                    if (!acc[uniqueSizeKey]) {
-                                                                                        acc[uniqueSizeKey] = { 
-                                                                                            id, 
-                                                                                            name, 
-                                                                                            size: [{ name: size, price, itemId: id }], 
-                                                                                            unit, 
-                                                                                            price, 
-                                                                                            inventoryId 
+                                                                                    if (!acc[name]) {
+                                                                                        acc[name] = {
+                                                                                          id,
+                                                                                          name,
+                                                                                          size: [
+                                                                                            {
+                                                                                              name: size,
+                                                                                              price,
+                                                                                              itemId: id,
+                                                                                            },
+                                                                                          ],
+                                                                                          unit,
+                                                                                          price,
+                                                                                          inventoryId,
                                                                                         };
-                                                                                    } else {
-                                                                                        // If item with this name already exists, preserve it and add new size
-                                                                                        acc[uniqueSizeKey].size.push({ name: size, price, itemId: id });
-                                                                                    }
+                                                                                      } else {
+                                                                                        acc[name].size.push({
+                                                                                          name: size,
+                                                                                          price,
+                                                                                          itemId: id,
+                                                                                        });
+                                                                                      }
                                                                                     return acc;
                                                                                 }, {}) || {}
                                                                             );
