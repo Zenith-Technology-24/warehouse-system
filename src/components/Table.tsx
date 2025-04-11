@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import EmptyTableImage from "./EmptyTableImage";
+import { useLocation } from "react-router-dom";
 
 interface Props {
     columns: any
@@ -28,6 +29,9 @@ const Table: React.FC<Props> = ({
     classes,
     gAmount = 0
 }) => {
+
+    const path = useLocation().pathname.split('/').pop()
+
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         onPageChange && onPageChange(page);
@@ -153,9 +157,11 @@ const Table: React.FC<Props> = ({
                     </div>
                 )
             }
-                <div className="p-4 w-full flex justify-end">
-                <h2 className="text-[14px]">Gross Total Amount: <span className="font-bold">P{gAmount.toLocaleString()} </span></h2>
-            </div>
+            {path === 'view' 
+            &&  <div className="p-4 w-full flex justify-end">
+                    <h2 className="text-[14px]">Gross Total Amount: <span className="font-bold">P{gAmount.toLocaleString()} </span></h2>
+                </div>
+            }
         </div >
         
     );
