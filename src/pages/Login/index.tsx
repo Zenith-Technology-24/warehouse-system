@@ -50,7 +50,7 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="grid grid-cols-2 h-screen">
+        <div className="grid grid-cols-[1fr_1.5fr] h-screen">
             <LoginWallpaper />
             <div className="m-auto">
                 <div className="flex flex-col bg-white border border-green-50 w-[500px] py-4 px-6 rounded-2xl">
