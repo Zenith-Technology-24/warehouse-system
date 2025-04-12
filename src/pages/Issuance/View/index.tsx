@@ -16,6 +16,7 @@ const View: React.FC = () => {
     const navigate = useNavigate()
     const [isWithdrawnModalOpen, setIsWithdrawnModalOpen] = useState<boolean>(false)
     const [toWithdrawn, setToWithdrawn] = useState<string | null>(null)
+    const [inventoryId, setInventoryId] = useState<string | null>(null)
     const { data, refetch } = useQuery({
         queryKey: ["receipt_details", state.id],
         queryFn: () => fetchOneIssuance(state.id),
@@ -34,37 +35,40 @@ const View: React.FC = () => {
                 'success'
             );
             setToWithdrawn(null)
+            setInventoryId(null)
         },
     });
 
     const calculateGrossTotal = (endUser: any) => {
         if (!endUser.inventory) return 0;
-        
+
         return endUser.inventory.reduce((total, inventory) => {
-            const amount = typeof inventory.item.amount === "string" 
-                ? Number(inventory.item.amount.replace(/,/g, "")) 
+            const amount = typeof inventory.item.amount === "string"
+                ? Number(inventory.item.amount.replace(/,/g, ""))
                 : Number(inventory.item.amount);
             return total + (isNaN(amount) ? 0 : amount);
         }, 0);
     };
 
-     useEffect(() => {
-            if (data?.endUsers) {
-                calculateGrossTotal(data.endUsers)
-            }
-            
-        }, [data]);
+    useEffect(() => {
+        if (data?.endUsers) {
+            calculateGrossTotal(data.endUsers)
+        }
+
+    }, [data]);
 
     const handleWithdrawn = () => {
         withdraw.mutate({
-            id: toWithdrawn
+            id: toWithdrawn,
+            inventoryId
         })
         setIsWithdrawnModalOpen(false)
     }
 
-    const handleOpenWithdrawnModal = (id: string | null) => {
+    const handleOpenWithdrawnModal = (id: string | null, inventoryId: string | null) => {
         setIsWithdrawnModalOpen(true)
         setToWithdrawn(id)
+        setInventoryId(inventoryId)
     }
 
     const columns = useMemo(() => {
@@ -156,10 +160,10 @@ const View: React.FC = () => {
             {
                 label: 'Action',
                 name: 'issuanceDetailId',
-                render(row: { item: { price: string, amount: string } }, value: string, rowIndex: number) {
+                render(row: any, value: string, rowIndex: number) {
                     return (
                         <div className="flex">
-                            <div onClick={() => handleOpenWithdrawnModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => handleOpenWithdrawnModal(value, row?.id)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
                                         <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />

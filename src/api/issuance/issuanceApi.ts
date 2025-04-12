@@ -61,6 +61,7 @@ interface updateIssuanceStatusProps {
 
 interface withdrawIssuanceProps {
     id: string | null;
+    inventoryId: string | null;
 }
 
 interface withdrawAllIssuanceProps {
@@ -114,8 +115,8 @@ export const fetchOneIssuance = async (id: number) => {
     return data;
 };
 
-export const withdrawIssuance = async ({ id }: withdrawIssuanceProps) => {
-    const { data } = await apiService.get(`/issuance/withdraw/${id}`);
+export const withdrawIssuance = async ({ id, inventoryId }: withdrawIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/withdraw/${id}/${inventoryId}`);
     return data;
 };
 
