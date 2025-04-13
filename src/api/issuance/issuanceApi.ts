@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import apiService from "../axios";
 import IssuanceData from "../../dummy/IssuanceData.json";
 
@@ -101,8 +102,8 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
     return data;
 };
 
-export const fetchReceiptRefs = async () => {
-    const { data } = await apiService.get('/issuance/refs');
+export const fetchReceiptRefs = async (fetch = "some") => {
+    const { data } = await apiService.get(`/issuance/refs?all=${fetch}`);
     return data.map(({ receipt, items, ...rest }: any) => ({
         name: receipt,
         items: items.map((item: any) => ({ ...item, name: item.item_name })),
