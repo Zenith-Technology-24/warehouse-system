@@ -37,7 +37,7 @@ const UpdateReturnOfItems: React.FC = () => {
 
     const { data: receiptRefs } = useQuery({
         queryKey: ['receipt-list'],
-        queryFn: () => fetchReceiptRefs() as any,
+        queryFn: () => fetchReceiptRefs('all') as any,
     });
 
     useEffect(() => {
@@ -152,7 +152,9 @@ const UpdateReturnOfItems: React.FC = () => {
                                         formikSelectedValue={values?.receiptRef}
                                         placeholder="Receipt Ref"
                                         name='receiptRef'
-                                        fetchNames={fetchReceiptRefs}
+                                        fetchNames={() => {
+                                            fetchReceiptRefs('all')
+                                        }}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: any) => {

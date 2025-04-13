@@ -23,14 +23,14 @@ const View: React.FC = () => {
     const receiptColumns = useReceiptColumns(state)
     const pendingIssuanceColumns = usePendingIssuanceColumns(state)
 
-        
+
     const calculateGrossTotalReceipt = (items: any[]) => {
         if (!Array.isArray(items)) return 0;
-    
+
         return items.reduce((total, item) => {
             return total + item.item.reduce((itemTotal, item) => {
-                const amount = typeof item.amount === "string" 
-                    ? Number(item.amount.replace(/,/g, "")) 
+                const amount = typeof item.amount === "string"
+                    ? Number(item.amount.replace(/,/g, ""))
                     : Number(item.amount);
                 return itemTotal + (isNaN(amount) ? 0 : amount);
             }, 0);
@@ -39,21 +39,21 @@ const View: React.FC = () => {
 
     const calculateGrossTotalIssuance = (items: any[]) => {
         if (!Array.isArray(items)) return 0;
-    
+
         return items.reduce((total, item) => {
-            const amount = typeof item.amount === "string" 
-                    ? Number(item.amount.replace(/,/g, "")) 
-                    : Number(item.amount);
-                return total + (isNaN(amount) ? 0 : amount);
+            const amount = typeof item.amount === "string"
+                ? Number(item.amount.replace(/,/g, ""))
+                : Number(item.amount);
+            return total + (isNaN(amount) ? 0 : amount);
         }, 0);
     };
 
 
     useEffect(() => {
-        if (Array.isArray(data.receipts) && data.receipts.length > 0) {
+        if (Array.isArray(data?.receipts) && data?.receipts.length > 0) {
             setGamountReceipt(calculateGrossTotalReceipt(data.receipts));
         }
-        if (Array.isArray(data.issuance) && data.issuance.length > 0) {
+        if (Array.isArray(data?.issuance) && data?.issuance.length > 0) {
             setGamountIssuance(calculateGrossTotalIssuance(data.issuance))
         }
     }, [data]);
