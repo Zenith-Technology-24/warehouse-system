@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import apiService from "../axios";
 import IssuanceData from "../../dummy/IssuanceData.json";
 
@@ -61,6 +62,7 @@ interface updateIssuanceStatusProps {
 
 interface withdrawIssuanceProps {
     id: string | null;
+    inventoryId: string | null;
 }
 
 interface withdrawAllIssuanceProps {
@@ -87,7 +89,7 @@ export const createIssuance = async (data: createIssuanceProps) => {
 export const exportIssuance = async ({ search, status, start_date, end_date }: exportIssuanceProps) => {
     const { data } = await apiService.post('/issuance/export', { search, status, start_date, end_date });
     return data;
-    
+
 }
 
 export const updateIssuance = async (data: updateIssuanceProps) => {
@@ -100,11 +102,11 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
     return data;
 };
 
-export const fetchReceiptRefs = async () => {
-    const { data } = await apiService.get('/issuance/refs');
-
-    return data.map(({ receipt, ...rest }) => ({
+export const fetchReceiptRefs = async (fetch = "some") => {
+    const { data } = await apiService.get(`/issuance/refs?all=${fetch}`);
+    return data.map(({ receipt, items, ...rest }: any) => ({
         name: receipt,
+        items: items.map((item: any) => ({ ...item, name: item.item_name })),
         ...rest
     }));
 };
@@ -114,8 +116,8 @@ export const fetchOneIssuance = async (id: number) => {
     return data;
 };
 
-export const withdrawIssuance = async ({ id }: withdrawIssuanceProps) => {
-    const { data } = await apiService.get(`/issuance/withdraw/${id}`);
+export const withdrawIssuance = async ({ id, inventoryId }: withdrawIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/withdraw/${id}/${inventoryId}`);
     return data;
 };
 

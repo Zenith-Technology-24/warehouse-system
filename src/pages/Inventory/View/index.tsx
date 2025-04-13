@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePendingIssuanceColumns } from "../../../columns/PendingIssuanceColumns"
 import { useReceiptColumns } from "../../../columns/ReceiptColumns"
 import DashboardCard from "../../../components/DashboardCard"
@@ -13,6 +13,8 @@ import { fetchOneInventory } from "../../../api/inventory/inventoryApi"
 const View: React.FC = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
+    const [gAmountReceipt, setGamountReceipt] = useState(0)
+    const [gAmountIssuance, setGamountIssuance] = useState(0)
     const [expand, setExpand] = useState<string | null>(null)
     const { data } = useQuery({
         queryKey: ["inventory_details", state.id],
@@ -21,18 +23,45 @@ const View: React.FC = () => {
     const receiptColumns = useReceiptColumns(state)
     const pendingIssuanceColumns = usePendingIssuanceColumns(state)
 
+
+    const calculateGrossTotalReceipt = (items: any[]) => {
+        if (!Array.isArray(items)) return 0;
+
+        return items.reduce((total, item) => {
+            return total + item.item.reduce((itemTotal, item) => {
+                const amount = typeof item.amount === "string"
+                    ? Number(item.amount.replace(/,/g, ""))
+                    : Number(item.amount);
+                return itemTotal + (isNaN(amount) ? 0 : amount);
+            }, 0);
+        }, 0);
+    };
+
+    const calculateGrossTotalIssuance = (items: any[]) => {
+        if (!Array.isArray(items)) return 0;
+
+        return items.reduce((total, item) => {
+            const amount = typeof item.amount === "string"
+                ? Number(item.amount.replace(/,/g, ""))
+                : Number(item.amount);
+            return total + (isNaN(amount) ? 0 : amount);
+        }, 0);
+    };
+
+
+    useEffect(() => {
+        if (Array.isArray(data?.receipts) && data?.receipts.length > 0) {
+            setGamountReceipt(calculateGrossTotalReceipt(data.receipts));
+        }
+        if (Array.isArray(data?.issuance) && data?.issuance.length > 0) {
+            setGamountIssuance(calculateGrossTotalIssuance(data.issuance))
+        }
+    }, [data]);
+
     return (
         <>
             <div className="flex flex-row justify-between">
                 <Header title={'View Inventory'} description={'Inventory'} />
-                <TopButtons >
-                    <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
-                        Cancel
-                    </button>
-                    <button onClick={() => navigate('/receipt/update', { state: state })} className="rounded-lg font-lato bg-aaa text-white p-3">
-                        Update
-                    </button>
-                </TopButtons>
             </div>
             <div className="border rounded-lg py-4 px-6 space-y-4">
                 <div className="grid grid-columns-2">
@@ -172,6 +201,7 @@ const View: React.FC = () => {
                                 columns={receiptColumns}
                                 rows={{ data: data?.items }}
                                 classes="!h-0"
+                                gAmount={gAmountReceipt}
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>
                     }
@@ -185,6 +215,7 @@ const View: React.FC = () => {
                                 columns={pendingIssuanceColumns}
                                 rows={{ data: data?.issuance }}
                                 classes="!h-0"
+                                gAmount={gAmountIssuance}
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>
                     }

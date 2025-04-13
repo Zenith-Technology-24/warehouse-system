@@ -7,11 +7,11 @@ import Modal from "../../components/Modal"
 import TopButtons from "../../components/TopButtons"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../../providers/ToastContext"
-import moment from "moment"
 import Search from "../../components/Search"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
 import StockStatusComponent from "../../components/StockStatus"
+import Filter from "../../components/Filter"
 
 const Inventory: React.FC = () => {
     const { showToast } = useToast()
@@ -22,13 +22,16 @@ const Inventory: React.FC = () => {
     const [status, setStatus] = useState<string>('active')
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toActive, setToActive] = useState<number | null>(null)
+    const [filterString, setFilterString] = useState<string>('')
     const [isArchiveModalOpen, setIsArchiveModalOpen] = useState<boolean>(false)
     const [isActiveModalOpen, setIsActiveModalOpen] = useState<boolean>(false)
     const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false)
     const { data: rows, refetch } = useQuery({
-        queryKey: ["inventory", search, page, limit, status],
-        queryFn: () => fetchInventory({ search, page, limit, status }) as any,
+        queryKey: ["inventory", search, page, limit, status, filterString],
+        queryFn: () => fetchInventory({ search, page, limit, status, filter: filterString }) as any,
     });
+
+    const listItems = ['High Stock', 'Mid Stock', 'Low Stock'];
 
     const updateStatus = useMutation({
         mutationFn: updateInventoryStatus,
@@ -192,32 +195,47 @@ const Inventory: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'ID', key: 'id', width: 40 },
             { header: 'Item name', key: 'name', width: 40 },
-            { header: 'T/Qty', key: 'totalQuantity', width: 15 },
-            { header: 'UoM', key: 'unit', width: 15 },
-            { header: 'GT/Amount', key: 'grandTotalAmount', width: 15 },
-            { header: 'Stock Level', key: 'stockLevel', width: 15 },
-            { header: 'Created At', key: 'created_at', width: 15 },
+            { header: 'Size', key: 'size', width: 40 },
+            { header: 'Total Quantity', key: 'totalQuantity', width: 40 },
+            { header: 'Pending Quantity', key: 'pendingQuantity', width: 40 },
+            { header: 'Available Quantity', key: 'availableQuantity', width: 40 },
+            { header: 'UoM', key: 'unit', width: 40 },
+            { header: 'Stock Status', key: 'stockLevel', width: 15 },
+            { header: 'Total Amount', key: 'grandTotalAmount', width: 15 },
         ];
 
         const data = toExport?.map((row: {
-            id: number,
             name: string,
+            receipts: {
+                item: {
+                    size: string
+                }[]
+            }[],
             totalQuantity: number,
+            pendingQuantity: number,
+            availableQuantity: number,
             unit: string,
-            grandTotalAmount: string,
             stockLevel: string,
-            created_at: string
+            grandTotalAmount: string
         }) => {
+            
+            const sizes = [
+                ...new Set(
+                    row.receipts?.flatMap(receipt =>
+                        receipt.item?.map(i => i.size) || []
+                    )
+                )
+            ];
             return {
-                id: row.id,
                 name: row.name,
+                size: sizes.join(', ') || 'N/A', // Combine all sizes
                 totalQuantity: row.totalQuantity,
+                pendingQuantity: row.pendingQuantity,
+                availableQuantity: row.availableQuantity,
                 unit: row.unit,
-                grandTotalAmount: row.grandTotalAmount,
                 stockLevel: row.stockLevel,
-                created_at: moment(row.created_at).format('L')
+                grandTotalAmount: row.grandTotalAmount
             }
         })
         exportToExcel({ data, headers, filename: `${status}-inventory-${start_date}-to-${end_date}` })
@@ -260,9 +278,16 @@ const Inventory: React.FC = () => {
                     <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
                     <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
-                <Search
-                    handleFetchData={handleSearch}
-                />
+                <div className="flex items-center gap-5">
+                    <Filter 
+                        listItems={listItems}
+                        filterString={filterString}
+                        setFilterString={setFilterString}
+                    />
+                    <Search
+                        handleFetchData={handleSearch}
+                    />
+                </div>
             </div>
             <Table
                 currentPage={page}

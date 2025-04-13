@@ -38,7 +38,7 @@ const UpdateIssuance = React.lazy(() => import('./pages/Issuance/Update'))
 
 const ReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems'))
 const CreateReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/Create'))
-// const ViewReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/View'))
+const ViewReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/View'))
 const UpdateReturnOfItems = React.lazy(() => import('./pages/ReturnOfItems/Update'))
 
 const Receipt = React.lazy(() => import('./pages/Receipt'))
@@ -104,17 +104,17 @@ function App() {
                 <Route path="update" element={<UpdateProduct />} />
                 <Route path="view" element={<ViewInventory />} />
               </Route>
-              <Route path="sales">
+              {/* <Route path="sales">
                 <Route index={true} element={<Sales />} />
                 <Route path="create" element={<CreateSales />} />
                 <Route path="update" element={<UpdateSales />} />
                 <Route path="view/:id" element={<ViewSales />} />
-              </Route>
-              <Route path="expenses">
+              </Route> */}
+              {/* <Route path="expenses">
                 <Route index={true} element={<Expenses />} />
                 <Route path="create" element={<CreateExpense />} />
                 <Route path="update" element={<UpdateExpense />} />
-              </Route>
+              </Route> */}
 
               <Route path="issuance">
                 <Route index={true} element={<Issuance />} />
@@ -127,6 +127,7 @@ function App() {
                 <Route index={true} element={<ReturnOfItems />} />
                 <Route path="create" element={<CreateReturnOfItems />} />
                 <Route path="update" element={<UpdateReturnOfItems />} />
+                <Route path="view" element={<ViewReturnOfItems />} />
               </Route>
 
               <Route path='activity-logs'>

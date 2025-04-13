@@ -300,7 +300,7 @@ const CreateReceipt: React.FC = () => {
                                                         _index={index}
                                                         placeholder="Item Name"
                                                         name={`inventory[${index}].name`}
-                                                        fetchNames={() => itemTypes || []}
+                                                        fetchNames={fetchItemType}
                                                         setFieldValue={setFieldValue}
                                                         refetchData={handleRefetch}
                                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
@@ -310,6 +310,15 @@ const CreateReceipt: React.FC = () => {
                                                             setFieldValue(`inventory[${index}].sizeType`, value.sizeType);
                                                             setFieldValue(`inventory[${index}].name`, value.name);
                                                         }}
+                                                        onUpdate={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsUpdateItemModalOpen(true)
+                                                        }}
+                                                        onDelete={(option: object) => {
+                                                            setSelectedItemType(option)
+                                                            setIsDeleteTypeModalOpen(true)
+                                                        }
+                                                        }
                                                     />
                                                 </div>
                                                 <SizeSelector inventory={inventory} index={index} />

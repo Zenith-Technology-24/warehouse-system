@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorMessage, Field, Formik, FormikValues, Form } from "formik"
 import React, { useRef, useState } from "react"
 import * as Yup from 'yup'
@@ -119,17 +120,12 @@ const CreateIssuance: React.FC = () => {
                         const formattedValues = {
                             ...values,
                             issuanceDate: values.issuanceDate ? `${values.issuanceDate}T00:00:00.000Z` : null,
-                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null
+                            validityDate: values.validityDate ? `${values.validityDate}T00:00:00.000Z` : null,
                         };
                         createIssuanceMutation.mutate(formattedValues)
                     }}
                 >
                     {({ values, setFieldValue }) => {
-                        const totalAmount = values.endUsers.reduce((sum: number, user: { inventory: any }) => {
-                            return sum + user.inventory.reduce((invSum: number, inv: { amount: number }) => {
-                                return invSum + inv?.amount;
-                            }, 0);
-                        }, 0);
 
                         const updateAmount = (index: number, _index: number, quantity: number) => {
                             const amount = values.endUsers[index].inventory[_index].price * quantity;
@@ -209,7 +205,7 @@ const CreateIssuance: React.FC = () => {
                                                         fetchNames={fetchEndUsers}
                                                         setFieldValue={setFieldValue}
                                                         data={user.name}
-                                                        setSelectedValue={(value) => console.log("Selected:", value)}
+                                                        setSelectedValue={(value: any) => console.log("Selected:", value)}
                                                     />
                                                 </div>
                                                 <div className="flex flex-row gap-5 mx-5">
@@ -257,8 +253,29 @@ const CreateIssuance: React.FC = () => {
                                                 {
                                                     user?.inventory?.map((inventory: any, _index: number) => {
                                                         return (
-                                                            <div key={_index} className="w-full col-span-2 gap-1 bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-2">
-                                                                <div className="flex h-auto flex-col py-3 col-span-2">
+                                                            
+                                                            <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-[3fr_1fr_1fr_4fr_4fr]">
+                                                                <div className="flex flex-row gap-5 absolute right-6 top-0">
+                                                                    <div className="py-6">
+                                                                        <div
+                                                                            onClick={() => {
+                                                                                if (values.endUsers[index].inventory.length > 1) {
+                                                                                    const updatedInventory = [...values.endUsers[index].inventory];
+                                                                                    updatedInventory.splice(_index, 1);
+                                                                                    setFieldValue(`endUsers[${index}].inventory`, updatedInventory);
+                                                                                }
+                                                                            }}
+                                                                            className={`flex text-gray-500 flex-row gap-2 items-center text-sm hover:text-gray-800 cursor-pointer`}>
+    
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                                            </svg>
+                                                                            
+                                                                            <p className="sr-only">Remove Item</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex h-auto flex-col py-3 col-span-3 mt-7">
                                                                     <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].receiptRef`}>Receipt Ref</label>
                                                                     <DropdownWithSearch
                                                                         formikSelectedValue={values?.endUsers[index].inventory[_index].receiptRef}
@@ -270,12 +287,45 @@ const CreateIssuance: React.FC = () => {
                                                                         refetchData={handleRefetch}
                                                                         setSelectedValue={(value: any) => {
                                                                             const mappedItems = Object.values(
-                                                                                value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
+                                                                                value?.items?.reduce((acc: { 
+                                                                                    [key: string]: { 
+                                                                                        id: string, 
+                                                                                        name: string, 
+                                                                                        size: Array<{ name: string, price: number, itemId: string }>, 
+                                                                                        unit: string, 
+                                                                                        price: number, 
+                                                                                        inventoryId: string 
+                                                                                    } 
+                                                                                }, { id, name, size, unit, price, inventoryId }: { 
+                                                                                    id: string, 
+                                                                                    name: string, 
+                                                                                    size: string, 
+                                                                                    unit: string, 
+                                                                                    price: number, 
+                                                                                    inventoryId: string 
+                                                                                }) => {
                                                                                     if (!acc[name]) {
-                                                                                        acc[name] = { id, name, size: [{ name: size, price }], unit, price, inventoryId };
-                                                                                    } else {
-                                                                                        acc[name].size.push({ name: size, price });
-                                                                                    }
+                                                                                        acc[name] = {
+                                                                                          id,
+                                                                                          name,
+                                                                                          size: [
+                                                                                            {
+                                                                                              name: size,
+                                                                                              price,
+                                                                                              itemId: id,
+                                                                                            },
+                                                                                          ],
+                                                                                          unit,
+                                                                                          price,
+                                                                                          inventoryId,
+                                                                                        };
+                                                                                      } else {
+                                                                                        acc[name].size.push({
+                                                                                          name: size,
+                                                                                          price,
+                                                                                          itemId: id,
+                                                                                        });
+                                                                                      }
                                                                                     return acc;
                                                                                 }, {}) || {}
                                                                             );
@@ -291,7 +341,8 @@ const CreateIssuance: React.FC = () => {
                                                                         }}
                                                                     />
                                                                 </div>
-                                                                <div className="flex h-auto flex-col py-3">
+
+                                                                <div className="flex h-auto flex-col py-3 col-span-2 mt-7">
                                                                     <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].name`}>Item Name</label>
                                                                     <DropdownWithSearch
                                                                         formikSelectedValue={values?.endUsers[index]?.inventory[_index].name}
@@ -304,7 +355,6 @@ const CreateIssuance: React.FC = () => {
                                                                         setSelectedValue={(value: any) => {
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].itemSizes`, value?.size);
-                                                                            // setFieldValue(`endUsers[${index}].inventory[${_index}].item.id`, value?.id);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].size`, value?.size[0]?.name);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].id`, value?.inventoryId);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].unit`, value?.unit)
@@ -313,22 +363,39 @@ const CreateIssuance: React.FC = () => {
                                                                         }}
                                                                     />
                                                                 </div>
+                                                               
                                                                 <div className="flex h-auto flex-col py-3">
-                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size</label>
+                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size <span className="text-gray-400">(Optional)</span></label>
                                                                     <Field as="select"
-                                                                        name={`endUsers[${index}].inventory[${_index}].size`}
+                                                                        name={`endUsers[${index}].inventory[${_index}].itemId`}
                                                                         placeholder="Size"
                                                                         className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                                                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                                            const selectedSize = e.target.value;
-                                                                            const price = values.endUsers[index].inventory[_index].itemSizes.find((size: { name: string }) => size.name === selectedSize)?.price;
-                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].size`, selectedSize);
+                                                                            const selectedId = e.target.value;
+                                                                            const price = values.endUsers[
+                                                                                index
+                                                                            ].inventory[_index].itemSizes.find(
+                                                                                (size: { name: string, itemId: string }) =>
+                                                                                size.itemId === selectedId
+                                                                            )?.price;
+
+                                                                            const size = values.endUsers[
+                                                                                index
+                                                                            ].inventory[_index].itemSizes.find(
+                                                                                (size: { name: string, itemId: string }) =>
+                                                                                size.itemId === selectedId
+                                                                            )?.name;
+                                                                            
+                                                                            // Log them appropriately for easier tracking
+                                                                            console.log("Selected Size:", selectedId, price, size);
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, selectedId);
+                                                                            setFieldValue(`endUsers[${index}].inventory[${_index}].size`, size);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
                                                                             setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
                                                                         }}
                                                                     >
-                                                                        {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string }) => (
-                                                                            <option key={size.name} value={size.name}>{size.name}</option>
+                                                                        {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string, itemId: string }, sizeIndex: number) => (
+                                                                            <option key={`${size.name}-${sizeIndex}`} value={size.itemId}>{size.name}</option>
                                                                         ))}
                                                                     </Field>
                                                                     <div className="h-6">
@@ -367,7 +434,7 @@ const CreateIssuance: React.FC = () => {
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex h-auto flex-col py-3">
-                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].price`}>Price</label>
+                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].price`}>U/Price</label>
                                                                     <Field
                                                                         as="input"
                                                                         name={`endUsers[${index}].inventory[${_index}].price`}
@@ -380,7 +447,7 @@ const CreateIssuance: React.FC = () => {
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex h-auto flex-col py-3">
-                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].amount`}>Amount</label>
+                                                                    <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].amount`}>T/Amount</label>
                                                                     <Field
                                                                         as="input"
                                                                         type="number"
@@ -393,23 +460,7 @@ const CreateIssuance: React.FC = () => {
                                                                         <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].amount`} component="div" />
                                                                     </div>
                                                                 </div>
-                                                                <div className="flex flex-row gap-5">
-                                                                    <div className="py-6">
-                                                                        <div
-                                                                            onClick={() => {
-                                                                                if (values.endUsers[index].inventory.length > 1) {
-                                                                                    const updatedInventory = [...values.endUsers[index].inventory];
-                                                                                    updatedInventory.splice(_index, 1);
-                                                                                    setFieldValue(`endUsers[${index}].inventory`, updatedInventory);
-                                                                                }
-                                                                            }}
-                                                                            className={`flex flex-row gap-2 items-center text-sm text-red-300 ${values.inventories?.length > 1 && 'hover:text-red-400'} cursor-pointer`}>
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5">
-                                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                                            </svg>
-                                                                            <p>Remove Item</p>
-                                                                        </div>
-                                                                    </div>
+                                                                <div className="flex flex-row gap- col-span-2 pb-3">
                                                                     <div onClick={() => setFieldValue(`endUsers[${index}].inventory`, [...values.endUsers[index].inventory, {
                                                                         refId: '',
                                                                         id: '',
@@ -435,9 +486,6 @@ const CreateIssuance: React.FC = () => {
                                         )
                                     })}
                                 </div >
-                                <div className="flex flex-row-reverse py-1">
-                                    GT/Amount: ₱{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </div>
                             </Form >
                         )
                     }

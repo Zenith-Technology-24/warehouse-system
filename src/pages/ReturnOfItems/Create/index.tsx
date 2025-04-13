@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import Header from "../../../components/Header"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import TopButtons from "../../../components/TopButtons"
 import { useNavigate } from "react-router-dom"
 import { Formik, Form, Field, ErrorMessage, FormikValues } from 'formik';
@@ -10,8 +10,6 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import { fetchReceiptRefs } from "../../../api/issuance/issuanceApi"
-import SizeSelector from "../../../components/SizeSelector"
-import { fetchItemType } from "../../../api/item/itemApi"
 import { createReturnedItems } from "../../../api/returnedItems/returnedItemsApi"
 
 const CreateReturnOfItems: React.FC = () => {
@@ -37,6 +35,7 @@ const CreateReturnOfItems: React.FC = () => {
     });
 
     const handleSave = () => {
+        console.log(formRef?.current);
         if (formRef?.current) {
             formRef.current?.submitForm()
         }
@@ -58,6 +57,7 @@ const CreateReturnOfItems: React.FC = () => {
         itemName: '',
         size: '',
         personnel: '',
+        itemSizes: null,
         sizeType: '',
         date: '',
         time: '',
@@ -94,7 +94,7 @@ const CreateReturnOfItems: React.FC = () => {
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
-                        const { sizeType, ...filteredValues } = values;
+                        const { itemSizes, sizeType, ...filteredValues } = values;
                         createReturnedItemsMutation.mutate(filteredValues);
                     }
                     }
@@ -108,7 +108,9 @@ const CreateReturnOfItems: React.FC = () => {
                                         formikSelectedValue={values?.receiptRef}
                                         placeholder="Receipt Ref"
                                         name='receiptRef'
-                                        fetchNames={fetchReceiptRefs}
+                                        fetchNames={() => {
+                                            fetchReceiptRefs('all')
+                                        }}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: any) => {
@@ -138,27 +140,41 @@ const CreateReturnOfItems: React.FC = () => {
                                         setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
                                             setFieldValue(`size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
                                             setFieldValue(`sizeType`, value.sizeType);
+                                            setFieldValue('itemSizes', value?.size);
                                         }}
                                     />
                                 </div>
-                                <SizeSelector name={'size'} inventory={values} classes="!col-span-1 !py-1" />
-                                <div className=" flex h-auto flex-col p-1">
+                                <div className="flex h-auto flex-col">
+                                    <label className="pb-2" htmlFor='size'>Size</label>
+                                    <Field as="select"
+                                        name='size'
+                                        placeholder="Size"
+                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                            const selectedSize = e.target.value;
+                                            setFieldValue('size', selectedSize);
+                                        }}
+                                    >
+                                        {values?.itemSizes?.map((size: { id: string, name: string }) => (
+                                            <option key={size?.id} value={size?.id}>{size?.name}</option>
+                                        ))}
+                                    </Field>
+                                    <div className="h-6">
+                                        <ErrorMessage className="text-red-400" name='size' component="div" />
+                                    </div>
+                                </div>
+                                <div className=" flex h-auto flex-col">
                                     <label className="pb-2" htmlFor="personnel">Personnel</label>
                                     <Field
                                         as="input"
                                         name="personnel"
                                         placeholder="Personnel"
                                         className="bg-transparent h-12 border border-gray-300 p-4 mb-1 rounded-md"
-
                                         fullWidth
                                         variant="outlined"
                                         size="small"
                                     />
-                                    <div className="h-6">
-                                        <ErrorMessage className="text-red-400" name="personnel" component="div" />
-                                    </div>
                                 </div>
-
                                 <div className="flex h-auto flex-col py-3">
                                     <label className="pb-2" htmlFor="date">Return Date</label>
                                     <Field
@@ -200,9 +216,9 @@ const CreateReturnOfItems: React.FC = () => {
                                 </div>
                             </div>
 
-                        </Form>
+                        </Form >
                     )}
-                </Formik>
+                </Formik >
             </div >
         </>
     )

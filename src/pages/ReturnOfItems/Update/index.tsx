@@ -10,7 +10,7 @@ import LinkSecondaryButton from "../../../components/buttons/LinkSecondaryButton
 import PrimaryButton from "../../../components/buttons/PrimaryButton"
 import DropdownWithSearch from "../../../components/DropdownWithSearch"
 import { fetchReceiptRefs } from "../../../api/issuance/issuanceApi"
-import { createReturnedItems, fetchOneReturnedItems, updateReturnedItems } from "../../../api/returnedItems/returnedItemsApi"
+import { fetchOneReturnedItems, updateReturnedItems } from "../../../api/returnedItems/returnedItemsApi"
 
 interface MappedItem {
     id: string;
@@ -37,7 +37,7 @@ const UpdateReturnOfItems: React.FC = () => {
 
     const { data: receiptRefs } = useQuery({
         queryKey: ['receipt-list'],
-        queryFn: () => fetchReceiptRefs() as any,
+        queryFn: () => fetchReceiptRefs('all') as any,
     });
 
     useEffect(() => {
@@ -152,7 +152,9 @@ const UpdateReturnOfItems: React.FC = () => {
                                         formikSelectedValue={values?.receiptRef}
                                         placeholder="Receipt Ref"
                                         name='receiptRef'
-                                        fetchNames={fetchReceiptRefs}
+                                        fetchNames={() => {
+                                            fetchReceiptRefs('all')
+                                        }}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: any) => {
@@ -274,10 +276,3 @@ const UpdateReturnOfItems: React.FC = () => {
 }
 
 export default UpdateReturnOfItems
-
-
-
-
-
-
-
