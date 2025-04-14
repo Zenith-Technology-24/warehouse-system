@@ -103,7 +103,7 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
 };
 
 export const fetchReceiptRefs = async (fetch = "some") => {
-    const { data } = await apiService.get(`/issuance/refs?all=${fetch}`);
+    const { data } = await apiService.get(`/issuance/refs?fetch=${fetch}`);
     return data.map(({ receipt, items, ...rest }: any) => ({
         name: receipt,
         items: items.map((item: any) => ({ ...item, name: item.item_name })),
