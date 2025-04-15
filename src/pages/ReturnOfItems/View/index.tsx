@@ -12,10 +12,10 @@ import { fetchOneReturnedItems } from "../../../api/returnedItems/returnedItemsA
 const View: React.FC = () => {
     const { state } = useLocation()
     const navigate = useNavigate()
-    const { data } = useQuery({
-        queryKey: ["returned_item_details", state.id],
-        queryFn: () => fetchOneReturnedItems(state.id),
-    });
+    // const { data } = useQuery({
+    //     queryKey: ["returned_item_details", state.id],
+    //     queryFn: () => fetchOneReturnedItems(state.id),
+    // });
 
     return (
         <>
@@ -35,6 +35,7 @@ const View: React.FC = () => {
                     <div className="text-gray-500 space-y-2">
                         <p>ID: <span className="text-black ml-2">{state?.id || 'N/A'}</span></p>
                         <p>Item Name: <span className="text-black ml-2">{state?.itemName || 'N/A'}</span></p>
+                        <p>Item Size: <span className="text-black ml-2">{state?.size || 'N/A'}</span></p>
                         <p>Returned Date & Time: <span className="text-black ml-2">{moment(state?.date).format('DD MMM YYYY') + ' ' + moment(state?.time, "HH:mm").format('h:mm A') || 'N/A'}</span></p>
                         <p>Created At: <span className="text-black ml-2">{moment(state?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
                         <p>Created By: <span className="text-black ml-2">{'N/A'}</span></p>
