@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react"
 import Header from "../../../components/Header"
 import { useMutation } from "@tanstack/react-query"
@@ -49,13 +50,15 @@ const CreateReturnOfItems: React.FC = () => {
         sizeType: Yup.string(),
         date: Yup.string().required('Date is required'),
         time: Yup.string().required('Time is required'),
-        notes: Yup.string().required('Notes is required')
+        notes: Yup.string().required('Notes is required'),
+        itemId: Yup.string().nullable().optional(),
     });
 
     const initialValues = {
         receiptRef: '',
         itemName: '',
         size: '',
+        itemId: '',
         personnel: '',
         itemSizes: null,
         sizeType: '',
@@ -113,11 +116,11 @@ const CreateReturnOfItems: React.FC = () => {
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: any) => {
                                             const mappedItems = Object.values(
-                                                value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
+                                                value?.items?.reduce((acc: { [key: string]: { id: string, name: string, size: Array<{ name: string, itemId: string, price: number }>, unit: string, price: number, inventoryId: string } }, { id, name, size, unit, price, inventoryId }: { id: string, name: string, size: string, unit: string, price: number, inventoryId: string }) => {
                                                     if (!acc[name]) {
-                                                        acc[name] = { id, name, size: [{ name: size, price }], unit, price, inventoryId };
+                                                        acc[name] = { id, name, size: [{ itemId: id, name: size, price }], unit, price, inventoryId };
                                                     } else {
-                                                        acc[name].size.push({ name: size, price });
+                                                        acc[name].size.push({ name: size, price, itemId: id });
                                                     }
                                                     return acc;
                                                 }, {}) || {}
@@ -149,12 +152,15 @@ const CreateReturnOfItems: React.FC = () => {
                                         placeholder="Size"
                                         className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                            const selectedSize = e.target.value;
-                                            setFieldValue('size', selectedSize);
+                                            // get all the sizes from itemNames
+                                            const itemSizes = itemNames.map((item: any) => item.size).flat();
+                                            const selectedData = itemSizes.find((item: { itemId: string }) => item.itemId === e.target.value);
+                                            setFieldValue('size', selectedData.itemId);
+                                            setFieldValue('itemId', selectedData.itemId);
                                         }}
                                     >
-                                        {values?.itemSizes?.map((size: { id: string, name: string }) => (
-                                            <option key={size?.id} value={size?.id}>{size?.name}</option>
+                                        {values?.itemSizes?.map((size: { id: string, name: string, itemId: string }) => (
+                                            <option key={size?.id} value={size?.itemId}>{size?.name}</option>
                                         ))}
                                     </Field>
                                     <div className="h-6">
