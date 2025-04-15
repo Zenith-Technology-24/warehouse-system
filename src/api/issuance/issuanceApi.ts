@@ -65,6 +65,11 @@ interface withdrawIssuanceProps {
     inventoryId: string | null;
 }
 
+interface pendingIssuanceProps {
+    id: string | null;
+    inventoryId: string | null;
+}
+
 interface withdrawAllIssuanceProps {
     id: string | null | number;
 }
@@ -118,6 +123,11 @@ export const fetchOneIssuance = async (id: number) => {
 
 export const withdrawIssuance = async ({ id, inventoryId }: withdrawIssuanceProps) => {
     const { data } = await apiService.get(`/issuance/withdraw/${id}/${inventoryId}`);
+    return data;
+};
+
+export const pendingIssuance = async ({ id, inventoryId }: pendingIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/pending/${id}/${inventoryId}`);
     return data;
 };
 

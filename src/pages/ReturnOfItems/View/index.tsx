@@ -38,7 +38,7 @@ const View: React.FC = () => {
                         <p>Item Size: <span className="text-black ml-2">{state?.size || 'N/A'}</span></p>
                         <p>Returned Date & Time: <span className="text-black ml-2">{moment(state?.date).format('DD MMM YYYY') + ' ' + moment(state?.time, "HH:mm").format('h:mm A') || 'N/A'}</span></p>
                         <p>Created At: <span className="text-black ml-2">{moment(state?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
-                        <p>Created By: <span className="text-black ml-2">{'N/A'}</span></p>
+                        <p>Created By: <span className="text-black ml-2">{state?.created_by?.firstname} {state?.created_by?.lastname}</span></p>
                         <p>Personnel: <span className="text-black ml-2">{state?.personnel}</span></p>
                         <p>Notes: <span className="text-black ml-2">{state?.notes}</span></p>
                     </div>
