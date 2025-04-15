@@ -108,9 +108,7 @@ const CreateReturnOfItems: React.FC = () => {
                                         formikSelectedValue={values?.receiptRef}
                                         placeholder="Receipt Ref"
                                         name='receiptRef'
-                                        fetchNames={() => {
-                                            fetchReceiptRefs('all')
-                                        }}
+                                        fetchNames={() => fetchReceiptRefs("all")}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
                                         setSelectedValue={(value: any) => {
