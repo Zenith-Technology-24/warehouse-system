@@ -284,11 +284,24 @@ const Issuance: React.FC = () => {
             const fullName = row.user
             ? `${row.user.firstname} ${row.user.lastname}`
             : 'N/A';
+
+            const formatDate = (dateStr: string) => {
+                return new Intl.DateTimeFormat("en-PH", {
+                  timeZone: "Asia/Manila", 
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                }).format(new Date(dateStr));
+              };
+              
+              const formattedIssuanceDate = formatDate(row.issuanceDate);
+              const formattedValidityDate = formatDate(row.validityDate);
+              const formattedCreatedAt = formatDate(row.issuanceDetails[0].createdAt);
             
             return {
-                issuanceDate: row.issuanceDate,
+                issuanceDate: formattedIssuanceDate,
                 documentNo: row.documentNo,
-                validityDate: row.validityDate,
+                validityDate: formattedValidityDate,
                 issuanceDirective: row.issuanceDirective,
                 endUser: row.endUsers[0].name,
                 totalAmount: row.totalAmount,
@@ -298,7 +311,7 @@ const Issuance: React.FC = () => {
                 price: row.price,
                 unit: row.issuanceDetails[0].inventory.unit,
                 status: row.issuanceDetails[0].inventory.status,
-                createdAt: row.issuanceDetails[0].createdAt,
+                createdAt: formattedCreatedAt,
                 createdBy: fullName
             }
         })
