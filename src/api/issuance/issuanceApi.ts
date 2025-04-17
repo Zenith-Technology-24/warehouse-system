@@ -65,6 +65,11 @@ interface withdrawIssuanceProps {
     inventoryId: string | null;
 }
 
+interface pendingIssuanceProps {
+    id: string | null;
+    inventoryId: string | null;
+}
+
 interface withdrawAllIssuanceProps {
     id: string | null | number;
 }
@@ -103,7 +108,7 @@ export const updateIssuanceStatus = async ({ id, status }: updateIssuanceStatusP
 };
 
 export const fetchReceiptRefs = async (fetch = "some") => {
-    const { data } = await apiService.get(`/issuance/refs?all=${fetch}`);
+    const { data } = await apiService.get(`/issuance/refs?fetch=${fetch}`);
     return data.map(({ receipt, items, ...rest }: any) => ({
         name: receipt,
         items: items.map((item: any) => ({ ...item, name: item.item_name })),
@@ -118,6 +123,11 @@ export const fetchOneIssuance = async (id: number) => {
 
 export const withdrawIssuance = async ({ id, inventoryId }: withdrawIssuanceProps) => {
     const { data } = await apiService.get(`/issuance/withdraw/${id}/${inventoryId}`);
+    return data;
+};
+
+export const pendingIssuance = async ({ id, inventoryId }: pendingIssuanceProps) => {
+    const { data } = await apiService.get(`/issuance/pending/${id}/${inventoryId}`);
     return data;
 };
 

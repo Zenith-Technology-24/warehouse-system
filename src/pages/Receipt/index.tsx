@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Table from "../../components/Table"
 import Header from "../../components/Header"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -66,6 +66,7 @@ const Receipt: React.FC = () => {
         setIsActiveModalOpen(true)
         setToActive(id)
     }
+
 
     const handleOpenArchiveModal = (id: number | null) => {
         setIsArchiveModalOpen(true)
@@ -202,6 +203,12 @@ const Receipt: React.FC = () => {
         return value === status && 'border-b-2 border-black'
     }
 
+    useEffect(() => {
+        console.log(rows);
+        
+    }, [rows])
+    
+
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
             { header: 'Receipt Date', key: 'receiptDate', width: 40 },
@@ -209,7 +216,7 @@ const Receipt: React.FC = () => {
             { header: 'Source', key: 'source', width: 30},
             { header: 'Item Name', key: 'itemName', width: 30},
             { header: 'Size', key: 'size', width: 30},
-            { header: 'Quantity', key: 'quantity', width: 30},
+            { header: 'Quantity', key: 'max_quantity', width: 30},
             { header: 'UoM', key: 'unit', width: 30},
             { header: 'Total Amount', key: 'totalAmount', width: 30},
             { header: 'Expiry Date', key: 'expiryDate', width: 30},
@@ -225,8 +232,14 @@ const Receipt: React.FC = () => {
             receiptDate: string,
             issuanceDirective: string,
             source: string,
-            inventory: { name: string }[],
-            quantity: string,
+            inventory: { 
+                name: string,
+                unit: string
+            }[],
+            item: {
+                location: string
+            }[],
+            max_quantity: string,
             createdAt: string,
             user: {
                 firstname: string,
@@ -234,28 +247,38 @@ const Receipt: React.FC = () => {
             },
             totalAmount: string,
             size: string,
-            unit: string,
             expiryDate: string,
-            location: string
         }) => {
             overall += parseFloat(row.totalAmount);
 
             const fullName = row.user
             ? `${row.user.firstname} ${row.user.lastname}`
-            : 'N/A';
+            : 'N/A';            
+
+            const formatDate = (dateStr: string) => {
+                return new Intl.DateTimeFormat("en-PH", {
+                    timeZone: "Asia/Manila", 
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                }).format(new Date(dateStr));
+            };
+
+            const formattedReceiptDate = formatDate(row.receiptDate);
+            const formattedCreatedAt = formatDate(row.createdAt);
 
             return {
                 id: row.id,
-                receiptDate: row.receiptDate,
+                receiptDate: formattedReceiptDate,
                 issuanceDirective: row.issuanceDirective,
                 source: row.source,
                 itemName: row.inventory?.[0]?.name || 'N/A',
                 size: row.size,
-                unit: row.unit,
+                unit: row.inventory?.[0]?.unit || 'N/A',
                 expiryDate: row.expiryDate,
-                location: row.location,
-                quantity: row.quantity,
-                createdAt: row.createdAt,
+                location: row.item?.[0]?.location || 'N/A',
+                max_quantity: row.max_quantity,
+                createdAt: formattedCreatedAt,
                 createdBy: fullName,
                 totalAmount: row.totalAmount
             }
@@ -308,21 +331,9 @@ const Receipt: React.FC = () => {
                     <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
                     <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
-                <div className="flex gap-3">
-                    <input
-                        name="end_date"
-                        value={date}
-                        onChange={(e) => setDate(e)}
-                        type="date"
-                        id="end_date"
-                        className="bg-transparent text-gray-500 h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                        placeholder="Enter End Date"
-                        required
-                    />
-                    <Search
-                        handleFetchData={handleSearch}
-                    />
-                </div>
+                <Search
+                    handleFetchData={handleSearch}
+                />
             </div>
             <Table
                 currentPage={page}

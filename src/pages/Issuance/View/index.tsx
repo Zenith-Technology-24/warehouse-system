@@ -6,7 +6,7 @@ import CsvDownloader from 'react-csv-downloader'
 import { useLocation, useNavigate } from "react-router-dom"
 import moment from "moment"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { fetchOneIssuance, withdrawIssuance } from "../../../api/issuance/issuanceApi"
+import { fetchOneIssuance, pendingIssuance, withdrawIssuance } from "../../../api/issuance/issuanceApi"
 import Modal from "../../../components/Modal"
 import { useToast } from "../../../providers/ToastContext"
 
@@ -16,6 +16,8 @@ const View: React.FC = () => {
     const navigate = useNavigate()
     const [isWithdrawnModalOpen, setIsWithdrawnModalOpen] = useState<boolean>(false)
     const [toWithdrawn, setToWithdrawn] = useState<string | null>(null)
+    const [isPendingModalOpen, setIsPendingModalOpen] = useState<boolean>(false)
+    const [toPending, setToPending] = useState<string | null>(null)
     const [inventoryId, setInventoryId] = useState<string | null>(null)
     const { data, refetch } = useQuery({
         queryKey: ["receipt_details", state.id],
@@ -30,11 +32,28 @@ const View: React.FC = () => {
         onSuccess: (data: any) => {
             refetch()
             showToast(
-                `Item Successfully ${data?.status}!`,
-                `Item has been successfully ${data?.status}.`,
+                `Item Successfully Withdrawn!`,
+                `Item has been successfully Withdrawn.`,
                 'success'
             );
             setToWithdrawn(null)
+            setInventoryId(null)
+        },
+    });
+
+    const pending = useMutation({
+        mutationFn: pendingIssuance,
+        onError: (error: any) => {
+            console.log(error)
+        },
+        onSuccess: (data: any) => {
+            refetch()
+            showToast(
+                `Item Successfully Return to Pending!`,
+                `Item has been successfully Return to Pending.`,
+                'success'
+            );
+            setToPending(null)
             setInventoryId(null)
         },
     });
@@ -65,9 +84,23 @@ const View: React.FC = () => {
         setIsWithdrawnModalOpen(false)
     }
 
+    const handlePending = () => {
+        pending.mutate({
+            id: toPending,
+            inventoryId
+        })
+        setIsPendingModalOpen(false)
+    }
+
     const handleOpenWithdrawnModal = (id: string | null, inventoryId: string | null) => {
         setIsWithdrawnModalOpen(true)
         setToWithdrawn(id)
+        setInventoryId(inventoryId)
+    }
+
+    const handleOpenPendingModal = (id: string | null, inventoryId: string | null) => {
+        setIsPendingModalOpen(true)
+        setToPending(id)
         setInventoryId(inventoryId)
     }
 
@@ -163,15 +196,25 @@ const View: React.FC = () => {
                 render(row: any, value: string, rowIndex: number) {
                     return (
                         <div className="flex">
-                            <div onClick={() => handleOpenWithdrawnModal(value, row?.id)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
-                                <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
-                                        <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
-                                        <path d="M12 10.5V17m-2.5-2l2.5 2.5l2.5-2.5m6.5-4a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305" />
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
+                            {
+                                row?.status === 'withdrawn' ? (
+                                    <div onClick={() => handleOpenPendingModal(value, row?.id)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9.75h4.875a2.625 2.625 0 0 1 0 5.25H12M8.25 9.75 10.5 7.5M8.25 9.75 10.5 12m9-7.243V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185Z" />
+                                        </svg>
+                                    </div>
+                                ) : (
+                                    <div onClick={() => handleOpenWithdrawnModal(value, row?.id)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                        <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+                                                <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
+                                                <path d="M12 10.5V17m-2.5-2l2.5 2.5l2.5-2.5m6.5-4a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                )
+                            }
+                        </div >
                     )
                 }
             }
@@ -186,6 +229,13 @@ const View: React.FC = () => {
                 onClose={() => setIsWithdrawnModalOpen(false)}
                 handleFunction={() => handleWithdrawn()}
                 message={'Are you sure you want to change the status of this item from Pending to Withdrawn?'}
+            />
+            <Modal
+                isOpen={isPendingModalOpen}
+                title={'Move Withdrawn Item to Pending'}
+                onClose={() => setIsPendingModalOpen(false)}
+                handleFunction={() => handlePending()}
+                message={'Are you sure you want to change the status of this item from Withdrawn to Pending?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'View Issuance'} description={'Issuance'} />

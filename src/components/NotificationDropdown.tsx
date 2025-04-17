@@ -58,7 +58,7 @@ const NotificationDropdown = () => {
     const checkTitle = (notification: any) => {
         if (notification.title === 'Low Stock Alert') navigate('/inventory/view', { state: { id: notification?.dataId } })
         else if (notification.title === 'Issuance Validity Reminder') navigate('/issuance/view', { state: { id: notification?.dataId } })
-        else navigate('/issuance/view', { state: { id: notification?.dataId } })
+        else navigate('/receipt/view', { state: { id: notification?.dataId } })
         read.mutate(notification.id)
         setOpen(false)
         refetchNotifications()
