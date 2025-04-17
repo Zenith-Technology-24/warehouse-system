@@ -17,16 +17,16 @@ const View: React.FC = () => {
         queryFn: () => fetchOneReceipt(state.id),
     });
 
-    
+
     const calculateGrossTotal = (items: any[]) => {
         if (!Array.isArray(items)) return 0;
-    
+
         return items.reduce((total, item) => {
-            const amount = typeof item.amount === "string" 
-                ? Number(item.amount.replace(/,/g, "")) 
+            const amount = typeof item.amount === "string"
+                ? Number(item.amount.replace(/,/g, ""))
                 : Number(item.amount);
-    
-            return total + (isNaN(amount) ? 0 : amount); 
+
+            return total + (isNaN(amount) ? 0 : amount);
         }, 0);
     };
 
@@ -104,6 +104,15 @@ const View: React.FC = () => {
                         </div>
                     )
                 }
+            },
+            {
+                label: 'Expiry Date',
+                name: 'expiryDate',
+                render(row: { item: { amount: string } }, value: string, rowIndex: number) {
+                    return (
+                        <p>{value ? moment(value).format('DD MMM YYYY') : 'N/A'}</p>
+                    )
+                }
             }
         ]
     }, [state?.endUsers])
@@ -127,6 +136,7 @@ const View: React.FC = () => {
                     <div className="text-gray-500 space-y-2">
                         <p>Receipt Date: <span className="text-black ml-2">{moment(state?.receiptDate).format('DD MMM YYYY') || 'N/A'}</span></p>
                         <p>Issuance Directive Nr: <span className="text-black ml-2">{state?.issuanceDirective || 'N/A'}</span></p>
+                        <p>Expiry Date: <span className="text-black ml-2">{state?.issuanceDirective || 'N/A'}</span></p>
                         <p>Source: <span className="text-black ml-2">{state?.source || 'N/A'}</span></p>
                         <p>Created At: <span className="text-black ml-2">{moment(state?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
                         <p>Created By: <span className="text-black ml-2">{state?.user?.firstname + ' ' + state?.user?.lastname || 'N/A'}</span></p>
