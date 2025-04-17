@@ -31,7 +31,7 @@ const Inventory: React.FC = () => {
         queryFn: () => fetchInventory({ search, page, limit, status, filter: filterString }) as any,
     });
 
-    const listItems = ['High Stock', 'Mid Stock', 'Low Stock'];
+    const listItems = ['All', 'High Stock', 'Mid Stock', 'Low Stock', 'Out of Stock'];
 
     const updateStatus = useMutation({
         mutationFn: updateInventoryStatus,
