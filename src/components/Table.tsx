@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import EmptyTableImage from "./EmptyTableImage";
 import { useLocation } from "react-router-dom";
 
@@ -37,8 +37,6 @@ const Table: React.FC<Props> = ({
         setCurrentPage(page);
         onPageChange && onPageChange(page);
     };
-
-    
 
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
@@ -160,7 +158,7 @@ const Table: React.FC<Props> = ({
                     </div>
                 )
             }
-            {path === 'view' || inventoryPath !== 'inventory'
+            {inventoryPath !== 'inventory' && path === 'view' 
             &&  <div className="p-4 w-full flex justify-end">
                     <h2 className="text-[14px]">Gross Total Amount: <span className="font-bold">P{gAmount.toLocaleString()} </span></h2>
                 </div>
