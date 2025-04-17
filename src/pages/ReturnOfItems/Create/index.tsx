@@ -16,7 +16,7 @@ import { createReturnedItems } from "../../../api/returnedItems/returnedItemsApi
 const CreateReturnOfItems: React.FC = () => {
     const navigate = useNavigate();
     const { showToast } = useToast()
-    const [itemNames, setItemNames] = useState<any>('')
+    const [itemNames, setItemNames] = useState<any[]>([])
     const formRef = useRef<any>();
 
     const createReturnedItemsMutation = useMutation({
@@ -31,7 +31,6 @@ const CreateReturnOfItems: React.FC = () => {
                 'success'
             );
             navigate("/return-of-items", { replace: true })
-
         },
     });
 
@@ -52,6 +51,7 @@ const CreateReturnOfItems: React.FC = () => {
         time: Yup.string().required('Time is required'),
         notes: Yup.string().required('Notes is required'),
         itemId: Yup.string().nullable().optional(),
+        inventoryId: Yup.string().nullable().optional(),
     });
 
     const initialValues = {
@@ -60,26 +60,27 @@ const CreateReturnOfItems: React.FC = () => {
         size: '',
         itemId: '',
         personnel: '',
-        itemSizes: null,
+        itemSizes: [],
         sizeType: '',
         date: '',
         time: '',
-        notes: ''
+        notes: '',
+        inventoryId: '',
     };
 
     const handleRefetch = (refetchFn: () => void) => {
         refetchFn();
     };
 
-    const defaultSizeMap = {
-        numerical: "5",
-        standard: "S",
-        length: "XXS",
-        fit: "5R",
-        expanded: "52",
-        roman: "I",
-        none: "none"
-    };
+    // const defaultSizeMap = {
+    //     numerical: "5",
+    //     standard: "S",
+    //     length: "XXS",
+    //     fit: "5R",
+    //     expanded: "52",
+    //     roman: "I",
+    //     none: "none"
+    // };
 
     return (
         <>
@@ -97,7 +98,7 @@ const CreateReturnOfItems: React.FC = () => {
                     validationSchema={validationSchema}
                     validateOnChange
                     onSubmit={(values: FormikValues) => {
-                        const { itemSizes, sizeType, ...filteredValues } = values;
+                        const { ...filteredValues } = values;
                         createReturnedItemsMutation.mutate(filteredValues);
                     }
                     }
@@ -126,6 +127,12 @@ const CreateReturnOfItems: React.FC = () => {
                                                 }, {}) || {}
                                             );
                                             setItemNames(mappedItems);
+                                            // Reset item selection when receipt changes
+                                            setFieldValue('itemName', '');
+                                            setFieldValue('size', '');
+                                            setFieldValue('itemSizes', []);
+                                            setFieldValue('itemId', '');
+                                            setFieldValue('inventoryId', '');
                                         }}
                                     />
                                 </div>
@@ -138,10 +145,14 @@ const CreateReturnOfItems: React.FC = () => {
                                         fetchNames={() => itemNames || []}
                                         setFieldValue={setFieldValue}
                                         refetchData={handleRefetch}
-                                        setSelectedValue={(value: { sizeType: string, unit: string, name: string, size: string }) => {
-                                            setFieldValue(`size`, defaultSizeMap[value.sizeType as keyof typeof defaultSizeMap] || "none");
-                                            setFieldValue(`sizeType`, value.sizeType);
-                                            setFieldValue('itemSizes', value?.size);
+                                        setSelectedValue={(value: { sizeType: string, inventoryId: string, unit: string, name: string, size: Array<{ name: string, itemId: string, price: number }> }) => {
+                                            setFieldValue(`sizeType`, value.sizeType || 'none');
+                                            setFieldValue('itemSizes', value.size || []);
+                                            setFieldValue("inventoryId", value.inventoryId);
+                                            
+                                            // Reset size when item changes
+                                            setFieldValue('size', '');
+                                            setFieldValue('itemId', '');
                                         }}
                                     />
                                 </div>
@@ -152,15 +163,24 @@ const CreateReturnOfItems: React.FC = () => {
                                         placeholder="Size"
                                         className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                            // get all the sizes from itemNames
-                                            const itemSizes = itemNames.map((item: any) => item.size).flat();
-                                            const selectedData = itemSizes.find((item: { itemId: string }) => item.itemId === e.target.value);
-                                            setFieldValue('size', selectedData.itemId);
-                                            setFieldValue('itemId', selectedData.itemId);
+                                            const selectedSize = e.target.value;
+                                            
+                                            const sizeObj = values.itemSizes.find(
+                                                (size: { name: string, itemId: string }) => size.itemId === selectedSize
+                                            );
+                                            
+                                            if (sizeObj) {
+                                                setFieldValue('size', sizeObj.name);
+                                                setFieldValue('itemId', sizeObj.itemId);
+                                            }
                                         }}
+                                        disabled={values.itemSizes.length === 0}
                                     >
-                                        {values?.itemSizes?.map((size: { id: string, name: string, itemId: string }) => (
-                                            <option key={size?.id} value={size?.itemId}>{size?.name}</option>
+                                        <option value="" disabled selected>Select Size</option>
+                                        {Array.isArray(values.itemSizes) && values.itemSizes.map((size: { name: string, itemId: string }, index: number) => (
+                                            <option key={`${size.name}-${index}`} value={size.itemId}>
+                                                {size.name}
+                                            </option>
                                         ))}
                                     </Field>
                                     <div className="h-6">
@@ -209,7 +229,6 @@ const CreateReturnOfItems: React.FC = () => {
                                         name="notes"
                                         placeholder="Notes"
                                         className="bg-transparent h-12 border  border-gray-300 p-4 mb-1 rounded-md"
-
                                         fullWidth
                                         variant="outlined"
                                         size="small"
@@ -219,7 +238,6 @@ const CreateReturnOfItems: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-
                         </Form >
                     )}
                 </Formik >
@@ -229,10 +247,3 @@ const CreateReturnOfItems: React.FC = () => {
 }
 
 export default CreateReturnOfItems
-
-
-
-
-
-
-
