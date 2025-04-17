@@ -29,13 +29,16 @@ const Table: React.FC<Props> = ({
     classes,
     gAmount = 0
 }) => {
-
+    
+    const inventoryPath = useLocation().pathname.split('/')[1]
     const path = useLocation().pathname.split('/').pop()
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         onPageChange && onPageChange(page);
     };
+
+    
 
     return (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
@@ -157,7 +160,7 @@ const Table: React.FC<Props> = ({
                     </div>
                 )
             }
-            {path === 'view' 
+            {path === 'view' || inventoryPath !== 'inventory'
             &&  <div className="p-4 w-full flex justify-end">
                     <h2 className="text-[14px]">Gross Total Amount: <span className="font-bold">P{gAmount.toLocaleString()} </span></h2>
                 </div>

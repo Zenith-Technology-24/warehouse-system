@@ -201,7 +201,6 @@ const View: React.FC = () => {
                                 columns={receiptColumns}
                                 rows={{ data: data?.items }}
                                 classes="!h-0"
-                                gAmount={gAmountReceipt}
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>
                     }
@@ -215,7 +214,6 @@ const View: React.FC = () => {
                                 columns={pendingIssuanceColumns}
                                 rows={{ data: data?.issuance }}
                                 classes="!h-0"
-                                gAmount={gAmountIssuance}
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>
                     }
