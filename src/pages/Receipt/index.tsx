@@ -331,21 +331,9 @@ const Receipt: React.FC = () => {
                     <div onClick={() => setStatus('active')} className={`${checkIfActive('active')} w-24 py-2 cursor-pointer`}>Active</div>
                     <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
-                <div className="flex gap-3">
-                    <input
-                        name="end_date"
-                        value={date}
-                        onChange={(e) => setDate(e)}
-                        type="date"
-                        id="end_date"
-                        className="bg-transparent text-gray-500 h-12 border border-gray-300 p-4 mb-1 rounded-md"
-                        placeholder="Enter End Date"
-                        required
-                    />
-                    <Search
-                        handleFetchData={handleSearch}
-                    />
-                </div>
+                <Search
+                    handleFetchData={handleSearch}
+                />
             </div>
             <Table
                 currentPage={page}
