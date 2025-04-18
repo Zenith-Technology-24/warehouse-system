@@ -1,10 +1,10 @@
 import DashboardCard from "../DashboardCard";
 
 interface UserReportProps {
-  users: {
-    totalUsers: number;
-    activeUsers: number;
-    inactiveUsers: number;
+  users?: {
+    totalUsers?: number;
+    activeUsers?: number;
+    inactiveUsers?: number;
   };
 }
 
@@ -33,7 +33,7 @@ const UserReports: React.FC<UserReportProps> = ({ users }) => {
             </div>
           }
           title={"Total Registered Users"}
-          value={users.totalUsers.toString()}
+          value={users?.totalUsers?.toString() || "0"}
           type={"primary"}
         />
         <DashboardCard
@@ -56,7 +56,7 @@ const UserReports: React.FC<UserReportProps> = ({ users }) => {
             </div>
           }
           title={"Active Users"}
-          value={users.activeUsers.toString()}
+          value={users?.activeUsers?.toString() || "0"}
           type={"success"}
         />
         <DashboardCard
@@ -79,7 +79,7 @@ const UserReports: React.FC<UserReportProps> = ({ users }) => {
             </div>
           }
           title={"Deactivated Users"}
-          value={users.inactiveUsers.toString()}
+          value={users?.inactiveUsers?.toString() || "0"}
           type={"error"}
         />
       </div>
