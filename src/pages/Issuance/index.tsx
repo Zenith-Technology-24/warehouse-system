@@ -11,7 +11,7 @@ import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import { exportIssuance, fetchIssuance, updateIssuanceStatus, withdrawAllIssuance } from "../../api/issuance/issuanceApi"
+import { exportIssuance, fetchIssuance, pendingAllIssuance, updateIssuanceStatus, withdrawAllIssuance } from "../../api/issuance/issuanceApi"
 
 const Issuance: React.FC = () => {
     const { showToast } = useToast()
@@ -20,6 +20,8 @@ const Issuance: React.FC = () => {
     const [page, setPage] = useState<number>(1)
     const [limit, setLimit] = useState<number>(10)
     const [status, setStatus] = useState<string>('all')
+    const [isPendingModalOpen, setIsPendingModalOpen] = useState<boolean>(false)
+    const [toPending, setToPending] = useState<string | null | number>(null)
     const [toArchive, setToArchive] = useState<number | null>(null)
     const [toWithdrawn, setToWithdrawn] = useState<string | null | number>(null)
     const [toActive, setToActive] = useState<number | null>(null)
@@ -81,6 +83,30 @@ const Issuance: React.FC = () => {
         },
     });
 
+    const pendingAll = useMutation({
+        mutationFn: pendingAllIssuance,
+        onError: (error: any) => {
+            showToast(
+                error?.response?.data?.message,
+                "",
+                "error"
+            );
+        },
+        onSuccess: (data: any) => {
+            setIsActiveModalOpen(false)
+            setIsArchiveModalOpen(false)
+            refetch()
+            showToast(
+                `Issuance Successfully Pending!`,
+                `Issuance has been successfully Pending.`,
+                'success'
+            );
+            setToArchive(null)
+            setToActive(null)
+            setToWithdrawn(null)
+        },
+    });
+
     const handleSearch = (searchInput = '') => {
         setSearch(searchInput)
     };
@@ -104,6 +130,11 @@ const Issuance: React.FC = () => {
         setToWithdrawn(id)
     }
 
+    const handleOpenPendingModal = (id: string | null | number) => {
+        setIsPendingModalOpen(true)
+        setToPending(id)
+    }
+
     const handleArchive = () => {
         updateStatus.mutate({
             id: toArchive,
@@ -125,6 +156,13 @@ const Issuance: React.FC = () => {
             id: toWithdrawn
         })
         setIsWithdrawnModalOpen(false)
+    }
+
+    const handlePending = () => {
+        pendingAll.mutate({
+            id: toPending
+        })
+        setIsPendingModalOpen(false)
     }
 
     const columns = useMemo(() => {
@@ -192,14 +230,24 @@ const Issuance: React.FC = () => {
                                     </g>
                                 </svg>
                             </div>
-                            <div onClick={() => handleOpenWithdrawnModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
-                                <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
-                                        <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
-                                        <path d="M12 10.5V17m-2.5-2l2.5 2.5l2.5-2.5m6.5-4a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305" />
-                                    </g>
-                                </svg>
-                            </div>
+                            {
+                                row.status === 'withdrawn' ? (
+                                    <div onClick={() => handleOpenPendingModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9.75h4.875a2.625 2.625 0 0 1 0 5.25H12M8.25 9.75 10.5 7.5M8.25 9.75 10.5 12m9-7.243V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185Z" />
+                                        </svg>
+                                    </div>
+                                ) : (
+                                    <div onClick={() => handleOpenWithdrawnModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                        <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+                                                <path d="m18.935 13.945l-.67-3.648c-.29-1.576-.435-2.364-1.008-2.83S15.86 7 14.213 7H9.787c-1.647 0-2.47 0-3.044.467c-.573.466-.718 1.254-1.008 2.83l-.67 3.648c-.6 3.271-.901 4.907.024 5.98C6.014 21 7.724 21 11.142 21h1.716c3.418 0 5.128 0 6.053-1.074s.625-2.71.024-5.98" />
+                                                <path d="M12 10.5V17m-2.5-2l2.5 2.5l2.5-2.5m6.5-4a1.5 1.5 0 0 0 .414-.305C22 10.089 22 9.11 22 7.152s0-2.936-.586-3.544S19.886 3 18 3H6c-1.886 0-2.828 0-3.414.608S2 5.195 2 7.152s0 2.936.586 3.543q.18.188.414.305" />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                )
+                            }
                             {
                                 row.status !== 'archived' ? (
                                     <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
@@ -247,12 +295,12 @@ const Issuance: React.FC = () => {
             { header: 'Validity Date', key: 'validityDate', width: 20 },
             { header: 'End User', key: 'endUser', width: 20 },
             { header: 'Item Name', key: 'itemName', width: 30 },
-            { header: 'Size', key: 'size', width: 30 }, 
+            { header: 'Size', key: 'size', width: 30 },
             { header: 'Quantity', key: 'quantity', width: 30 },
             { header: 'UoM', key: 'unit', width: 30 },
-            { header: 'Unit Price', key: 'unitPrice', width: 30 }, 
-            { header: 'Total Amount', key: 'unit', width: 30 }, 
-            { header: 'Status', key: 'status', width: 30 }, 
+            { header: 'Unit Price', key: 'unitPrice', width: 30 },
+            { header: 'Total Amount', key: 'unit', width: 30 },
+            { header: 'Status', key: 'status', width: 30 },
             { header: 'Created At', key: 'createdAt', width: 30 },
             { header: 'Created By', key: 'createdBy', width: 30 },
         ];
@@ -280,24 +328,24 @@ const Issuance: React.FC = () => {
             price: string,
             totalAmount: string
         }) => {
-            
+
             const fullName = row.user
-            ? `${row.user.firstname} ${row.user.lastname}`
-            : 'N/A';
+                ? `${row.user.firstname} ${row.user.lastname}`
+                : 'N/A';
 
             const formatDate = (dateStr: string) => {
                 return new Intl.DateTimeFormat("en-PH", {
-                  timeZone: "Asia/Manila", 
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
+                    timeZone: "Asia/Manila",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
                 }).format(new Date(dateStr));
-              };
-              
-              const formattedIssuanceDate = formatDate(row.issuanceDate);
-              const formattedValidityDate = formatDate(row.validityDate);
-              const formattedCreatedAt = formatDate(row.issuanceDetails[0].createdAt);
-            
+            };
+
+            const formattedIssuanceDate = formatDate(row.issuanceDate);
+            const formattedValidityDate = formatDate(row.validityDate);
+            const formattedCreatedAt = formatDate(row.issuanceDetails[0].createdAt);
+
             return {
                 issuanceDate: formattedIssuanceDate,
                 documentNo: row.documentNo,
@@ -347,7 +395,14 @@ const Issuance: React.FC = () => {
                 title={'Pending to Withdrawn'}
                 onClose={() => setIsWithdrawnModalOpen(false)}
                 handleFunction={() => handleWithdrawn()}
-                message={'Are you sure you want to change the status of this issuance from Pending to Withdrawn? This action cannot be undone.'}
+                message={'Are you sure you want to change the status of this issuance from Pending to Withdrawn?'}
+            />
+            <Modal
+                isOpen={isPendingModalOpen}
+                title={'Withdrawn to Pending'}
+                onClose={() => setIsPendingModalOpen(false)}
+                handleFunction={() => handlePending()}
+                message={'Are you sure you want to change the status of this issuance from Withdrawn to Pending?'}
             />
             <div className="flex flex-row justify-between">
                 <Header title={'Issuance'} description={'Showing all issuance'} />
