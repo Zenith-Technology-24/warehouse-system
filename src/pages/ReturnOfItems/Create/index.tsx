@@ -72,16 +72,6 @@ const CreateReturnOfItems: React.FC = () => {
         refetchFn();
     };
 
-    // const defaultSizeMap = {
-    //     numerical: "5",
-    //     standard: "S",
-    //     length: "XXS",
-    //     fit: "5R",
-    //     expanded: "52",
-    //     roman: "I",
-    //     none: "none"
-    // };
-
     return (
         <>
             <div className="flex flex-row justify-between pb-4">
