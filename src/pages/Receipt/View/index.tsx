@@ -136,7 +136,6 @@ const View: React.FC = () => {
                     <div className="text-gray-500 space-y-2">
                         <p>Receipt Date: <span className="text-black ml-2">{moment(data?.receiptDate).format('DD MMM YYYY') || 'N/A'}</span></p>
                         <p>Issuance Directive Nr: <span className="text-black ml-2">{data?.issuanceDirective || 'N/A'}</span></p>
-                        <p>Expiry Date: <span className="text-black ml-2">{data?.issuanceDirective || 'N/A'}</span></p>
                         <p>Source: <span className="text-black ml-2">{data?.source || 'N/A'}</span></p>
                         <p>Created At: <span className="text-black ml-2">{moment(data?.createdAt).format('DD MMM YYYY h:mm A') || 'N/A'}</span></p>
                         <p>Created By: <span className="text-black ml-2">{data?.user?.firstname + ' ' + data?.user?.lastname || 'N/A'}</span></p>
