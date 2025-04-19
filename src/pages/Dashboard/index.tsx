@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from "@tanstack/react-query";
 import Header from "../../components/Header"
 import Sales from "../Sales"
@@ -17,9 +18,9 @@ const Dashboard: React.FC = () => {
             <div className="flex flex-row justify-between">
                 <Header title={'Dashboard'} description={'Showing summary reports'} />
             </div>
-            <InventoryReports />
-            <UserReports />
-            <InventoryStatus />
+            <InventoryReports data={data} />
+            <UserReports users={data?.users}/>
+            <InventoryStatus data={data} />
             <Sales dashboardView={true} />
         </div>
     )

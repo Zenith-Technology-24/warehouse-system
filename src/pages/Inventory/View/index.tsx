@@ -23,6 +23,12 @@ const View: React.FC = () => {
     const receiptColumns = useReceiptColumns(state)
     const pendingIssuanceColumns = usePendingIssuanceColumns(state)
 
+    const [receiptPage, setReceiptPage] = useState<number>(1)
+    const [receiptLimit, setReceiptLimit] = useState<number>(5)
+
+    const [issuancePage, setIssuancePage] = useState<number>(1)
+    const [issuanceLimit, setIssuanceLimit] = useState<number>(5)
+
 
     const calculateGrossTotalReceipt = (items: any[]) => {
         if (!Array.isArray(items)) return 0;
@@ -57,6 +63,26 @@ const View: React.FC = () => {
             setGamountIssuance(calculateGrossTotalIssuance(data.issuance))
         }
     }, [data]);
+
+    const getReceiptPaginatedData = (data: any[], page: number, limit: number) => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        return data?.slice(startIndex, endIndex);
+    };
+
+    const handleReceiptChangePage = (page: number) => {
+        setReceiptPage(page)
+    }
+
+    const getIssuancePaginatedData = (data: any[], page: number, limit: number) => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        return data?.slice(startIndex, endIndex);
+    };
+
+    const handleIssuanceChangePage = (page: number) => {
+        setIssuancePage(page)
+    }
 
     return (
         <>
@@ -198,8 +224,14 @@ const View: React.FC = () => {
                     {
                         data?.receipts.length > 0 ? (
                             <Table
+                                currentPage={receiptPage}
+                                setCurrentPage={setReceiptPage}
+                                totalRows={getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit).length || 1}
                                 columns={receiptColumns}
-                                rows={{ data: data?.items }}
+                                rows={{ data: getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit) }}
+                                rowsPerPage={receiptLimit}
+                                totalPages={Math.ceil((data?.items?.length || 0) / receiptLimit)}
+                                onPageChange={handleReceiptChangePage}
                                 classes="!h-0"
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>
@@ -211,8 +243,14 @@ const View: React.FC = () => {
                     {
                         data?.issuance.length > 0 ? (
                             <Table
+                                currentPage={issuancePage}
+                                setCurrentPage={setIssuancePage}
+                                totalRows={getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit).length || 1}
                                 columns={pendingIssuanceColumns}
-                                rows={{ data: data?.issuance }}
+                                rows={{ data: getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit) }}
+                                rowsPerPage={issuanceLimit}
+                                totalPages={Math.ceil((data?.issuance?.length || 0) / issuanceLimit)}
+                                onPageChange={handleIssuanceChangePage}
                                 classes="!h-0"
                             />
                         ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>
