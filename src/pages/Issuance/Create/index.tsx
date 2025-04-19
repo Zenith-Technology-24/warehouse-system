@@ -254,7 +254,7 @@ const CreateIssuance: React.FC = () => {
                                                     user?.inventory?.map((inventory: any, _index: number) => {
                                                         return (
                                                             
-                                                            <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-5 min-w-[600px] overflow-x-auto">
+                                                            <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-5 min-w-[500px] overflow-x-auto">
                                                                 <div className="flex flex-row gap-5 absolute right-6 top-0">
                                                                     <div className="py-6">
                                                                         <div

@@ -47,7 +47,7 @@ const UpdateIssuance: React.FC = () => {
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && receiptRefs) {
       setInitialValues({
         documentNo: data?.documentNo,
         issuanceDirective: data?.issuanceDirective,
@@ -60,6 +60,7 @@ const UpdateIssuance: React.FC = () => {
             const matchItem = receiptRefs?.find(
               (ref: { name: string }) => ref.name === inv?.item?.receiptRef
             );
+  
             const mappedItems = Object.values(
               matchItem?.items?.reduce(
                 (
@@ -106,19 +107,22 @@ const UpdateIssuance: React.FC = () => {
                 {}
               ) || {}
             );
+  
             const item = (mappedItems as MappedItem[])?.find(
               (item) => item?.name === inv?.item?.name
             );
+  
             setItemNamesMap((prev) => ({
               ...prev,
               [`${index}-${_index}`]: mappedItems,
             }));
+  
             return {
               refId: inv?.item?.itemId,
               id: inv?.id,
               receiptRef: inv?.item?.receiptRef,
               name: inv?.item?.name,
-              itemSizes: item?.size,
+              itemSizes: item?.size, 
               size: inv?.item?.size,
               unit: inv?.item?.unit,
               quantity: inv?.item?.quantity,
@@ -130,7 +134,7 @@ const UpdateIssuance: React.FC = () => {
       });
     }
   }, [state, data, receiptRefs]);
-
+  
   const updateIssuanceMutation = useMutation({
     mutationFn: (values: any) => updateIssuance(values),
     onError: (error: any) => {
@@ -329,6 +333,10 @@ const UpdateIssuance: React.FC = () => {
 
                   <h1 className="text-lg">End User & Item Details</h1>
                   {values.endUsers.map((user: any, index: number) => {
+                    useEffect(() => {
+                      console.log(user);
+                      
+                    }, [user])
                     return (
                       <div
                         key={index}
@@ -432,8 +440,9 @@ const UpdateIssuance: React.FC = () => {
                         </div>
                         {user?.inventory?.map(
                           (inventory: any, _index: number) => {
+                            
                             return (
-                               <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-[3fr_1fr_1fr_4fr_4fr]">
+                               <div key={_index} className="w-full col-span-2 gap-4 relative bg-gray-50 px-6 py-2 my-2 rounded-lg border grid grid-cols-5 min-w-[600px] overflow-x-auto">
                                   <div className="flex flex-row gap-5 absolute right-6 top-0">
                                       <div className="py-6">
                                           <div
@@ -450,7 +459,6 @@ const UpdateIssuance: React.FC = () => {
                                                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                               </svg>
                                               
-                                              <p className="sr-only">Remove Item</p>
                                           </div>
                                       </div>
                                   </div>
@@ -546,37 +554,41 @@ const UpdateIssuance: React.FC = () => {
                                   <div className="flex h-auto flex-col py-3">
                                       <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size <span className="text-gray-400">(Optional)</span></label>
                                       <Field as="select"
-                                          name={`endUsers[${index}].inventory[${_index}].itemId`}
-                                          placeholder="Size"
-                                          className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
-                                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                              const selectedId = e.target.value;
-                                              const price = values.endUsers[
-                                                  index
-                                              ].inventory[_index].itemSizes.find(
-                                                  (size: { name: string, itemId: string }) =>
-                                                  size.itemId === selectedId
-                                              )?.price;
+                                        name={`endUsers[${index}].inventory[${_index}].itemId`}
+                                        value={values.endUsers[index].inventory[_index].refId} 
+                                        placeholder="Size"
+                                        className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
+                                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                          const selectedId = e.target.value;
+                                          const selectedSizeObj = values.endUsers[index].inventory[_index].itemSizes.find(
+                                            (size: { name: string, itemId: string }) => size.itemId === selectedId
+                                          );
 
-                                              const size = values.endUsers[
-                                                  index
-                                              ].inventory[_index].itemSizes.find(
-                                                  (size: { name: string, itemId: string }) =>
-                                                  size.itemId === selectedId
-                                              )?.name;
-                                              
-                                              // Log them appropriately for easier tracking
-                                              console.log("Selected Size:", selectedId, price, size);
-                                              setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, selectedId);
-                                              setFieldValue(`endUsers[${index}].inventory[${_index}].size`, size);
-                                              setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
-                                              setFieldValue(`endUsers[${index}].inventory[${_index}].amount`, price * values.endUsers[index].inventory[_index].quantity);
-                                          }}
+                                          const price = selectedSizeObj?.price;
+                                          const size = selectedSizeObj?.name;
+
+                                          console.log("Selected Size:", selectedId, price, size);
+                                          setFieldValue(`endUsers[${index}].inventory[${_index}].refId`, selectedId);
+                                          setFieldValue(`endUsers[${index}].inventory[${_index}].size`, size);
+                                          setFieldValue(`endUsers[${index}].inventory[${_index}].price`, price);
+                                          setFieldValue(
+                                            `endUsers[${index}].inventory[${_index}].amount`,
+                                            price * values.endUsers[index].inventory[_index].quantity
+                                          );
+                                        }}
                                       >
-                                          {values.endUsers[index].inventory[_index].itemSizes?.map((size: { name: string, itemId: string }, sizeIndex: number) => (
-                                              <option key={`${size.name}-${sizeIndex}`} value={size.itemId}>{size.name}</option>
-                                          ))}
+
+                                        {values.endUsers[index].inventory[_index].itemSizes?.length > 0 &&
+                                          values.endUsers[index].inventory[_index].itemSizes.map(
+                                            (size: { name: string, itemId: string }, sizeIndex: number) => (
+                                              <option key={`${size.name}-${sizeIndex}`} value={size.itemId}>
+                                                {size.name}
+                                              </option>
+                                            )
+                                        )}
+                                      
                                       </Field>
+
                                       <div className="h-6">
                                           <ErrorMessage className="text-red-400" name={`endUsers[${index}].inventory[${_index}].size`} component="div" />
                                       </div>
