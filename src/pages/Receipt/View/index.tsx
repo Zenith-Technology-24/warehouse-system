@@ -74,7 +74,7 @@ const View: React.FC = () => {
                         <div className="space-y-3">
                             <div>
                                 <p className="text-gray-500">Qty</p>
-                                <p className={`${row?.is_consumed && 'text-gray-400'}text-gray-500`}>{row?.quantity_string}</p>
+                                <p className={`${row?.is_consumed && 'text-gray-400'}`}>{row?.quantity_string}</p>
                             </div>
                             <div>
                                 <p className="text-gray-500">UoM</p>
