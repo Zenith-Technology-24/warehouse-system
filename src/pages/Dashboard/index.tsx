@@ -19,9 +19,8 @@ const Dashboard: React.FC = () => {
                 <Header title={'Dashboard'} description={'Showing summary reports'} />
             </div>
             <InventoryReports data={data} />
-            <UserReports users={data?.users}/>
+            <UserReports users={data?.users} />
             <InventoryStatus data={data} />
-            <Sales dashboardView={true} />
         </div>
     )
 }
