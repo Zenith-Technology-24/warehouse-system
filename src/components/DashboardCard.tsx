@@ -54,7 +54,7 @@ const isActive = (active: boolean, type: string) => {
 
 const DashboardCard: React.FC<Props> = ({ active = null, icon, title, value, type, handleClick }) => {
     return (
-        <div onClick={handleClick} className={`shadow-md hover:shadow-lg flex flex-col justify-center gap-2 rounded-lg items-start p-4 ${getStyle(type)} ${isActive(active, type)}`}>
+        <div onClick={handleClick} className={`shadow-md hover:shadow-lg flex flex-col justify-start gap-2 rounded-lg items-start p-4 ${getStyle(type)} ${isActive(active, type)}`}>
             {icon}
             <p className="text-gray-400 font-medium">{title}</p>
             <h1 className="font-medium text-gray-600 text-right text-3xl">{value}</h1>
