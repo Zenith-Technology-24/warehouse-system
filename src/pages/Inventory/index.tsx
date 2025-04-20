@@ -195,7 +195,7 @@ const Inventory: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Item name', key: 'name', width: 40 },
+            { header: 'Item Name', key: 'name', width: 40 },
             { header: 'Size', key: 'size', width: 40 },
             { header: 'Total Quantity', key: 'totalQuantity', width: 40 },
             { header: 'Pending Quantity', key: 'pendingQuantity', width: 40 },
@@ -219,7 +219,7 @@ const Inventory: React.FC = () => {
             stockLevel: string,
             grandTotalAmount: string
         }) => {
-            
+
             const sizes = [
                 ...new Set(
                     row.receipts?.flatMap(receipt =>
@@ -279,7 +279,7 @@ const Inventory: React.FC = () => {
                     <div onClick={() => setStatus('archived')} className={`${checkIfActive('archived')} w-24 py-2 cursor-pointer`}>Archived</div>
                 </div>
                 <div className="flex items-center gap-5">
-                    <Filter 
+                    <Filter
                         listItems={listItems}
                         filterString={filterString}
                         setFilterString={setFilterString}
