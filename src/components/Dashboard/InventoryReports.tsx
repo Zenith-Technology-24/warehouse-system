@@ -67,7 +67,7 @@ const InventoryReports: React.FC<InventoryReportsProps> = ({ data }) => {
               </div>
             </div>
           }
-          title={"Total Issued Items"}
+          title={"Total Issued"}
           value={data?.totalIssuedItems?.toString() || "0"}
           type={"issued"}
         />
@@ -85,7 +85,7 @@ const InventoryReports: React.FC<InventoryReportsProps> = ({ data }) => {
               </div>
             </div>
           }
-          title={"Total Received Items"}
+          title={"Total Receipt"}
           value={data?.totalReceiptItems?.toString() || "0"}
           type={"received"}
         />
@@ -99,7 +99,7 @@ const InventoryReports: React.FC<InventoryReportsProps> = ({ data }) => {
               </div>
             </div>
           }
-          title={"Total Returned Items"}
+          title={"Total Returned"}
           value={data?.totalReturnedItems?.toString() || "0"}
           type={"returned"}
         />
