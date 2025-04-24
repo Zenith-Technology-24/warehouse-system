@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
-const COLORS = ["#4CAF50", "#FFC107", "#F44336"];
+const COLORS = ["#4CAF50", "#FFC107", "#F44336", "#ff1fff"];
 
 interface DataItem {
   counts?: {
@@ -43,9 +43,8 @@ const InventoryStatusPie: React.FC<DataItem> = ({ counts }) => {
     { name: "High Stock", value: counts?.highStock || undefined },
     { name: "Mid Stock", value: counts?.midStock || undefined },
     { name: "Low Stock", value: counts?.lowStock || undefined },
-    { name: "Out of Stock", value: counts?.outOfStock || undefined},
-  ];
-
+    { name: "Out of Stock", value: counts?.outOfStock || undefined },
+  ].filter((item) => item.value !== undefined && item.value !== 0);
   return (
     <PieChart width={500} height={600}>
       <Pie
@@ -59,14 +58,16 @@ const InventoryStatusPie: React.FC<DataItem> = ({ counts }) => {
         dataKey="value"
       >
         {/* Create an object entries for the counts objects */}
-        {Object.entries(counts || {}).map(([key, value], index) => (
-          <Cell
-            key={`cell-${index}-${key}-${value}`}
-            fill={COLORS[index % COLORS.length]}
-            stroke="white"
-            strokeWidth={2}
-          />
-        ))}
+        {Object.entries(counts || {})
+          .filter(([key, value]) => value !== 0 && key !== "total")
+          .map(([key, value], index) => (
+            <Cell
+              key={`cell-${index}-${key}-${value}`}
+              fill={COLORS[index % data.length]}
+              stroke="white"
+              strokeWidth={2}
+            />
+          ))}
       </Pie>
       <Tooltip />
     </PieChart>

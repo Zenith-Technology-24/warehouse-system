@@ -1,5 +1,7 @@
 import InventoryStatusPie from "./InventoryStatusPie";
 import Label from "./Label";
+// repeat offender
+const COLORS = ["#4CAF50", "#FFC107", "#F44336", "#ff1fff"];
 
 interface InventoryStatusProps {
   data: {
@@ -26,29 +28,41 @@ const InventoryStatus: React.FC<InventoryStatusProps> = ({ data }) => {
     midStock: 0,
     lowStock: 0,
     outOfStock: 0,
-    total: 0
+    total: 0,
   };
-  
+
   const percentages = data?.percentages || {
     highStock: "0%",
     midStock: "0%",
     lowStock: "0%",
-    outOfStock: "0%"
+    outOfStock: "0%",
   };
 
   return (
     <div className="shadow-lg border border-gray-100 rounded-lg p-5">
       <p className="font-normal text-lg">Inventory Status</p>
       <div className="flex justify-center">
-        <InventoryStatusPie counts={counts}/>
+        <InventoryStatusPie counts={counts} />
         <div className="grid grid-cols-3 px-6 mx-6">
-          <Label
-            label="High Stock"
-            value={percentages.highStock}
-            bulletColor="#2E7D32"
-          />
-          <Label label="Mid Stock" value={percentages.midStock} bulletColor="#FFC107" />
-          <Label label="Low Stock" value={percentages.lowStock} bulletColor="#F44336" />
+          {Object.entries(counts)
+            .filter(([key, value]) => value > 0 && key !== "total")
+            .map(([key, value], index) => {
+              const labelMap: Record<string, string> = {
+                highStock: "High Stock",
+                midStock: "Mid Stock",
+                lowStock: "Low Stock",
+                outOfStock: "Out of Stock",
+              };
+
+              return (
+                <Label
+                  key={key}
+                  label={labelMap[key]}
+                  value={percentages[key as keyof typeof percentages]}
+                  bulletColor={COLORS[index % COLORS.length]}
+                />
+              );
+            })}
         </div>
       </div>
     </div>
