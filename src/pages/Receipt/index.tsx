@@ -205,24 +205,24 @@ const Receipt: React.FC = () => {
 
     useEffect(() => {
         console.log(rows);
-        
+
     }, [rows])
-    
+
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
             { header: 'Receipt Date', key: 'receiptDate', width: 40 },
-            { header: 'Issuance Directive No.', key: 'issuanceDirective', width: 30},
-            { header: 'Source', key: 'source', width: 30},
-            { header: 'Item Name', key: 'itemName', width: 30},
-            { header: 'Size', key: 'size', width: 30},
-            { header: 'Quantity', key: 'max_quantity', width: 30},
-            { header: 'UoM', key: 'unit', width: 30},
-            { header: 'Total Amount', key: 'totalAmount', width: 30},
-            { header: 'Expiry Date', key: 'expiryDate', width: 30},
-            { header: 'Location', key: 'location', width: 30},
-            { header: 'Created At', key: 'createdAt', width: 30},          
-            { header: 'Created By', key: 'createdBy', width: 30},            
+            { header: 'Issuance Directive No.', key: 'issuanceDirective', width: 30 },
+            { header: 'Source', key: 'source', width: 30 },
+            { header: 'Item Name', key: 'itemName', width: 30 },
+            { header: 'Size', key: 'size', width: 30 },
+            { header: 'Quantity', key: 'max_quantity', width: 30 },
+            { header: 'UoM', key: 'unit', width: 30 },
+            { header: 'Total Amount', key: 'totalAmount', width: 30 },
+            { header: 'Expiry Date', key: 'expiryDate', width: 30 },
+            { header: 'Location', key: 'location', width: 30 },
+            { header: 'Created At', key: 'createdAt', width: 30 },
+            { header: 'Created By', key: 'createdBy', width: 30 },
         ];
 
         let overall = 0
@@ -232,7 +232,7 @@ const Receipt: React.FC = () => {
             receiptDate: string,
             issuanceDirective: string,
             source: string,
-            inventory: { 
+            inventory: {
                 name: string,
                 unit: string
             }[],
@@ -252,12 +252,12 @@ const Receipt: React.FC = () => {
             overall += parseFloat(row.totalAmount);
 
             const fullName = row.user
-            ? `${row.user.firstname} ${row.user.lastname}`
-            : 'N/A';            
+                ? `${row.user.firstname} ${row.user.lastname}`
+                : 'N/A';
 
             const formatDate = (dateStr: string) => {
                 return new Intl.DateTimeFormat("en-PH", {
-                    timeZone: "Asia/Manila", 
+                    timeZone: "Asia/Manila",
                     year: "numeric",
                     month: "2-digit",
                     day: "2-digit",
@@ -284,6 +284,7 @@ const Receipt: React.FC = () => {
             }
         })
         exportToExcel({ data, headers, filename: `${status}-receipt-${start_date}-to-${end_date}` })
+        setIsExportModalOpen(false)
     }
 
     return (

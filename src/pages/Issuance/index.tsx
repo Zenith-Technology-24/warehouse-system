@@ -250,7 +250,7 @@ const Issuance: React.FC = () => {
                             }
                             {
                                 row.status !== 'archived' ? (
-                                    <div onClick={() => handleOpenArchiveModal(value)} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                                    <div onClick={() => row.status !== 'withdrawn' && handleOpenArchiveModal(value)} className={`p-2 rounded-full ${row.status !== 'withdrawn' && 'hover:bg-gray-100 cursor-pointer !opacity-100'} opacity-50 transition m-auto`}>
                                         <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
