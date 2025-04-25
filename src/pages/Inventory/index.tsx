@@ -239,6 +239,7 @@ const Inventory: React.FC = () => {
             }
         })
         exportToExcel({ data, headers, filename: `${status}-inventory-${start_date}-to-${end_date}` })
+        setIsExportModalOpen(false)
     }
 
     return (
