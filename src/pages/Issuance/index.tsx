@@ -346,22 +346,26 @@ const Issuance: React.FC = () => {
             const formattedValidityDate = formatDate(row.validityDate);
             const formattedCreatedAt = formatDate(row.issuanceDetails[0].createdAt);
 
-            return {
-                issuanceDate: formattedIssuanceDate,
-                documentNo: row.documentNo,
-                validityDate: formattedValidityDate,
-                issuanceDirective: row.issuanceDirective,
-                endUser: row.endUsers[0].name,
-                totalAmount: row.totalAmount,
-                itemName: row.issuanceDetails[0].inventory.name,
-                quantity: row.quantity,
-                size: row.size,
-                price: row.price,
-                unit: row.issuanceDetails[0].inventory.unit,
-                status: row.issuanceDetails[0].inventory.status,
-                createdAt: formattedCreatedAt,
-                createdBy: fullName
-            }
+            const issuanceRows = row.issuanceDetails.map((item: any, index) => {
+                return {
+                    issuanceDate: index === 0 ? formattedIssuanceDate : '',
+                    documentNo: index === 0 ? row.documentNo : '',
+                    validityDate: index === 0 ? formattedValidityDate : '',
+                    issuanceDirective: index === 0 ? row.issuanceDirective : '',
+                    endUser: item.issuanceDetails.endUser.name,
+                    totalAmount: '',
+                    itemName: item.name,
+                    quantity: item.quantity,
+                    size: '',
+                    price: '',
+                    unit: item.unit,
+                    status: '',
+                    createdAt: index === 0 ? formattedCreatedAt : '',
+                    createdBy: index === 0 ? fullName : ''
+                };
+            });
+
+            return issuanceRows
         })
         exportToExcel({ data, headers, filename: `${status}-issuance-${start_date}-to-${end_date}` })
     }
