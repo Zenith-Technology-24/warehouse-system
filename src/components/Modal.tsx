@@ -17,8 +17,6 @@ const Modal: React.FC<ModalProps> = ({ title, isOpen, onClose, handleFunction, m
                 <h2 className="text-xl font-medium text-center text-gray-800 mb-4">{title}</h2>
                 <p className="text-gray-500 mb-6 text-center">
                     {message}
-                    <br />
-                    {'This action cannot be undone.'}
                 </p>
                 <div className="flex space-x-3">
                     <button
