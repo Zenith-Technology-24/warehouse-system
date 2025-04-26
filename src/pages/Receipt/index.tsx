@@ -227,7 +227,7 @@ const Receipt: React.FC = () => {
 
         let overall = 0
 
-        let data = toExport?.map((row: {
+        let data = toExport?.flatMap((row: {
             id: number,
             receiptDate: string,
             issuanceDirective: string,
@@ -267,21 +267,25 @@ const Receipt: React.FC = () => {
             const formattedReceiptDate = formatDate(row.receiptDate);
             const formattedCreatedAt = formatDate(row.createdAt);
 
-            return {
-                id: row.id,
-                receiptDate: formattedReceiptDate,
-                issuanceDirective: row.issuanceDirective,
-                source: row.source,
-                itemName: row.inventory?.[0]?.name || 'N/A',
-                size: row.size,
-                unit: row.inventory?.[0]?.unit || 'N/A',
-                expiryDate: row.expiryDate,
-                location: row.item?.[0]?.location || 'N/A',
-                max_quantity: row.max_quantity,
-                createdAt: formattedCreatedAt,
-                createdBy: fullName,
-                totalAmount: row.totalAmount
-            }
+            const receiptRows = row.item.map((item: any, index) => {
+                return {
+                    id: index === 0 ? row.id : '',
+                    receiptDate: index === 0 ? formattedReceiptDate : '',
+                    issuanceDirective: index === 0 ? row.issuanceDirective : '',
+                    source: index === 0 ? row.source : '',
+                    quantity: item.quantity,
+                    itemName: item.item_name,
+                    size: item.size,
+                    unit: item.unit,
+                    expiryDate: item.expiryDate,
+                    location: item.location,
+                    createdAt: formattedCreatedAt,
+                    createdBy: fullName,
+                    totalAmount: row.totalAmount
+                };
+            });
+
+            return receiptRows
         })
         exportToExcel({ data, headers, filename: `${status}-receipt-${start_date}-to-${end_date}` })
         setIsExportModalOpen(false)
