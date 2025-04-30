@@ -1,7 +1,7 @@
 import InventoryStatusPie from "./InventoryStatusPie";
 import Label from "./Label";
 // repeat offender
-const COLORS = ["#4CAF50", "#FFC107", "#F44336", "#ff1fff"];
+const COLORS = { highStock: "#4CAF50", midStock: "#5799F8", lowStock: "#F44336", outOfStock: "#E7E9EC", total: "#ff1fff" };
 
 interface InventoryStatusProps {
   data: {
@@ -59,7 +59,7 @@ const InventoryStatus: React.FC<InventoryStatusProps> = ({ data }) => {
                   key={key}
                   label={labelMap[key]}
                   value={percentages[key as keyof typeof percentages]}
-                  bulletColor={COLORS[index % COLORS.length]}
+                  bulletColor={COLORS[key]}
                 />
               );
             })}

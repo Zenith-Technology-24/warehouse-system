@@ -352,7 +352,7 @@ const Issuance: React.FC = () => {
                     documentNo: index === 0 ? row.documentNo : '',
                     validityDate: index === 0 ? formattedValidityDate : '',
                     issuanceDirective: index === 0 ? row.issuanceDirective : '',
-                    endUser: item.issuanceDetails.endUser.name,
+                    endUser: item.endUser.name,
                     totalAmount: '',
                     itemName: item.name,
                     quantity: item.quantity,

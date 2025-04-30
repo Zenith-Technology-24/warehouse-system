@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
-const COLORS = ["#4CAF50", "#FFC107", "#F44336", "#ff1fff"];
+const COLORS = { highStock: "#4CAF50", midStock: "#5799F8", lowStock: "#F44336", outOfStock: "#E7E9EC", total: "#ff1fff" };
 
 interface DataItem {
   counts?: {
@@ -63,7 +63,7 @@ const InventoryStatusPie: React.FC<DataItem> = ({ counts }) => {
           .map(([key, value], index) => (
             <Cell
               key={`cell-${index}-${key}-${value}`}
-              fill={COLORS[index % data.length]}
+              fill={COLORS[key]}
               stroke="white"
               strokeWidth={2}
             />

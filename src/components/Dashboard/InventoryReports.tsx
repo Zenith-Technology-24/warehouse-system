@@ -67,7 +67,7 @@ const InventoryReports: React.FC<InventoryReportsProps> = ({ data }) => {
               </div>
             </div>
           }
-          title={"Total Issued"}
+          title={"Total Issuance"}
           value={data?.totalIssuedItems?.toString() || "0"}
           type={"issued"}
         />

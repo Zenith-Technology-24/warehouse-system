@@ -1,8 +1,9 @@
 import React, { Suspense, useEffect } from 'react'
 import './App.css'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Loading from './components/Loading'
+import useIdleLogout from './hooks/useIdleLogout'
 
 const Dashboard = React.lazy(() => import('./pages/Dashboard'))
 const Login = React.lazy(() => import('./pages/Login'))
@@ -47,6 +48,14 @@ const ViewReceipt = React.lazy(() => import('./pages/Receipt/View'))
 const UpdateReceipt = React.lazy(() => import('./pages/Receipt/Update'))
 
 function App() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  useIdleLogout(handleLogout, 300000);
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

@@ -227,40 +227,31 @@ const View: React.FC = () => {
                 }
                 <div>
                     <h1 className="text-md font-semibold mb-2">Receipt Details</h1>
-                    {
-                        data?.receipts.length > 0 ? (
-                            <Table
-                                currentPage={receiptPage}
-                                setCurrentPage={setReceiptPage}
-                                totalRows={getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit).length || 1}
-                                columns={receiptColumns}
-                                rows={{ data: getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit) }}
-                                rowsPerPage={receiptLimit}
-                                totalPages={Math.ceil((data?.items?.length || 0) / receiptLimit)}
-                                onPageChange={handleReceiptChangePage}
-                                classes="!h-0"
-                            />
-                        ) : <span className="italic text-gray-500 text-sm">No Receipts Details</span>
-                    }
-
+                    <Table
+                        currentPage={receiptPage}
+                        setCurrentPage={setReceiptPage}
+                        totalRows={getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit).length || 1}
+                        columns={receiptColumns}
+                        rows={{ data: getReceiptPaginatedData(data?.items || [], receiptPage, receiptLimit) }}
+                        rowsPerPage={receiptLimit}
+                        totalPages={Math.ceil((data?.items?.length || 0) / receiptLimit)}
+                        onPageChange={handleReceiptChangePage}
+                        classes="!h-0"
+                    />
                 </div>
                 <div>
                     <h1 className="text-md font-semibold mb-2">Pending Issuance Details</h1>
-                    {
-                        data?.issuance.length > 0 ? (
-                            <Table
-                                currentPage={issuancePage}
-                                setCurrentPage={setIssuancePage}
-                                totalRows={getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit).length || 1}
-                                columns={pendingIssuanceColumns}
-                                rows={{ data: getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit) }}
-                                rowsPerPage={issuanceLimit}
-                                totalPages={Math.ceil((data?.issuance?.length || 0) / issuanceLimit)}
-                                onPageChange={handleIssuanceChangePage}
-                                classes="!h-0"
-                            />
-                        ) : <span className="italic text-gray-500 text-sm">No Pending Issuance Details</span>
-                    }
+                    <Table
+                        currentPage={issuancePage}
+                        setCurrentPage={setIssuancePage}
+                        totalRows={getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit).length || 1}
+                        columns={pendingIssuanceColumns}
+                        rows={{ data: getIssuancePaginatedData(data?.issuance || [], issuancePage, issuanceLimit) }}
+                        rowsPerPage={issuanceLimit}
+                        totalPages={Math.ceil((data?.issuance?.length || 0) / issuanceLimit)}
+                        onPageChange={handleIssuanceChangePage}
+                        classes="!h-0"
+                    />
                 </div>
             </div>
         </>

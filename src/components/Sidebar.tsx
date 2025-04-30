@@ -29,7 +29,7 @@ const Sidebar: React.FC<Props> = ({ isOpen }) => {
     return (
         <div className={`h-screen sticky top-0 overflow-hidden transition-all shadow-lg duration-300 !z-10 ${isOpen ? 'w-64 flex-none' : 'w-20'}`}>
             <div className={`flex flex-col items-center justify-center duration-300`}>
-                <div className={`flex items-center block px-3 pt-3`}>
+                <div className={`flex items-center px-3 pt-3`}>
                     <img src={siteConfig.logo} alt="Vite Logo" />
                 </div>
                 <nav className="w-full text-gray-500">
