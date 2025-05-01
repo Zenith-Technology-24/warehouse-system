@@ -298,14 +298,14 @@ const Issuance: React.FC = () => {
             { header: 'Size', key: 'size', width: 30 },
             { header: 'Quantity', key: 'quantity', width: 30 },
             { header: 'UoM', key: 'unit', width: 30 },
-            { header: 'Unit Price', key: 'unitPrice', width: 30 },
-            { header: 'Total Amount', key: 'unit', width: 30 },
+            { header: 'Unit Price', key: 'price', width: 30 },
+            { header: 'Total Amount', key: 'totalAmount', width: 30 },
             { header: 'Status', key: 'status', width: 30 },
             { header: 'Created At', key: 'createdAt', width: 30 },
             { header: 'Created By', key: 'createdBy', width: 30 },
         ];
 
-        let data = toExport?.map((row: {
+        let data = toExport?.flatMap((row: {
             issuanceDate: string,
             documentNo: string,
             validityDate: string,
@@ -353,13 +353,13 @@ const Issuance: React.FC = () => {
                     validityDate: index === 0 ? formattedValidityDate : '',
                     issuanceDirective: index === 0 ? row.issuanceDirective : '',
                     endUser: item.endUser.name,
-                    totalAmount: '',
-                    itemName: item.name,
-                    quantity: item.quantity,
-                    size: '',
-                    price: '',
-                    unit: item.unit,
-                    status: '',
+                    totalAmount: item.inventory[0].amount,
+                    itemName: item.inventory[0].item_name,
+                    quantity: item.inventory[0].quantity,
+                    size: item.inventory[0].size,
+                    price: item.inventory[0].price,
+                    unit: item.inventory[0].unit,
+                    status: item.status,
                     createdAt: index === 0 ? formattedCreatedAt : '',
                     createdBy: index === 0 ? fullName : ''
                 };
@@ -367,6 +367,7 @@ const Issuance: React.FC = () => {
 
             return issuanceRows
         })
+        console.log(data)
         exportToExcel({ data, headers, filename: `${status}-issuance-${start_date}-to-${end_date}` })
     }
 

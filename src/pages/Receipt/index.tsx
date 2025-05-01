@@ -216,7 +216,7 @@ const Receipt: React.FC = () => {
             { header: 'Source', key: 'source', width: 30 },
             { header: 'Item Name', key: 'itemName', width: 30 },
             { header: 'Size', key: 'size', width: 30 },
-            { header: 'Quantity', key: 'max_quantity', width: 30 },
+            { header: 'Quantity', key: 'quantity', width: 30 },
             { header: 'UoM', key: 'unit', width: 30 },
             { header: 'Total Amount', key: 'totalAmount', width: 30 },
             { header: 'Expiry Date', key: 'expiryDate', width: 30 },
@@ -277,11 +277,11 @@ const Receipt: React.FC = () => {
                     itemName: item.item_name,
                     size: item.size,
                     unit: item.unit,
-                    expiryDate: item.expiryDate,
+                    expiryDate: item.expiryDate ? moment(item.expiryDate).format('D MMM YYYY') : 'N/A',
                     location: item.location,
                     createdAt: formattedCreatedAt,
                     createdBy: fullName,
-                    totalAmount: row.totalAmount
+                    totalAmount: item.amount
                 };
             });
 
