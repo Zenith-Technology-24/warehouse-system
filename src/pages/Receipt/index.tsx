@@ -225,7 +225,8 @@ const Receipt: React.FC = () => {
             { header: 'Created By', key: 'createdBy', width: 30 },
         ];
 
-        let overall = 0
+        let gtAmount = 0
+        let tQty = 0
 
         let data = toExport?.flatMap((row: {
             id: number,
@@ -249,8 +250,6 @@ const Receipt: React.FC = () => {
             size: string,
             expiryDate: string,
         }) => {
-            overall += parseFloat(row.totalAmount);
-
             const fullName = row.user
                 ? `${row.user.firstname} ${row.user.lastname}`
                 : 'N/A';
@@ -268,6 +267,8 @@ const Receipt: React.FC = () => {
             const formattedCreatedAt = formatDate(row.createdAt);
 
             const receiptRows = row.item.map((item: any, index) => {
+                gtAmount += parseFloat(item.amount);
+                tQty += parseFloat(item.quantity);
                 return {
                     id: index === 0 ? row.id : '',
                     receiptDate: index === 0 ? formattedReceiptDate : '',
@@ -287,6 +288,49 @@ const Receipt: React.FC = () => {
 
             return receiptRows
         })
+        data = [...data, {
+            id: '',
+            receiptDate: '',
+            issuanceDirective: '',
+            source: '',
+            quantity: '',
+            itemName: '',
+            size: '',
+            unit: '',
+            expiryDate: '',
+            location: '',
+            createdAt: '',
+            createdBy: '',
+            totalAmount: ''
+        }, {
+            id: '',
+            receiptDate: 'GT/AMOUNT : ',
+            issuanceDirective: gtAmount.toLocaleString(),
+            source: '',
+            quantity: '',
+            itemName: '',
+            size: '',
+            unit: '',
+            expiryDate: '',
+            location: '',
+            createdAt: '',
+            createdBy: '',
+            totalAmount: ''
+        }, {
+            id: '',
+            receiptDate: 'T/Qty : ',
+            issuanceDirective: tQty,
+            source: '',
+            quantity: '',
+            itemName: '',
+            size: '',
+            unit: '',
+            expiryDate: '',
+            location: '',
+            createdAt: '',
+            createdBy: '',
+            totalAmount: ''
+        }]
         exportToExcel({ data, headers, filename: `${status}-receipt-${start_date}-to-${end_date}` })
         setIsExportModalOpen(false)
     }

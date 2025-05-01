@@ -221,7 +221,7 @@ const Issuance: React.FC = () => {
                                     </g>
                                 </svg>
                             </div>
-                            <div onClick={() => navigate('/issuance/update', { state: row })} className="p-2 rounded-full hover:bg-gray-100 cursor-pointer transition m-auto">
+                            <div onClick={() => row.status !== 'withdrawn' && navigate('/issuance/update', { state: row })} className={`p-2 rounded-full ${row.status !== 'withdrawn' && 'hover:bg-gray-100 cursor-pointer !opacity-100'} opacity-50 transition m-auto`}>
                                 <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -305,6 +305,9 @@ const Issuance: React.FC = () => {
             { header: 'Created By', key: 'createdBy', width: 30 },
         ];
 
+        let gtAmount = 0
+        let tQty = 0
+
         let data = toExport?.flatMap((row: {
             issuanceDate: string,
             documentNo: string,
@@ -328,7 +331,6 @@ const Issuance: React.FC = () => {
             price: string,
             totalAmount: string
         }) => {
-
             const fullName = row.user
                 ? `${row.user.firstname} ${row.user.lastname}`
                 : 'N/A';
@@ -347,6 +349,8 @@ const Issuance: React.FC = () => {
             const formattedCreatedAt = formatDate(row.issuanceDetails[0].createdAt);
 
             const issuanceRows = row.issuanceDetails.map((item: any, index) => {
+                gtAmount += parseInt(item.inventory[0].amount)
+                tQty += parseInt(item.inventory[0].quantity)
                 return {
                     issuanceDate: index === 0 ? formattedIssuanceDate : '',
                     documentNo: index === 0 ? row.documentNo : '',
@@ -367,8 +371,54 @@ const Issuance: React.FC = () => {
 
             return issuanceRows
         })
-        console.log(data)
+        data = [...data, {
+            issuanceDate: '',
+            documentNo: '',
+            validityDate: '',
+            issuanceDirective: '',
+            endUser: '',
+            totalAmount: '',
+            itemName: '',
+            quantity: '',
+            size: '',
+            price: '',
+            unit: '',
+            status: '',
+            createdAt: '',
+            createdBy: ''
+        }, {
+            issuanceDate: 'GT/AMOUNT : ',
+            documentNo: gtAmount.toLocaleString(),
+            validityDate: '',
+            issuanceDirective: '',
+            endUser: '',
+            totalAmount: '',
+            itemName: '',
+            quantity: '',
+            size: '',
+            price: '',
+            unit: '',
+            status: '',
+            createdAt: '',
+            createdBy: ''
+        }, {
+            issuanceDate: 'T/Qty : ',
+            documentNo: tQty,
+            validityDate: '',
+            issuanceDirective: '',
+            endUser: '',
+            totalAmount: '',
+            itemName: '',
+            quantity: '',
+            size: '',
+            price: '',
+            unit: '',
+            status: '',
+            createdAt: '',
+            createdBy: ''
+        }]
         exportToExcel({ data, headers, filename: `${status}-issuance-${start_date}-to-${end_date}` })
+        setIsExportModalOpen(false)
     }
 
     return (

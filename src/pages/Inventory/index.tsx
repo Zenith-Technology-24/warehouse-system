@@ -205,7 +205,10 @@ const Inventory: React.FC = () => {
             { header: 'Total Amount', key: 'grandTotalAmount', width: 15 },
         ];
 
-        const data = toExport?.map((row: {
+        let gtAmount = 0
+        let tQty = 0
+
+        let data = toExport?.map((row: {
             name: string,
             receipts: {
                 item: {
@@ -219,7 +222,8 @@ const Inventory: React.FC = () => {
             stockLevel: string,
             grandTotalAmount: string
         }) => {
-
+            gtAmount += parseInt(row.grandTotalAmount)
+            tQty += row.totalQuantity
             const sizes = [
                 ...new Set(
                     row.receipts?.flatMap(receipt =>
@@ -229,7 +233,7 @@ const Inventory: React.FC = () => {
             ];
             return {
                 name: row.name,
-                size: sizes.join(', ') || 'N/A', // Combine all sizes
+                size: sizes.join(', ') || 'N/A',
                 totalQuantity: row.totalQuantity,
                 pendingQuantity: row.pendingQuantity,
                 availableQuantity: row.availableQuantity,
@@ -238,6 +242,34 @@ const Inventory: React.FC = () => {
                 grandTotalAmount: row.grandTotalAmount
             }
         })
+        data = [...data, {
+            name: '',
+            size: '',
+            totalQuantity: '',
+            pendingQuantity: '',
+            availableQuantity: '',
+            unit: '',
+            stockLevel: '',
+            grandTotalAmount: ''
+        }, {
+            name: 'GT/AMOUNT : ',
+            size: gtAmount.toLocaleString(),
+            totalQuantity: '',
+            pendingQuantity: '',
+            availableQuantity: '',
+            unit: '',
+            stockLevel: '',
+            grandTotalAmount: ''
+        }, {
+            name: 'T/Qty : ',
+            size: tQty,
+            totalQuantity: '',
+            pendingQuantity: '',
+            availableQuantity: '',
+            unit: '',
+            stockLevel: '',
+            grandTotalAmount: ''
+        }]
         exportToExcel({ data, headers, filename: `${status}-inventory-${start_date}-to-${end_date}` })
         setIsExportModalOpen(false)
     }

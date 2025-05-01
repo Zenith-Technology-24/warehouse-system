@@ -243,7 +243,7 @@ const View: React.FC = () => {
                     <button onClick={() => navigate(-1)} className="rounded-lg font-lato border border-aaa text-aaa p-3">
                         Cancel
                     </button>
-                    <button onClick={() => navigate('/issuance/update', { state: state })} className="rounded-lg font-lato bg-aaa text-white p-3">
+                    <button disabled={data?.issuanceStatus === 'withdrawn'} onClick={() => navigate('/issuance/update', { state: state })} className={`rounded-lg font-lato ${data?.issuanceStatus === 'withdrawn' ? 'opacity-50' : 'opacity-100'} bg-aaa text-white p-3`}>
                         Update
                     </button>
                 </TopButtons>
