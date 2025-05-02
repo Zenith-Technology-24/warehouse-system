@@ -551,7 +551,7 @@ const UpdateIssuance: React.FC = () => {
                                   <label className="pb-2" htmlFor={`endUsers[${index}].inventory[${_index}].size`}>Size <span className="text-gray-400">(Optional)</span></label>
                                   <Field as="select"
                                     name={`endUsers[${index}].inventory[${_index}].itemId`}
-                                    value={values.endUsers[index].inventory[_index].refId}
+                                    value={values.endUsers[index].inventory[_index].size}
                                     placeholder="Size"
                                     className="bg-transparent h-12 border border-gray-300 px-4 mb-1 rounded-md custom-select-icon"
                                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
