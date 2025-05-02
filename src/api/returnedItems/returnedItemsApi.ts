@@ -33,8 +33,20 @@ interface updateReturnedItemStatusProps {
     status: string;
 }
 
+interface exportReturnedItemsProps {
+    search: string
+    status: string
+    start_date: string
+    end_date: string
+}
+
 export const fetchReturnedItems = async ({ status, search, page, limit }: fetchReturnedItemsProps) => {
     const { data } = await apiService.get(`/returned-items?page=${page}&limit=${limit}&search=${search}&status=${status}`);
+    return data;
+};
+
+export const exportReturnedItems = async ({ search, status, start_date, end_date }: exportReturnedItemsProps) => {
+    const { data } = await apiService.post('/returned-items/export', { search, status, start_date, end_date });
     return data;
 };
 

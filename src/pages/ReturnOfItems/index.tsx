@@ -9,12 +9,9 @@ import { useToast } from "../../providers/ToastContext"
 import moment from "moment"
 import Search from "../../components/Search"
 import LinkPrimaryButton from "../../components/buttons/LinkPrimaryButton"
-import SecondaryButton from "../../components/buttons/SecondaryButton"
-import CsvDownloader from 'react-csv-downloader'
-import { exportExpenses, fetchExpenses, updateExpenseStatus } from "../../api/expenses/expensesApi"
 import exportToExcel from "../../components/ExportToExcel"
 import ExportModal from "../../components/ExportModal"
-import { fetchReturnedItems, updateReturnedItemStatus } from "../../api/returnedItems/returnedItemsApi"
+import { exportReturnedItems, fetchReturnedItems, updateReturnedItemStatus } from "../../api/returnedItems/returnedItemsApi"
 
 const ReturnOfItems: React.FC = () => {
     const { showToast } = useToast()
@@ -199,52 +196,41 @@ const ReturnOfItems: React.FC = () => {
 
     const handleExport = ({ toExport, start_date, end_date }: any) => {
         const headers = [
-            { header: 'Expenses ID', key: 'id', width: 10 },
-            { header: 'Name', key: 'name', width: 15 },
-            { header: 'Expense Type', key: 'type', width: 15 },
-            { header: 'Amount', key: 'amount', width: 15 },
-            { header: 'Description', key: 'description', width: 35 },
-            { header: 'Created At', key: 'created_at', width: 15 }
+            { header: 'Item Name', key: 'itemName', width: 15 },
+            { header: 'Size', key: 'size', width: 8 },
+            { header: 'Returned Date & Time', key: 'date', width: 35 },
+            { header: 'Personnel', key: 'personnel', width: 15 },
+            { header: 'Notes', key: 'notes', width: 40 },
+            { header: 'Created At', key: 'created_at', width: 15 },
+            { header: 'Created By', key: 'created_by', width: 15 },
         ];
 
-        let overall = 0
-
         let data = toExport?.map((row: {
-            id: number,
-            first_name: string
-            last_name: string
-            expense_type: string,
-            amount: string,
-            description: string,
+            itemName: string,
+            size: string
+            date: string
+            time: string
+            personnel: string,
+            notes: string,
             created_at: string,
+            created_by: {
+                firstname: string,
+                lastname: string
+            },
         }) => {
-            overall += parseFloat(row.amount);
             return {
-                id: row.id,
-                name: row.first_name + row.last_name,
-                type: row.expense_type,
-                amount: "₱" + row.amount,
-                description: row.description,
-                created_at: moment(row.created_at).format('L')
+                itemName: row.itemName,
+                size: row.size,
+                date: moment(row?.date).format('DD MMM YYYY') + ' ' + moment(row?.time, "HH:mm").format('h:mm A'),
+                personnel: row.personnel,
+                notes: row.notes,
+                created_at: moment(row?.created_at).format('DD MMM YYYY'),
+                created_by: row.created_by ? row.created_by.firstname + ' ' + row.created_by.lastname : '',
             }
         })
 
-        data = [...data, {
-            id: '',
-            name: '',
-            type: '',
-            amount: '',
-            description: '',
-            created_at: ''
-        }, {
-            id: '',
-            name: '',
-            type: 'OVERALL TOTAL',
-            amount: '₱' + overall,
-            description: '',
-            created_at: ''
-        }]
-        exportToExcel({ data, headers, filename: `${status}-expenses-${start_date}-to-${end_date}` })
+        exportToExcel({ data, headers, filename: `${status}-returned-items-${start_date}-to-${end_date}` })
+        setIsExportModalOpen(false)
     }
 
     return (
@@ -255,7 +241,7 @@ const ReturnOfItems: React.FC = () => {
                 isOpen={isExportModalOpen}
                 onClose={() => setIsExportModalOpen(false)}
                 handleFunction={handleExport}
-                exportFunction={exportExpenses}
+                exportFunction={exportReturnedItems}
             />
             <Modal
                 isOpen={isArchiveModalOpen}

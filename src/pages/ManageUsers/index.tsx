@@ -260,9 +260,9 @@ const ManageUsers: React.FC = () => {
             <div className="flex flex-row justify-between">
                 <Header title={'Manage Users'} description={'Showing all users'} />
                 <TopButtons >
-                    <button onClick={() => setIsExportModalOpen(true)} className="rounded-lg font-lato border-2 border-aaa text-aaa p-3">
+                    {/* <button onClick={() => setIsExportModalOpen(true)} className="rounded-lg font-lato border-2 border-aaa text-aaa p-3">
                         Export
-                    </button>
+                    </button> */}
                     <LinkPrimaryButton text="Create" to="create" />
                 </TopButtons>
             </div>

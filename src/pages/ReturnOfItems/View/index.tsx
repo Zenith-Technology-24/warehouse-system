@@ -34,6 +34,7 @@ const View: React.FC = () => {
                 <div>
                     <div className="text-gray-500 space-y-2">
                         <p>ID: <span className="text-black ml-2">{state?.id || 'N/A'}</span></p>
+                        <p>Receipt Ref: <span className="text-black ml-2">{state?.receiptRef || 'N/A'}</span></p>
                         <p>Item Name: <span className="text-black ml-2">{state?.itemName || 'N/A'}</span></p>
                         <p>Item Size: <span className="text-black ml-2">{state?.size || 'N/A'}</span></p>
                         <p>Returned Date & Time: <span className="text-black ml-2">{moment(state?.date).format('DD MMM YYYY') + ' ' + moment(state?.time, "HH:mm").format('h:mm A') || 'N/A'}</span></p>
