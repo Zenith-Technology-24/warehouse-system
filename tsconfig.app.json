@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "public/serviceWorker.js"]
+  "include": ["src", "public/serviceWorker.js", "server/fetch.ts", "dist/src"]
 }

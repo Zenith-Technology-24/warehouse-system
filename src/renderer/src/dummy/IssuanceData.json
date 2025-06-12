@@ -1,0 +1,21 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "issuanceDate": "11 May 2023",
+            "directiveNo": "TOS 2023-1105-17",
+            "itemName": "Army Combat Boots, Suede, Field Use",
+            "status": "Pending"
+        },
+        {
+            "id": 2,
+            "issuanceDate": "04 Aug 2021",
+            "directiveNo": "TOS 2021-0408-29",
+            "itemName": "Army Athletic Rubber Shoes",
+            "status": "Withdrawn"
+        }
+    ],
+    "total": 2,
+    "currentPage": 1,
+    "totalPages": 1
+}
